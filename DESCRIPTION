@@ -1,0 +1,44 @@
+Package: pspatreg
+Type: Package
+Title: Spatio-Temporal Semiparametric Regression Models with Spatial Lags
+Version: 1.0
+Date: 2021-11-21
+Authors@R: person("Roman","Minguez", email = "roman.minguez@uclm.es", 
+    role = c("aut","cre")) 
+Description: Estimation and inference of spatial and spatio-temporal 
+    semiparametric models including spatial or spatio-temporal non-parametric 
+    trends, parametric and non-parametric covariates and, possibly, a spatial 
+    lag for the dependent variable and temporal correlation in the noise.
+    The spatio-temporal trend can be decomposed in ANOVA way including main and 
+    interaction functional terms. Use of SAP algorithm to estimate the spatial 
+    or spatio-temporal trend and non-parametric covariates. 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 4.1),
+    methods (>= 4.1),
+    stats (>= 4.1),
+    graphics (>= 4.1)
+Imports:
+    akima (>= 0.6-2.3),
+    ggplot2 (>= 3.3.5),
+    MASS (>= 7.3-54),
+    minqa (>= 1.2.4),
+    Matrix (>= 1.3-4),
+    numDeriv (>= 2016.8-1.1),
+    rootSolve (>= 1.8.2.3),
+    sf (>= 1.0-3),
+    spatialreg (>= 1.2-1),
+    spdep (>= 1.1-12),
+    splines (>= 4.1),
+    stringr (>= 1.4.0)
+Suggests:
+    knitr (>= 1.36),
+    rmarkdown (>= 2.11),
+    Rdpack (>= 2.1.2)
+RoxygenNote: 7.1.2
+VignetteBuilder: knitr
+RdMacros: Rdpack
+URL: http://github.com/rominsal/pspatreg
+BugReports: http://github.com/rominsal/pspatreg/issues
