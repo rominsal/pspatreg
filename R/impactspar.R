@@ -88,7 +88,7 @@
 #' sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, listw = Wsp_it, type = "sar", ar1=TRUE, 
 #'                     control = list(thr = 1e-1, maxit = 200, trace = FALSE))
 #' summary(sptanova_sar_ar1)
-#'  ###### Parametric Total, Direct and Indirect Effects
+#'  ##### Parametric Total, Direct and Indirect Effects
 #'  eff_parvar <- impactspar(sptanova_sar_ar1, listw = Wsp_it)
 #'  summary(eff_parvar)
 #'
