@@ -3,8 +3,16 @@ Type: Package
 Title: Spatio-Temporal Semiparametric Regression Models with Spatial Lags
 Version: 1.0
 Date: 2021-11-21
-Authors@R: person("Roman","Minguez", email = "roman.minguez@uclm.es", 
-    role = c("aut","cre")) 
+Authors@R: 
+  c(person("Roman", "Minguez", email = "roman.minguez@uclm.es", 
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0490-3181")),
+    person("Roberto", "Basile", email = "roberto.basile@univaq.it",
+    role = c("aut"), comment = c(ORCID = "0000-0002-4531-2820")),
+    person("Maria", "Durban", email = "mdurban@est-econ.uc3m.es",
+    role = c("aut"), comment = c(ORCID = "0000-0002-4272-7895")),
+    person("Gonzalo", "Espana-Heredia", email = "100365421@alumnos.uc3m.es",
+    role = c("aut")))
+Maintainer: Roman Minguez <roman.minguez@uclm.es>    
 Description: Estimation and inference of spatial and spatio-temporal 
     semiparametric models including spatial or spatio-temporal non-parametric 
     trends, parametric and non-parametric covariates and, possibly, a spatial 
