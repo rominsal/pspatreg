@@ -1,2 +1,3 @@
 this is a text file used to simulate a situation in which two personas are modifying the same file. ¿What would happen if one of them want to merge the changes of the other into his branch?
 rama2 añade una linea en la linea2
+rama1 adds a line in line 2. rama2 has a different text in the same line. I will try to merge and see what happens
