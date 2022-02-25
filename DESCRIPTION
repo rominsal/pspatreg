@@ -10,7 +10,7 @@ Authors@R:
     role = c("aut"), comment = c(ORCID = "0000-0002-4531-2820")),
     person("Maria", "Durban", email = "mdurban@est-econ.uc3m.es",
     role = c("aut"), comment = c(ORCID = "0000-0002-4272-7895")),
-    person("Gonzalo", "Espana-Heredia", email = "100365421@alumnos.uc3m.es",
+    person("Gonzalo", "Espana-Heredia", email = "gehllanza@gmail.com",
     role = c("aut")))
 Maintainer: Roman Minguez <roman.minguez@uclm.es>    
 Description: Estimation and inference of spatial and spatio-temporal 
