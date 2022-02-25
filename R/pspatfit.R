@@ -614,7 +614,7 @@
 #'                        listw = Wsp_it, type = "sar")
 #' summary(geospanova_sar)
 #'
-#'
+#' # Add a comment
 #'  ###############################################
 #'  ### Spatio-temporal semiparametric ANOVA model without spatial lag
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
