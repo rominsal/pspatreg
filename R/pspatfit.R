@@ -508,8 +508,7 @@
 #'      type = "p", cex.lab = 1.3, cex.main=1.3,
 #'      main = "Spatial semiparametric model with spatial lag",
 #'      sub = "Spatial trend fixed for period 2014")
-#'
-#'              
+#'         
 #'  
 #' ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
 #' eff_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
