@@ -49,6 +49,7 @@ $$y\_{it}=\\alpha y\_{it-1}+\\rho \\sum\_{j=1}^N w\_{ij,N} y\_{jt} + \\pi \\sum\
 \\sum\_{\\delta=1}^\\Delta g\_\\delta(x\_{\\delta, it}) + \\sum\_{\\delta=1}^\\Delta h\_\\delta\\left(\\sum\_{j=1}^N w\_{ij,N} x\_{\\delta,jt}\\right) + \\\\
 \\widetilde{ f}(s\_{1i},s\_{2i},\\tau_t)+\\epsilon\_{it}$$
 
+<img src="https://latex.codecogs.com/svg.image?\epsilon_{it}=\theta&space;\sum_{j=1}^N&space;w_{ij,N}\epsilon_{jt}&plus;\phi&space;\epsilon_{it-1}&plus;u_{it}" title="\epsilon_{it}=\theta \sum_{j=1}^N w_{ij,N}\epsilon_{jt}+\phi \epsilon_{it-1}+u_{it}" />
 $$\\epsilon\_{it}=\\theta \\sum\_{j=1}^N w\_{ij,N}\\epsilon\_{jt}+\\phi \\epsilon\_{it-1}+u\_{it}$$
 *u*<sub>*i**t*</sub> ∼ *i*.*i*.*d*.(0,*σ*<sub>*u*</sub><sup>2</sup>)
 
