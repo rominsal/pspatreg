@@ -31,6 +31,7 @@ Depends:
 Imports:
     akima (>= 0.6-2.3),
     ggplot2 (>= 3.3.5),
+    knitr (>= 1.36), 
     MASS (>= 7.3-54),
     minqa (>= 1.2.4),
     Matrix (>= 1.3-4),
@@ -41,8 +42,7 @@ Imports:
     spdep (>= 1.1-12),
     splines (>= 4.1),
     stringr (>= 1.4.0)
-Suggests:
-    knitr (>= 1.36),
+Suggests: 
     rmarkdown (>= 2.11),
     Rdpack (>= 2.1.2)
 RoxygenNote: 7.1.2
