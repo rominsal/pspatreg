@@ -7,6 +7,10 @@ output:
             toc: true
             toc_depth: 2
 bibliography: bibliopsplines.bib
+vignette: |
+  %\VignetteIndexEntry{An introduction to pspatreg}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include=FALSE}
