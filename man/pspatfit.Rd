@@ -18,6 +18,8 @@ pspatfit(
   trs = NULL,
   cor = "none",
   dynamic = FALSE,
+  demean = FALSE,
+  twoways = FALSE,
   control = list()
 )
 }
@@ -671,7 +673,11 @@ addmain = TRUE, addint = FALSE)
                   control = list(thr=1e-2, maxit = 200, trace = TRUE))
  summary(sptanova2)
  
- 
+######################  parametric formula (demean)
+formpar <- unrate ~ partrate + agri + cons
+param <- pspatfit(formpar, data = unemp_it, listw = lwsp_it)
+param_dem <- pspatfit(formpar, data = unemp_it, listw = lwsp_it,
+                      demean = TRUE, twoways = FALSE)
 
 }
 \references{

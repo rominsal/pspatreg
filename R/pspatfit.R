@@ -508,7 +508,8 @@
 #'      type = "p", cex.lab = 1.3, cex.main=1.3,
 #'      main = "Spatial semiparametric model with spatial lag",
 #'      sub = "Spatial trend fixed for period 2014")
-#'         
+#'
+#'              
 #'  
 #' ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
 #' eff_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
@@ -614,7 +615,7 @@
 #'                        listw = Wsp_it, type = "sar")
 #' summary(geospanova_sar)
 #'
-#' # Add a comment
+#'
 #'  ###############################################
 #'  ### Spatio-temporal semiparametric ANOVA model without spatial lag
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
@@ -692,18 +693,73 @@
 #'                   control = list(thr=1e-2, maxit = 200, trace = TRUE))
 #'  summary(sptanova2)
 #'  
-#'  
-#'
+#' ######################  parametric formula (demean)
+#' formpar <- unrate ~ partrate + agri + cons
+#' param <- pspatfit(formpar, data = unemp_it, listw = lwsp_it)
+#' param_dem <- pspatfit(formpar, data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       index = c("prov", "year") )
+#' summary(param_dem)
+#' param_plm <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       model = "within")
+#' summary(param_plm)                                              
+#' param_dem_twoways <- pspatfit(formpar, 
+#'                       data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       eff_demean = "twoways",
+#'                       index = c("prov", "year"))
+#' summary(param_dem_twoways)
+#' param_plm_twoways <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       effect = "twoways",
+#'                       model = "within")
+#' summary(param_plm_twoways) 
+#' param_dem_time <- pspatfit(formpar, 
+#'                       data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       eff_demean = "time",
+#'                       index = c("prov", "year"))
+#' summary(param_dem_time)
+#' param_plm_time <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       effect = "time",
+#'                       model = "within")
+#' summary(param_plm_time)
+#' formgam <- unrate ~ partrate + agri + cons +
+#' pspl(serv, nknots = 15) + 
+#' pspl(empgrowth, nknots = 20)
+#' gam_dem <- pspatfit(formula = formgam,
+#'                       data = unemp_it,
+#'                       demean = TRUE,
+#'                       index = c("prov", "year"))
+#' summary(gam_dem)      
+#' gam <- pspatfit(formula = formgam,
+#'                  data = unemp_it)
+#' summary(gam)                  
+#
+#'                       
+
 #' @export
 pspatfit <- function(formula, data, na.action,
                      listw = NULL, 
-                     type = "sim", method = "eigen", 
+                     type = "sim", 
+                     method = "eigen", 
                      Durbin = NULL,
                      zero.policy = NULL, 
                      interval = NULL, 
                      trs = NULL,
                      cor = "none",
                      dynamic = FALSE,
+                     demean = FALSE,
+                     eff_demean = "individual",
+                     index = NULL,
                      control = list()) {
   con <- list(tol = 1e-3, maxit = 200, trace = FALSE,
               optim = "llik_reml", fdHess = TRUE,
@@ -740,24 +796,54 @@ pspatfit <- function(formula, data, na.action,
       Wsp <- listw
       listw <- mat2listw(as.matrix(Wsp))
     } 
-  } else Wsp <- NULL  
+  } else Wsp <- NULL
   if (is.null(zero.policy))
     zero.policy <- get.ZeroPolicyOption()
   can.sim <- FALSE
   if (!(is.null(listw)) && listw$style %in% c("W", "S")) {
     can.sim <- can.be.simmed(listw)
-  }   
+  }
+  cl <- match.call()
   if (any(grepl("pspt", formula))) 
     formula <- update(formula, . ~ . - 1)
-  cl <- match.call()
+  if (demean) {
+    if (any(grepl("pspt", formula))) 
+      stop("pspt terms are not allowed with demeaning")
+    if (is.null(index))
+      stop("index argument must be provided with demeaning")
+    formula <- update(formula, . ~ . - 1)
+    var_form <- all.vars(formula)
+    lhs <- var_form[1]
+    rhs <- paste(var_form[2:length(var_form)],
+                 collapse = " + ")
+    pformula <- as.formula(paste(lhs, rhs, 
+                                 sep = " ~ "))
+    pmodel <- plm::plm(formula = pformula,
+                    data = data, 
+                    index = index,
+                    effect = eff_demean,
+                    model = "within")
+    pdata <- pmodel$model
+    for (i in 1:ncol(pdata)) {
+      pdata[[i]] <- plm::Within(pdata[[i]],
+                              effect = eff_demean)
+    }
+    pdata <- cbind(attr(pdata, "index"), pdata)
+  }
   mf <- match.call(expand.dots = TRUE)
-  m <- match(c("formula", "data", "offset"), names(mf), 0L)
+  m <- match(c("formula", "data", "offset"), 
+             names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(model.frame)
-  mf <- eval(mf, parent.frame())
+  if (!demean)  
+    mf <- eval(mf, envir = parent.frame())
+  else {
+    mf$data <- as.name("pdata")
+    mf <- eval(mf, envir = pdata)
+  }
   na.act <- attr(mf, "na.action")
-  y <- model.response(mf, "numeric")
+  y <- as.numeric(model.response(mf, "numeric"))
   nfull <- length(y)
   Xfull <- Zfull <- cfull <- NULL
   pordfull <- bdegfull <- nknotsfull <- decomfull <- NULL
@@ -904,7 +990,43 @@ pspatfit <- function(formula, data, na.action,
   } else nt <- 1
   assign("nsp", nsp, envir = env)
   assign("nt", nt, envir = env)  
+  # # Demeaning case. Follow notation of
+  # #  "Econometric Analysis of Panel Data" (Baltagi)
+  # if (demean) {
+  #   if (nvarspt > 0) 
+  #     stop("It is not possible to demean with spatio-temporal trends")
+  #   browser()
+  #   pXpar <- plm::pdata.frame(as.data.frame(Xpar),
+  #                             index = index)
+  #   
+  #   browser()
+  #   if (!twoways) { # One way fixed effect
+  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
+  #     P_Z <- Matrix::kronecker(Diagonal(nsp),
+  #                              1/nt*J_nt)
+  #     Q_Z <- Diagonal(nsp*nt) - P_Z
+  #     Xpar <- Q_Z %*% Xpar
+  #     y <- Q_Z %*% y
+  #     rm(J_nt, P_Z, Q_Z)
+  #     # Test here. CONTINUE...
+  #   } else { # Two Ways fixed effect
+  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
+  #     J_nsp <- Matrix::matrix(1, nrow = nsp, 
+  #                             ncol = nsp)
+  #     I_nsp <- Diagonal(nsp)
+  #     I_nt <- Diagonal(nt)
+  #     Q_Z <- Matrix::kronecker(I_nsp, I_nt) -
+  #           Matrix::kronecker(I_nsp, 1/nt*J_nt) -
+  #           Matrix::kronecker(1/nsp*J_nsp, I_nt) +
+  #           Matrix::kronecker(1/nsp*J_nsp, 1/nt*J_nt)
+  #     Xpar <- Q_Z %*% Xpar
+  #     y <- Q_Z %*% y
+  #     rm(J_nt, J_nsp, I_nsp, I_nt, Q_Z)
+  #   }
+  # }
+  # 
   
+    
   if (type %in% c("slx", "sdm", "sdem")) {
     if (is.null(Durbin)) Durbin <- update(formula, NULL ~ . )
     # Add intercept in Durbin formula to use it in factor case...
