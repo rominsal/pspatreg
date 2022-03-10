@@ -89,7 +89,12 @@
 #'   are included. 
 #' @param eff_demean Type of demeaning for panel data.
 #'   Possible values are \code{"individual"} (default),
-#'   \code{"time"} and \code{"twoways"}.    
+#'   \code{"time"} and \code{"twoways"}.
+#' @param index Vector of variables indexing panel data. 
+#'   First variable corresponds to individuals and second 
+#'   variable corresponds to temporal coordinate (fast index). 
+#'   Follows the same rules than \code{\link[plm]{plm}} function
+#'   in package **plm**.        
 #' @param dynamic Logical value to set a dynamic model.
 #'   Dynamic models include a temporal lag of the dependent
 #'   variable in the right-hand side of the equation.
@@ -293,6 +298,7 @@
 #'  \code{dynamic} \tab Value of \code{dynamic} argument in the call to \code{pspatfit}. \cr
 #'  \code{demean} \tab Value of \code{demean} argument in the call to \code{pspatfit}. \cr
 #'  \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
+#'  \code{index} \tab Value of \code{index} argument in the call to \code{pspatfit}. \cr
 #'  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
 #'              mixed model. These betas comes from either parametric
 #'              covariates or fixed coefficients of smooth terms
@@ -818,7 +824,11 @@
 #'                       demean = TRUE,
 #'                       index = c("prov", "year"))
 #' summary(gamsar_dem)   
-
+#' summary(gam_dem)      
+#' gam <- pspatfit(formula = formgam,
+#'                  data = unemp_it)
+#' summary(gam)                  
+#
 #'                       
 
 #' @export
@@ -1296,6 +1306,7 @@ pspatfit <- function(formula, data, na.action,
   model_fit$cor <- cor
   model_fit$demean <- demean
   model_fit$eff_demean <- eff_demean
+  model_fit$index <- index
   model_fit$dynamic <- dynamic
   if (!is.null(listw)) model_fit$listw <- listw
   else model_fit$listw <- NULL

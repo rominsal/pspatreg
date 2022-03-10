@@ -117,6 +117,12 @@ are included.}
 Possible values are \code{"individual"} (default),
 \code{"time"} and \code{"twoways"}.}
 
+\item{index}{Vector of variables indexing panel data. 
+First variable corresponds to individuals and second 
+variable corresponds to temporal coordinate (fast index). 
+Follows the same rules than \code{\link[plm]{plm}} function
+in package **plm**.}
+
 \item{control}{List of extra control arguments - see section below}
 }
 \value{
@@ -147,6 +153,7 @@ A list object of class \emph{pspat}
  \code{dynamic} \tab Value of \code{dynamic} argument in the call to \code{pspatfit}. \cr
  \code{demean} \tab Value of \code{demean} argument in the call to \code{pspatfit}. \cr
  \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
+ \code{index} \tab Value of \code{index} argument in the call to \code{pspatfit}. \cr
  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
              mixed model. These betas comes from either parametric
              covariates or fixed coefficients of smooth terms
@@ -803,6 +810,10 @@ gamsar_dem <- pspatfit(formula = formgam,
                       demean = TRUE,
                       index = c("prov", "year"))
 summary(gamsar_dem)   
+summary(gam_dem)      
+gam <- pspatfit(formula = formgam,
+                 data = unemp_it)
+summary(gam)                  
                       
 }
 \references{
