@@ -80,7 +80,20 @@
 #'   Parameter Durbin is a formula of a subset of explanatory variables to lag on
 #'   this part of the model.
 #' @param cor Type of temporal correlation for temporal data. Possible values 
-#'   are "none" (default) or "ar1".
+#'   are \code{"none"} (default) or \code{"ar1"}.
+#' @param demean Logical value to include a demeaning 
+#'   for panel data. Default = \code{FALSE}. 
+#'   The demeaning is done previously to the estimation for
+#'   both parametric and nonparametric terms. It is not possible
+#'   to set \code{demean = TRUE} when spatio-temporal trends
+#'   are included. 
+#' @param eff_demean Type of demeaning for panel data.
+#'   Possible values are \code{"individual"} (default),
+#'   \code{"time"} and \code{"twoways"}.    
+#' @param dynamic Logical value to set a dynamic model.
+#'   Dynamic models include a temporal lag of the dependent
+#'   variable in the right-hand side of the equation.
+#'   Default = \code{FALSE}. 
 #' @param control List of extra control arguments - see section below
 #'
 #' @details Function to estimate the model:
@@ -251,9 +264,7 @@
 #'   \deqn{summary(eff_parvar)}
 #'   }
 #'   
-#'   }
-#'   
-#'   
+#'   }   
 #'
 #' @return A list object of class \emph{pspat}
 #' \tabular{ll}{
@@ -263,6 +274,11 @@
 #'              for parametric covariates. \cr
 #'  \code{xlevels} \tab (only where relevant) a record of the levels
 #'              of the parametric factors used in fitting. \cr
+#'  \code{data} \tab dataframe used as database. \cr
+#'  \code{nsp} \tab number of spatial observations. \cr
+#'  \code{nt} \tab number of temporal observations. It is set
+#'    to \code{nt=1} for spatial data. \cr
+#'  \code{nfull} \tab total number of observations. \cr
 #'  \code{edftot} \tab Equivalent degrees of freedom for the whole model. \cr
 #'  \code{edfspt} \tab Equivalent degrees of freedom for smooth
 #'              spatio-temporal or spatial trend. \cr
@@ -270,6 +286,13 @@
 #'              non-parametric covariates. \cr
 #'  \code{psanova} \tab \emph{TRUE} if spatio-temporal or spatial trend is 
 #'    PS-ANOVA. \cr
+#'  \code{type} \tab Value of \code{type} argument in the call to \code{pspatfit}. \cr
+#'  \code{listw} \tab Value of \code{listw} argument in the call to \code{pspatfit}. \cr
+#'  \code{Durbin} \tab Value of \code{Durbin} argument in the call to \code{pspatfit}. \cr
+#'  \code{cor} \tab Value of \code{cor} argument in the call to \code{pspatfit}. \cr
+#'  \code{dynamic} \tab Value of \code{dynamic} argument in the call to \code{pspatfit}. \cr
+#'  \code{demean} \tab Value of \code{demean} argument in the call to \code{pspatfit}. \cr
+#'  \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
 #'  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
 #'              mixed model. These betas comes from either parametric
 #'              covariates or fixed coefficients of smooth terms
@@ -279,17 +302,20 @@
 #'              in mixed model. These betas comes from random coefficients of 
 #'              smooth terms reparameterized as mixed models. \cr
 #'  \code{se_brandom}\tab Standard errors of random betas. \cr
-#'  \code{vcov_b} \tab Covariance matrix of fixed and random
-#'              effects. \cr
-#'  \code{sar} \tab \emph{TRUE} if model is PS-SAR. \cr
-#'  \code{rho} \tab Estimated rho. If \code{sar=FALSE} always \eqn{rho=0}. \cr 
+#'  \code{vcov_fr} \tab Covariance matrix of fixed and random
+#'              effects using frequentist or sandwich method. \cr
+#'  \code{vcov_by} \tab Covariance matrix of fixed and random
+#'              effects using bayesian method. \cr
+#'  \code{rho} \tab Estimated rho for spatial lag of the
+#'    dependent variable. if the model does not include
+#'    a spatial lag, always \eqn{rho=0}. \cr
 #'  \code{se_rho} \tab Standard error of \eqn{rho}. \cr
-#'  \code{ar1} \tab \emph{TRUE} if model has a temporal autoregressive of
-#'              first order in residuals. \cr
-#'  \code{phi} \tab Estimated phi. If \code{ar1=FALSE} always \eqn{phi=0}. \cr
-#'  \code{delta} \tab Estimated delta for spatial error models, if model does not include
-#'  spatial error term, always \eqn{delta=0}. \cr
-#'  \code{se_rho} \tab Standard error of \eqn{phi}. \cr
+#'  \code{delta} \tab Estimated delta for spatial error models, 
+#'    if the model does not include
+#'    spatial error term, always \eqn{delta=0}. \cr
+#'  \code{se_delta} \tab Standard error of \eqn{delta}. \cr
+#'  \code{phi} \tab Estimated phi. If \code{cor="none"} always \eqn{phi=0}. \cr
+#'  \code{se_phi} \tab Standard error of \eqn{phi}. \cr
 #'  \code{fitted.values} \tab Vector of fitted values of the dependent
 #'              variable. \cr
 #'  \code{se_fitted.values} \tab Vector of standard errors of
@@ -299,8 +325,6 @@
 #'  \code{se_fitted.values_Ay} \tab Vector of standard errors of
 #'       \code{fitted.values_Ay}. \cr
 #'  \code{residuals} \tab Vector of residuals. \cr
-#'  \code{residuals_norm} \tab Uncorrelated residuals. For non-temporal
-#'              data they are the same than \code{residuals}. \cr
 #'  \code{df.residual} \tab Equivalent degrees of freedom for \code{residuals}. 
 #'    \cr
 #'  \code{sig2}  \tab Residual variance computed as SSR/df.residual. \cr
@@ -318,24 +342,63 @@
 #'
 #' @section Control arguments:
 #' \tabular{ll}{
+#'   \code{optim} \tab method of estimation between 
+#'     restricted maximum likelihood, \code{"llik_reml"} or
+#'     maximum likelihood, \code{"llik"}. 
+#'     Default = \code{"llik_reml"}. \cr
+#'   \code{typese} \tab method to compute variances and 
+#'     standard errors. Default: \code{"sandwich"}. The
+#'     other option is \code{"bayesian"} \cr   
 #'   \code{vary_init} \tab Initial value of the noise variance in the model.
-#'     Default = \code{NULL}.\cr
+#'     Default = \code{NULL}. If \code{NULL} the initial variance
+#'     is the sample variance of the dependent variable. \cr
 #'   \code{trace} \tab A logical value set to \emph{TRUE} to show 
 #'     intermediate results during the estimation process. 
 #'     Default = \emph{FALSE}. \cr
-#'   \code{thr} \tab Numerical value for the threshold of convergence
+#'   \code{tol} \tab Numerical value for the tolerance of convergence
 #'     in the estimation process. Default 1e-3. \cr
 #'   \code{maxit} \tab An integer value for the maximum number of 
 #'     iterations until convergence. Default = 200. \cr
-#'   \code{rho_init} \tab An initial value for \eqn{rho} parameter if
-#'     \code{sar=TRUE}. Default 0. \cr
-#'   \code{phi_init} \tab An initial value for \eqn{phi} parameter if
-#'     \code{ar1=TRUE}. Default 0. \cr
-#'   \code{rho_fixed} \tab A logical value to set fixed \eqn{rho}
-#'          parameter during estimation process. Default \emph{FALSE}. \cr
-#'   \code{phi_fixed} \tab A logical value to set fixed \eqn{phi}
-#'          parameter during estimation process. Default \emph{FALSE}. \cr
-#' }
+#'   \code{rho_init} \tab An initial value for \eqn{rho} parameter. 
+#'     Default 0. \cr
+#'   \code{delta_init} \tab An initial value for \eqn{delta} parameter. 
+#'     Default 0. \cr
+#'   \code{phi_init} \tab An initial value for \eqn{phi} parameter. 
+#'     Default 0. \cr
+#'   \code{Imult} \tab default 2; used for preparing the Cholesky 
+#'       decompositions for updating in the Jacobian function \cr
+#'   \code{super} \tab  if \code{NULL} (default), set to \code{FALSE} to use 
+#'       a simplicial decomposition for the sparse Cholesky decomposition and 
+#'       method "Matrix_J", set to as.logical(NA) for method "Matrix", if 
+#'       \code{TRUE}, use a supernodal decomposition \cr
+#'     \code{cheb_q} \tab default 5; highest power of the approximating 
+#'       polynomial for the Chebyshev approximation \cr
+#'     \code{MC_p} \tab default 16; number of random variates \cr
+#'     \code{MC_m} \tab default 30; number of products of random variates 
+#'       matrix and spatial weights matrix \cr
+#'     \code{spamPivot} \tab  default "MMD", alternative "RCM" \cr
+#'     \code{in_coef} \tab default 0.1, coefficient value for initial Cholesky 
+#'       decomposition in "spam_update" \cr
+#'     \code{type} \tab default "MC", used with method "moments"; alternatives 
+#'       "mult" and "moments", for use if trs is missing \cr 
+#'     \code{correct} \tab default \code{TRUE}, used with method "moments" to 
+#'       compute the Smirnov/Anselin correction term \cr
+#'     \code{trunc} \tab default \code{TRUE}, used with method "moments" to 
+#'       truncate the Smirnov/Anselin correction term \cr
+#'     \code{SE_method} \tab default "LU", may be "MC" \cr
+#'     \code{nrho} \tab default 200, as in SE toolbox; the size of the first 
+#'       stage lndet grid; it may be reduced to for example 40 \cr
+#'     \code{interpn} \tab default 2000, as in SE toolbox; the size of the 
+#'       second stage lndet grid \cr
+#'     \code{SElndet} \tab default \code{NULL}, may be used to pass a 
+#'       pre-computed SE toolbox style matrix of coefficients and their lndet 
+#'       values to the "SE_classic" and "SE_whichMin" methods \cr
+#'     \code{LU_order} \tab default \code{FALSE}; used in "LU_prepermutate", 
+#'       note warnings given for lu method \cr
+#'     \code{pre_eig} \tab default \code{NULL}; may be used to pass a 
+#'       pre-computed vector of eigenvalues \cr
+#'  } 
+#' 
 #'
 #' @author Roman Minguez \email{roman.minguez@@uclm.es}
 #'
@@ -458,9 +521,9 @@
 #'                 pspt(long, lat, nknots = c(20,20), 
 #'                      psanova = FALSE)
 
-#' geosp1_sar <- pspatfit(form2, 
-#'                        data = unemp_it_short) 
-#' summary(geosp1_sar)
+#' geosp <- pspatfit(form2, 
+#'                        data = unemp_it_short)                        ) 
+#' summary(geosp)
 #' 
 #' 
 #' ###############################################
@@ -470,10 +533,10 @@
 #' ### but not recommended for large samples
 #' ### SAR
 #' geospsar <- pspatfit(form2, data = unemp_it_short, 
-#'                  listw = Wsp_it, 
+#'                  listw = lwsp_it, 
 #'                  method = "Chebyshev", 
-#'                  type = "sar", 
-#'                  control = list(trace = TRUE))
+#'                  type = "sar")
+#' summary(geospsar)                  
 #'  
 #' ### SEM
 #' geospsem <- pspatfit(form2, data = unemp_it_short, 
@@ -508,7 +571,8 @@
 #'      type = "p", cex.lab = 1.3, cex.main=1.3,
 #'      main = "Spatial semiparametric model with spatial lag",
 #'      sub = "Spatial trend fixed for period 2014")
-#'         
+#'
+#'              
 #'  
 #' ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
 #' eff_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
@@ -614,7 +678,7 @@
 #'                        listw = Wsp_it, type = "sar")
 #' summary(geospanova_sar)
 #'
-#' # Add a comment
+#'
 #'  ###############################################
 #'  ### Spatio-temporal semiparametric ANOVA model without spatial lag
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
@@ -692,27 +756,92 @@
 #'                   control = list(thr=1e-2, maxit = 200, trace = TRUE))
 #'  summary(sptanova2)
 #'  
-#'  
-#'
+#' ######################  demeaning
+#' formpar <- unrate ~ partrate + agri + cons
+#' param <- pspatfit(formpar, data = unemp_it, listw = lwsp_it)
+#' param_dem <- pspatfit(formpar, data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       index = c("prov", "year") )
+#' summary(param_dem)
+#' # Compare results with plm package
+#' param_plm <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       model = "within")
+#' summary(param_plm)                                              
+#' param_dem_twoways <- pspatfit(formpar, 
+#'                       data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       eff_demean = "twoways",
+#'                       index = c("prov", "year"))
+#' summary(param_dem_twoways)
+#' param_plm_twoways <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       effect = "twoways",
+#'                       model = "within")
+#' summary(param_plm_twoways) 
+#' param_dem_time <- pspatfit(formpar, 
+#'                       data = unemp_it, 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       eff_demean = "time",
+#'                       index = c("prov", "year"))
+#' summary(param_dem_time)
+#' param_plm_time <- plm::plm(formula = formpar,
+#'                       data = unemp_it,
+#'                       index = c("prov", "year"),
+#'                       effect = "time",
+#'                       model = "within")
+#' summary(param_plm_time)
+#' formgam <- unrate ~ partrate + agri + cons +
+#' pspl(serv, nknots = 15) + 
+#' pspl(empgrowth, nknots = 20)
+#' gam_dem <- pspatfit(formula = formgam,
+#'                       data = unemp_it,
+#'                       demean = TRUE,
+#'                       index = c("prov", "year"))
+#' summary(gam_dem)   
+#' # Compare with GAM pure without demeaning                    
+#' gam <- pspatfit(formula = formgam,
+#'                  data = unemp_it)
+#' summary(gam)
+#' # Plot of terms for GAM demeaned
+#' fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
+#' plot_terms(fit_gam_dem, unemp_it)
+#' gamsar_dem <- pspatfit(formula = formgam,
+#'                       data = unemp_it,
+#'                       type = "sar", 
+#'                       listw = lwsp_it,
+#'                       demean = TRUE,
+#'                       index = c("prov", "year"))
+#' summary(gamsar_dem)   
+
+#'                       
+
 #' @export
 pspatfit <- function(formula, data, na.action,
                      listw = NULL, 
-                     type = "sim", method = "eigen", 
+                     type = "sim", 
+                     method = "eigen", 
                      Durbin = NULL,
                      zero.policy = NULL, 
                      interval = NULL, 
                      trs = NULL,
                      cor = "none",
                      dynamic = FALSE,
+                     demean = FALSE,
+                     eff_demean = "individual",
+                     index = NULL,
                      control = list()) {
   con <- list(tol = 1e-3, maxit = 200, trace = FALSE,
-              optim = "llik_reml", fdHess = TRUE,
+              optim = "llik_reml", 
               typese = "sandwich", 
               ## Values:llik_reml, score_llik_reml, llik, score_llik
               vary_init = NULL, bold = NULL,
-              rho_init = 0, delta_init = 0, phi_init = 0, 
-              rho_fixed = FALSE, delta_fixed = FALSE, 
-              phi_fixed = FALSE,
+              rho_init = 0, delta_init = 0, phi_init = 0,
               Imult = 2, cheb_q = 5, MC_p = 16L, MC_m = 30L, super = NULL,
               spamPivot = "MMD", in_coef = 0.1, type = "MC", correct = TRUE,
               trunc = TRUE, SE_method = "LU", nrho = 200, interpn = 2000,
@@ -740,24 +869,54 @@ pspatfit <- function(formula, data, na.action,
       Wsp <- listw
       listw <- mat2listw(as.matrix(Wsp))
     } 
-  } else Wsp <- NULL  
+  } else Wsp <- NULL
   if (is.null(zero.policy))
     zero.policy <- get.ZeroPolicyOption()
   can.sim <- FALSE
   if (!(is.null(listw)) && listw$style %in% c("W", "S")) {
     can.sim <- can.be.simmed(listw)
-  }   
+  }
+  cl <- match.call()
   if (any(grepl("pspt", formula))) 
     formula <- update(formula, . ~ . - 1)
-  cl <- match.call()
+  if (demean) {
+    if (any(grepl("pspt", formula))) 
+      stop("pspt terms are not allowed with demeaning")
+    if (is.null(index))
+      stop("index argument must be provided with demeaning")
+    formula <- update(formula, . ~ . - 1)
+    var_form <- all.vars(formula)
+    lhs <- var_form[1]
+    rhs <- paste(var_form[2:length(var_form)],
+                 collapse = " + ")
+    pformula <- as.formula(paste(lhs, rhs, 
+                                 sep = " ~ "))
+    pmodel <- plm::plm(formula = pformula,
+                    data = data, 
+                    index = index,
+                    effect = eff_demean,
+                    model = "within")
+    pdata <- pmodel$model
+    for (i in 1:ncol(pdata)) {
+      pdata[[i]] <- plm::Within(pdata[[i]],
+                              effect = eff_demean)
+    }
+    pdata <- cbind(attr(pdata, "index"), pdata)
+  }
   mf <- match.call(expand.dots = TRUE)
-  m <- match(c("formula", "data", "offset"), names(mf), 0L)
+  m <- match(c("formula", "data", "offset"), 
+             names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(model.frame)
-  mf <- eval(mf, parent.frame())
+  if (!demean)  
+    mf <- eval(mf, envir = parent.frame())
+  else {
+    mf$data <- as.name("pdata")
+    mf <- eval(mf, envir = pdata)
+  }
   na.act <- attr(mf, "na.action")
-  y <- model.response(mf, "numeric")
+  y <- as.numeric(model.response(mf, "numeric"))
   nfull <- length(y)
   Xfull <- Zfull <- cfull <- NULL
   pordfull <- bdegfull <- nknotsfull <- decomfull <- NULL
@@ -904,7 +1063,43 @@ pspatfit <- function(formula, data, na.action,
   } else nt <- 1
   assign("nsp", nsp, envir = env)
   assign("nt", nt, envir = env)  
+  # # Demeaning case. Follow notation of
+  # #  "Econometric Analysis of Panel Data" (Baltagi)
+  # if (demean) {
+  #   if (nvarspt > 0) 
+  #     stop("It is not possible to demean with spatio-temporal trends")
+  #   browser()
+  #   pXpar <- plm::pdata.frame(as.data.frame(Xpar),
+  #                             index = index)
+  #   
+  #   browser()
+  #   if (!twoways) { # One way fixed effect
+  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
+  #     P_Z <- Matrix::kronecker(Diagonal(nsp),
+  #                              1/nt*J_nt)
+  #     Q_Z <- Diagonal(nsp*nt) - P_Z
+  #     Xpar <- Q_Z %*% Xpar
+  #     y <- Q_Z %*% y
+  #     rm(J_nt, P_Z, Q_Z)
+  #     # Test here. CONTINUE...
+  #   } else { # Two Ways fixed effect
+  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
+  #     J_nsp <- Matrix::matrix(1, nrow = nsp, 
+  #                             ncol = nsp)
+  #     I_nsp <- Diagonal(nsp)
+  #     I_nt <- Diagonal(nt)
+  #     Q_Z <- Matrix::kronecker(I_nsp, I_nt) -
+  #           Matrix::kronecker(I_nsp, 1/nt*J_nt) -
+  #           Matrix::kronecker(1/nsp*J_nsp, I_nt) +
+  #           Matrix::kronecker(1/nsp*J_nsp, 1/nt*J_nt)
+  #     Xpar <- Q_Z %*% Xpar
+  #     y <- Q_Z %*% y
+  #     rm(J_nt, J_nsp, I_nsp, I_nt, Q_Z)
+  #   }
+  # }
+  # 
   
+    
   if (type %in% c("slx", "sdm", "sdem")) {
     if (is.null(Durbin)) Durbin <- update(formula, NULL ~ . )
     # Add intercept in Durbin formula to use it in factor case...
@@ -1099,13 +1294,15 @@ pspatfit <- function(formula, data, na.action,
   model_fit$data <- data
   model_fit$type <- type
   model_fit$cor <- cor
+  model_fit$demean <- demean
+  model_fit$eff_demean <- eff_demean
+  model_fit$dynamic <- dynamic
   if (!is.null(listw)) model_fit$listw <- listw
   else model_fit$listw <- NULL
   model_fit$Durbin <- Durbin
   model_fit$X <- Xfull
   model_fit$Z <- Zfull
   model_fit$y <- y
-  model_fit$dynamic <- dynamic
   if (dynamic) {
     # Add the last observation
     nt <- nt + 1
@@ -1115,9 +1312,29 @@ pspatfit <- function(formula, data, na.action,
   model_fit$nsp <- nsp
   model_fit$nt <- nt
   model_fit$df.residual <- length(y) - model_fit$edftot
-  if (con$typese == "sandwich") 
+  model_fit$fitted.values_Ay <- model_fit$fit_A1y
+  model_fit$fit_A1y <- NULL
+  if (con$typese == "sandwich") {
     model_fit$se_bfixed <- model_fit$sefr_bfixed
-  else model_fit$se_bfixed <- model_fit$seby_bfixed
+    model_fit$se_brandom <- model_fit$sefr_brandom
+    model_fit$se_fitted.values <- model_fit$sefr_fitted.values
+    model_fit$se_fitted.values_Ay <- model_fit$sefr_fit_A1y
+  } else {
+    model_fit$se_bfixed <- model_fit$seby_bfixed
+    model_fit$se_brandom <- model_fit$seby_brandom
+    model_fit$se_fitted.values <- model_fit$seby_fitted.values
+    model_fit$se_fitted.values_Ay <- model_fit$seby_fit_A1y
+  }
+  model_fit$sefr_bfixed <- NULL
+  model_fit$seby_bfixed <- NULL
+  model_fit$sefr_brandom <- NULL
+  model_fit$seby_brandom <- NULL
+  model_fit$seby_fitted.values <- NULL
+  model_fit$sefr_fitted.values <- NULL
+  model_fit$sefr_fit_A1y <- NULL
+  model_fit$seby_fit_A1y <- NULL
+  model_fit$tauspt <- NULL
+  model_fit$taunopar <- NULL
   class(model_fit) <- c("pspatreg", "lm")
   model_fit
 }

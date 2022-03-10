@@ -18,6 +18,9 @@ pspatfit(
   trs = NULL,
   cor = "none",
   dynamic = FALSE,
+  demean = FALSE,
+  eff_demean = "individual",
+  index = NULL,
   control = list()
 )
 }
@@ -96,7 +99,23 @@ Default \code{NULL}, if given, a vector of powered spatial weights
 matrix traces output by \code{\link[spdep]{trW}}.}
 
 \item{cor}{Type of temporal correlation for temporal data. Possible values 
-are "none" (default) or "ar1".}
+are \code{"none"} (default) or \code{"ar1"}.}
+
+\item{dynamic}{Logical value to set a dynamic model.
+Dynamic models include a temporal lag of the dependent
+variable in the right-hand side of the equation.
+Default = \code{FALSE}.}
+
+\item{demean}{Logical value to include a demeaning 
+for panel data. Default = \code{FALSE}. 
+The demeaning is done previously to the estimation for
+both parametric and nonparametric terms. It is not possible
+to set \code{demean = TRUE} when spatio-temporal trends
+are included.}
+
+\item{eff_demean}{Type of demeaning for panel data.
+Possible values are \code{"individual"} (default),
+\code{"time"} and \code{"twoways"}.}
 
 \item{control}{List of extra control arguments - see section below}
 }
@@ -109,6 +128,11 @@ A list object of class \emph{pspat}
              for parametric covariates. \cr
  \code{xlevels} \tab (only where relevant) a record of the levels
              of the parametric factors used in fitting. \cr
+ \code{data} \tab dataframe used as database. \cr
+ \code{nsp} \tab number of spatial observations. \cr
+ \code{nt} \tab number of temporal observations. It is set
+   to \code{nt=1} for spatial data. \cr
+ \code{nfull} \tab total number of observations. \cr
  \code{edftot} \tab Equivalent degrees of freedom for the whole model. \cr
  \code{edfspt} \tab Equivalent degrees of freedom for smooth
              spatio-temporal or spatial trend. \cr
@@ -116,6 +140,13 @@ A list object of class \emph{pspat}
              non-parametric covariates. \cr
  \code{psanova} \tab \emph{TRUE} if spatio-temporal or spatial trend is 
    PS-ANOVA. \cr
+ \code{type} \tab Value of \code{type} argument in the call to \code{pspatfit}. \cr
+ \code{listw} \tab Value of \code{listw} argument in the call to \code{pspatfit}. \cr
+ \code{Durbin} \tab Value of \code{Durbin} argument in the call to \code{pspatfit}. \cr
+ \code{cor} \tab Value of \code{cor} argument in the call to \code{pspatfit}. \cr
+ \code{dynamic} \tab Value of \code{dynamic} argument in the call to \code{pspatfit}. \cr
+ \code{demean} \tab Value of \code{demean} argument in the call to \code{pspatfit}. \cr
+ \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
              mixed model. These betas comes from either parametric
              covariates or fixed coefficients of smooth terms
@@ -125,17 +156,20 @@ A list object of class \emph{pspat}
              in mixed model. These betas comes from random coefficients of 
              smooth terms reparameterized as mixed models. \cr
  \code{se_brandom}\tab Standard errors of random betas. \cr
- \code{vcov_b} \tab Covariance matrix of fixed and random
-             effects. \cr
- \code{sar} \tab \emph{TRUE} if model is PS-SAR. \cr
- \code{rho} \tab Estimated rho. If \code{sar=FALSE} always \eqn{rho=0}. \cr 
+ \code{vcov_fr} \tab Covariance matrix of fixed and random
+             effects using frequentist or sandwich method. \cr
+ \code{vcov_by} \tab Covariance matrix of fixed and random
+             effects using bayesian method. \cr
+ \code{rho} \tab Estimated rho for spatial lag of the
+   dependent variable. if the model does not include
+   a spatial lag, always \eqn{rho=0}. \cr
  \code{se_rho} \tab Standard error of \eqn{rho}. \cr
- \code{ar1} \tab \emph{TRUE} if model has a temporal autoregressive of
-             first order in residuals. \cr
- \code{phi} \tab Estimated phi. If \code{ar1=FALSE} always \eqn{phi=0}. \cr
- \code{delta} \tab Estimated delta for spatial error models, if model does not include
- spatial error term, always \eqn{delta=0}. \cr
- \code{se_rho} \tab Standard error of \eqn{phi}. \cr
+ \code{delta} \tab Estimated delta for spatial error models, 
+   if the model does not include
+   spatial error term, always \eqn{delta=0}. \cr
+ \code{se_delta} \tab Standard error of \eqn{delta}. \cr
+ \code{phi} \tab Estimated phi. If \code{cor="none"} always \eqn{phi=0}. \cr
+ \code{se_phi} \tab Standard error of \eqn{phi}. \cr
  \code{fitted.values} \tab Vector of fitted values of the dependent
              variable. \cr
  \code{se_fitted.values} \tab Vector of standard errors of
@@ -145,8 +179,6 @@ A list object of class \emph{pspat}
  \code{se_fitted.values_Ay} \tab Vector of standard errors of
       \code{fitted.values_Ay}. \cr
  \code{residuals} \tab Vector of residuals. \cr
- \code{residuals_norm} \tab Uncorrelated residuals. For non-temporal
-             data they are the same than \code{residuals}. \cr
  \code{df.residual} \tab Equivalent degrees of freedom for \code{residuals}. 
    \cr
  \code{sig2}  \tab Residual variance computed as SSR/df.residual. \cr
@@ -349,24 +381,62 @@ Function to estimate the model:
 \section{Control arguments}{
 
 \tabular{ll}{
+  \code{optim} \tab method of estimation between 
+    restricted maximum likelihood, \code{"llik_reml"} or
+    maximum likelihood, \code{"llik"}. 
+    Default = \code{"llik_reml"}. \cr
+  \code{typese} \tab method to compute variances and 
+    standard errors. Default: \code{"sandwich"}. The
+    other option is \code{"bayesian"} \cr   
   \code{vary_init} \tab Initial value of the noise variance in the model.
-    Default = \code{NULL}.\cr
+    Default = \code{NULL}. If \code{NULL} the initial variance
+    is the sample variance of the dependent variable. \cr
   \code{trace} \tab A logical value set to \emph{TRUE} to show 
     intermediate results during the estimation process. 
     Default = \emph{FALSE}. \cr
-  \code{thr} \tab Numerical value for the threshold of convergence
+  \code{tol} \tab Numerical value for the tolerance of convergence
     in the estimation process. Default 1e-3. \cr
   \code{maxit} \tab An integer value for the maximum number of 
     iterations until convergence. Default = 200. \cr
-  \code{rho_init} \tab An initial value for \eqn{rho} parameter if
-    \code{sar=TRUE}. Default 0. \cr
-  \code{phi_init} \tab An initial value for \eqn{phi} parameter if
-    \code{ar1=TRUE}. Default 0. \cr
-  \code{rho_fixed} \tab A logical value to set fixed \eqn{rho}
-         parameter during estimation process. Default \emph{FALSE}. \cr
-  \code{phi_fixed} \tab A logical value to set fixed \eqn{phi}
-         parameter during estimation process. Default \emph{FALSE}. \cr
-}
+  \code{rho_init} \tab An initial value for \eqn{rho} parameter. 
+    Default 0. \cr
+  \code{delta_init} \tab An initial value for \eqn{delta} parameter. 
+    Default 0. \cr
+  \code{phi_init} \tab An initial value for \eqn{phi} parameter. 
+    Default 0. \cr
+  \code{Imult} \tab default 2; used for preparing the Cholesky 
+      decompositions for updating in the Jacobian function \cr
+  \code{super} \tab  if \code{NULL} (default), set to \code{FALSE} to use 
+      a simplicial decomposition for the sparse Cholesky decomposition and 
+      method "Matrix_J", set to as.logical(NA) for method "Matrix", if 
+      \code{TRUE}, use a supernodal decomposition \cr
+    \code{cheb_q} \tab default 5; highest power of the approximating 
+      polynomial for the Chebyshev approximation \cr
+    \code{MC_p} \tab default 16; number of random variates \cr
+    \code{MC_m} \tab default 30; number of products of random variates 
+      matrix and spatial weights matrix \cr
+    \code{spamPivot} \tab  default "MMD", alternative "RCM" \cr
+    \code{in_coef} \tab default 0.1, coefficient value for initial Cholesky 
+      decomposition in "spam_update" \cr
+    \code{type} \tab default "MC", used with method "moments"; alternatives 
+      "mult" and "moments", for use if trs is missing \cr 
+    \code{correct} \tab default \code{TRUE}, used with method "moments" to 
+      compute the Smirnov/Anselin correction term \cr
+    \code{trunc} \tab default \code{TRUE}, used with method "moments" to 
+      truncate the Smirnov/Anselin correction term \cr
+    \code{SE_method} \tab default "LU", may be "MC" \cr
+    \code{nrho} \tab default 200, as in SE toolbox; the size of the first 
+      stage lndet grid; it may be reduced to for example 40 \cr
+    \code{interpn} \tab default 2000, as in SE toolbox; the size of the 
+      second stage lndet grid \cr
+    \code{SElndet} \tab default \code{NULL}, may be used to pass a 
+      pre-computed SE toolbox style matrix of coefficients and their lndet 
+      values to the "SE_classic" and "SE_whichMin" methods \cr
+    \code{LU_order} \tab default \code{FALSE}; used in "LU_prepermutate", 
+      note warnings given for lu method \cr
+    \code{pre_eig} \tab default \code{NULL}; may be used to pass a 
+      pre-computed vector of eigenvalues \cr
+ }
 }
 
 \examples{
@@ -437,9 +507,9 @@ form2 <- unrate ~ partrate + agri + cons +
                 pspl(empgrowth, nknots = 20) +
                 pspt(long, lat, nknots = c(20,20), 
                      psanova = FALSE)
-geosp1_sar <- pspatfit(form2, 
-                       data = unemp_it_short) 
-summary(geosp1_sar)
+geosp <- pspatfit(form2, 
+                       data = unemp_it_short)                        ) 
+summary(geosp)
 
 
 ###############################################
@@ -449,10 +519,10 @@ summary(geosp1_sar)
 ### but not recommended for large samples
 ### SAR
 geospsar <- pspatfit(form2, data = unemp_it_short, 
-                 listw = Wsp_it, 
+                 listw = lwsp_it, 
                  method = "Chebyshev", 
-                 type = "sar", 
-                 control = list(trace = TRUE))
+                 type = "sar")
+summary(geospsar)                  
  
 ### SEM
 geospsem <- pspatfit(form2, data = unemp_it_short, 
@@ -671,8 +741,69 @@ addmain = TRUE, addint = FALSE)
                   control = list(thr=1e-2, maxit = 200, trace = TRUE))
  summary(sptanova2)
  
- 
-
+######################  demeaning
+formpar <- unrate ~ partrate + agri + cons
+param <- pspatfit(formpar, data = unemp_it, listw = lwsp_it)
+param_dem <- pspatfit(formpar, data = unemp_it, 
+                      listw = lwsp_it,
+                      demean = TRUE,
+                      index = c("prov", "year") )
+summary(param_dem)
+# Compare results with plm package
+param_plm <- plm::plm(formula = formpar,
+                      data = unemp_it,
+                      index = c("prov", "year"),
+                      model = "within")
+summary(param_plm)                                              
+param_dem_twoways <- pspatfit(formpar, 
+                      data = unemp_it, 
+                      listw = lwsp_it,
+                      demean = TRUE,
+                      eff_demean = "twoways",
+                      index = c("prov", "year"))
+summary(param_dem_twoways)
+param_plm_twoways <- plm::plm(formula = formpar,
+                      data = unemp_it,
+                      index = c("prov", "year"),
+                      effect = "twoways",
+                      model = "within")
+summary(param_plm_twoways) 
+param_dem_time <- pspatfit(formpar, 
+                      data = unemp_it, 
+                      listw = lwsp_it,
+                      demean = TRUE,
+                      eff_demean = "time",
+                      index = c("prov", "year"))
+summary(param_dem_time)
+param_plm_time <- plm::plm(formula = formpar,
+                      data = unemp_it,
+                      index = c("prov", "year"),
+                      effect = "time",
+                      model = "within")
+summary(param_plm_time)
+formgam <- unrate ~ partrate + agri + cons +
+pspl(serv, nknots = 15) + 
+pspl(empgrowth, nknots = 20)
+gam_dem <- pspatfit(formula = formgam,
+                      data = unemp_it,
+                      demean = TRUE,
+                      index = c("prov", "year"))
+summary(gam_dem)   
+# Compare with GAM pure without demeaning                    
+gam <- pspatfit(formula = formgam,
+                 data = unemp_it)
+summary(gam)
+# Plot of terms for GAM demeaned
+fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
+plot_terms(fit_gam_dem, unemp_it)
+gamsar_dem <- pspatfit(formula = formgam,
+                      data = unemp_it,
+                      type = "sar", 
+                      listw = lwsp_it,
+                      demean = TRUE,
+                      index = c("prov", "year"))
+summary(gamsar_dem)   
+                      
 }
 \references{
 \itemize{ 

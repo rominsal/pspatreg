@@ -1,0 +1,4 @@
+- Parámetros de control de PSPATFIT
+- Incluir descripción de las siguientes funciones: Impactsnopar(), Impactspar(), Plot_sp2d(), plot_sp3d(), Plot_sptime()
+- Comprobar la función plot_sp3d() para corregir el error que te comenté el otro día.
+

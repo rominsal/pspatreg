@@ -368,16 +368,16 @@ fit_pspat <- function(env, con) {
                             env = env)
         param_new <- par_optim$par
       }
-      if (con$optim == "score_llik_reml") {
-        stop ("Not implemented yet...")
-        ## rho solves equation analytical_score_reml_2d = 0
-        par_optim <- uniroot(ansco_llikc_reml_2d, 
-                             lower = lower_par,
-                             upper = upper_par,
-                             env = env)
-        param_new <- par_optim$root
-        names(param_new) <- namesparam
-      }
+      # if (con$optim == "score_llik_reml") {
+      #   stop ("Not implemented yet...")
+      #   ## rho solves equation analytical_score_reml_2d = 0
+      #   par_optim <- uniroot(ansco_llikc_reml_2d, 
+      #                        lower = lower_par,
+      #                        upper = upper_par,
+      #                        env = env)
+      #   param_new <- par_optim$root
+      #   names(param_new) <- namesparam
+      # }
       if (con$optim == "llik") {
         par_optim <- bobyqa(par = param, 
                             fn = llikc,
@@ -399,7 +399,6 @@ fit_pspat <- function(env, con) {
       if (!is.null(delta)) delta <- param["delta"]
       if (!is.null(phi)) phi <- param["phi"]
     } else {  
-      rho_fixed <- delta_fixed <- phi_fixed <- TRUE
       rho <- delta <- phi <- NULL
       param <- c(rho, delta, phi)
       param_optim <- param
@@ -409,7 +408,8 @@ fit_pspat <- function(env, con) {
 	  if (dparam < con$tol) break
 	} # End loop 
   end <- proc.time()[3]
-	cat("\n Time to fit the model: ", (end-start), "seconds")
+	cat("\n Time to fit the model: ", (end - start), 
+	    "seconds \n")
 	param_optim <- param
 	if (length(np_eff) > 1) {
 	  eta <- X %*% bfixed + Z %*% brandom #+ offset
@@ -435,22 +435,17 @@ fit_pspat <- function(env, con) {
     se_num <- sqrt(diag(var_num))
     names(var_num) <- names(se_num) <- namesparam
   } else var_num <- se_num <- NULL
-  se_an <- NULL
+  # se_an <- NULL
   # CHANGE WHEN IT IS READY anhess_llikc_reml FUNCTION...
   # if (env$type == "sar" && !(con$fdHess)) { 
   #   se_an <- sqrt(-(1/anhess_llikc_reml_2d(param_optim, 
   #                                              env)))
   #   names(se_an) <- namesparam
   #   } else  se_an <- NULL
-  if (con$fdHess) {
-    se_rho <- se_num["rho"]
-    se_delta <- se_num["delta"]
-    se_phi <- se_num["phi"]
-  } else {
-    se_rho <- se_an["rho"]
-    se_delta <- se_an["delta"]
-    se_phi <- se_an["phi"]
-  }
+  se_rho <- se_num["rho"]
+  se_delta <- se_num["delta"]
+  se_phi <- se_num["phi"]
+  
   ########## COVARIANCE MATRICES FIXED AND RANDOM EFFECTS
   ## pp.375 Fahrmeir et al.
   ## CHECK IF I NEED TO CHANGE X FOR XSTAR AND Z FOR ZSTAR...
@@ -536,10 +531,8 @@ fit_pspat <- function(env, con) {
     sefr_fit_A1y <- rowSums((XZ %*% Var_Fr) * XZ)^0.5
     sefr_fit <- rowSums((solve(A1, XZ) %*% Var_Fr) *
                                   solve(A1, XZ))^0.5
-    residuals <- as.vector((A1 %*% y) - fit_A1y)
+    #residuals <- as.vector((A1 %*% y) - fit_A1y)
   } else {  
-    ## CAMBIAR PARA EL CASO DE CORRELACIÓN ESPACIAL Y/O TEMPORAL...
-    ## CONTINUAR AQUÍ...
     fit <- solve( kronecker(A1, It), fit_A1y)
     seby_fit_A1y <- rowSums((XZ %*% Var_By) * XZ)^0.5
     seby_fit <- rowSums((
@@ -549,9 +542,10 @@ fit_pspat <- function(env, con) {
     sefr_fit <- rowSums((
       solve( kronecker(A1, It), XZ) %*% Var_Fr) *
       solve( kronecker(A1, It), XZ))^0.5
-    residuals <- as.vector((
-      kronecker(A1, It) %*% y) - fit_A1y)
+    # residuals <- as.vector((
+    #   kronecker(A1, It) %*% y) - fit_A1y)
   }
+  residuals <- as.vector(y - fit)
   # Compute AIC y BIC based on loglik functions 
   # (Fahrmeir, pp. 664 and 677)
   aic <- -2*llikc_optim + 2*edftot
@@ -570,16 +564,10 @@ fit_pspat <- function(env, con) {
               residuals = as.vector(residuals),
               sig2 = sig2u,
               rho = rho,
-              se_num_rho = se_num["rho"],
-              se_an_rho = se_an["rho"],
               se_rho = se_rho,
               delta = delta,
-              se_num_delta = se_num["delta"],
-              se_an_delta = se_an["delta"],
               se_delta = se_delta,
               phi = phi,
-              se_num_phi = se_num["phi"],
-              se_an_phi = se_an["phi"],
               se_phi = se_phi,
               bfixed = bfixed, 
               brandom = brandom,
