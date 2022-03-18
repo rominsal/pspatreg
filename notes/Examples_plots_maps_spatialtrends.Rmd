@@ -1,0 +1,241 @@
+---
+title: "Using sptpsar to plot and mapping spatial trends"
+author: "Román Mínguez (UCLM)"
+date: "23/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, 
+                      cache = TRUE)
+```
+
+## Examples of plotting spatial trends for spatial point coordinates
+
+We will use *Ameshousing* case to show how to plot spatial trends using spatial coordinates. The database is put as an *sf* object and exclude duplicated spatial points.
+
+```{r}
+library(ggplot2)
+library(sf)
+devtools::load_all()
+```
+
+
+```{r datos_ames}
+ames_orig <- AmesHousing::make_ames()
+#dim(ames_orig)
+ames <- ames_orig[duplicated(ames_orig$Longitude) == FALSE, ]
+#dim(ames)
+ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
+coord_ames <- sf::st_coordinates(ames_sf)
+ames_sf$Longitude <- coord_ames[, "X"]
+ames_sf$Latitude <- coord_ames[, "Y"]
+ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
+ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
+ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
+ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+## Creating graph-based neighbours
+#NB: Graph-based represetnations construct the interpoint relationships 
+# based on Euclidean distance, with no option to use Great Circle distances for geographical coordinates 
+# Delauney triangulation neighbours (symmetric)
+col.tri.nb <- spdep::tri2nb(coord_ames)
+summary(col.tri.nb)
+spdep::is.symmetric.nb(col.tri.nb,verbose = TRUE, force = FALSE)
+listW <- spdep::nb2listw(col.tri.nb, style = "W", zero.policy = FALSE)
+```
+
+Define models to estimate and fit the models using **sptpsar** package.
+
+```{r 2dmodels_ames}
+# GAM Model with spatial trend in 2d
+form2d <- lnSale_Price ~ Fireplaces +
+  pspl(lnLot_Area, nknots = 20) + 
+  pspl(lnTotal_Bsmt_SF, nknots = 20) +
+  pspl(lnGr_Liv_Area, nknots = 20) +
+  pspl(Garage_Cars, nknots = 20) +
+  pspt(Longitude,Latitude, nknots = c(10, 10), 
+       psanova = FALSE)
+# GAM Model with PS-ANOVA spatial trend in 2d
+  form2d_psanova <- lnSale_Price ~ Fireplaces +
+    pspl(lnLot_Area, nknots = 20) + 
+    pspl(lnTotal_Bsmt_SF, nknots = 20) +
+    pspl(lnGr_Liv_Area, nknots = 20) +
+    pspl(Garage_Cars, nknots = 20) +
+  pspt(Longitude,Latitude, nknots = c(10, 10), 
+       psanova = TRUE)
+```
+
+```{r fit2dmodels_ames}
+sp2d <- pspatfit(form2d, data = ames_sf)
+summary(sp2d)
+sp2danova <- pspatfit(form2d_psanova, data = ames_sf)
+summary(sp2danova)
+```
+
+Now compute the spatial trend from the fitted models. For no PSANOVA case only plot the 2d trend.
+
+```{r plot2dpoints_noanova_ames}
+plot_sp2d(sp2d, data = ames_sf)
+```
+
+For PSANOVA case plot the 2d trend and the decomposition in main effects and interaction.
+
+```{r plot2dpoints_anova_ames}
+plot_sp2d(sp2danova, data = ames_sf, addmain = TRUE, 
+          addint = TRUE)
+```
+
+
+## Examples of mapping spatial trends (2d) with spatial polygons
+
+First read data of unemployment in Italy and use last year (2019) as a problem in 2d.
+
+```{r data_unempit_polyg, warning = FALSE}
+wd <- "C:\\Users\\Roman.Minguez\\Dropbox\\spatialmodels"
+setwd(wd)
+load("unemp_it_new_polyg_sf.RData")
+unemp_it_new_short_sf <- unemp_it_new_polyg_sf[unemp_it_new_polyg_sf$year == 2019, ]
+```
+
+
+```{r, eval = FALSE, echo = FALSE}
+unemp_it_new <- read.csv(file="panel_data_new.csv", 
+                         header = TRUE, 
+                         sep = ";", 
+                         dec = ".")
+unemp_it_new <- unemp_it_new[order(unemp_it_new$prov), ]
+unemp_it_new$ln_popdens <- log(unemp_it_new$popdens)
+unemp_it_new_short <- unemp_it_new[unemp_it_new$year == 2019, ]
+x <- sf::st_read(dsn = "C:/Users/Roman.Minguez/OneDrive - Universidad de Castilla-La Mancha/packages/pspatreg/data/Prov2001_WGS84.shp")
+
+x <- sf::st_read(dsn = "Maps", layer = "Prov2001_WGS84")
+x.sort <- x[order(x$COD_PRO), ]
+unique_years <- unique(unemp_it_new$year)
+unemp_it_sf_list <- vector(mode = "list", 
+                     length = length(unique_years))
+
+for (i in seq_along(unique_years)) {
+  unemp_it_i <- 
+    dplyr::filter(unemp_it_new, 
+                  year == unique_years[i])
+  unemp_it_sf_list[[i]] <- 
+    dplyr::left_join(x.sort,unemp_it_i,  
+                      by = c("COD_PRO"="prov"))
+  
+}
+unemp_it_sf <- NULL
+for (i in seq_along(unique_years)) {
+  unemp_it_sf <- rbind(unemp_it_sf,
+                       unemp_it_sf_list[[i]])
+  
+}  
+
+unemp_it_new_short_shape <- dplyr::left_join(x.sort,unemp_it_new_short,  
+                      by = c("COD_PRO"="prov"))
+```
+
+```{r, eval = FALSE, echo = FALSE}
+plot(sf::st_geometry(x.sort))
+coord_sf <- sf::st_centroid(x.sort)
+plot(sf::st_geometry(coord_sf), col = "red", add = TRUE)
+coord_pos <- sf::st_point_on_surface(x.sort)
+plot(sf::st_geometry(coord_pos), col = "blue", add=TRUE)
+
+```
+
+```{r, echo = FALSE, eval = FALSE}
+library(spdep)
+ ## Creating the W matrix. Standardized inverse distance W matrix
+coord <- sf::st_coordinates(x.sort)[, c(1,2)]
+k1 <- knn2nb(knearneigh(coord, k=1, longlat=F))
+all.linked <- max(unlist(nbdists(k1, coord,longlat=F))) 
+dnb <- dnearneigh(coord, d1 = 0, d2 = all.linked, row.names = unemp_it_new$prov[unemp_it_new$year == 1996], longlat = FALSE)
+nbd <- nbdists(dnb, coord, longlat = TRUE)
+gl <- lapply(nbd, function(x) 1/x)
+# list of neighbours
+listW <- nb2listw(dnb, glist = gl, zero.policy = FALSE)
+lwsp_it <- listW
+# Matrix format
+dnbgl_mat <- as_dgRMatrix_listw(listW)
+dnbgl_mat <- as.matrix(dnbgl_mat)
+Wsp_it <- dnbgl_mat
+```
+
+Formulae for the model proposed.
+
+```{r 2dmodels_unempit}
+# GAM Model with spatial trend in 2d
+form2dit <- unrate ~ partrate + agri + cons +
+  pspl(serv, nknots = 15) + 
+  pspl(empgrowth, nknots = 20) +
+  pspt(longitude, latitude, nknots = c(20, 20), psanova = FALSE)
+# GAM Model with PS-ANOVA spatial trend in 2d
+form2dit_psanova <- unrate ~ partrate + agri + cons +
+  pspl(serv, nknots = 15) + 
+  pspl(empgrowth, nknots = 20) +
+  pspt(longitude, latitude, nknots = c(20, 20), psanova = TRUE)
+```
+
+Fitting the models.
+
+```{r fit2dmodels_unempit}
+sp2dit <- pspatfit(form2dit, data = unemp_it_new_short_sf)
+summary(sp2dit)
+sp2ditanova <- pspatfit(form2dit_psanova, data = unemp_it_new_short_sf)
+summary(sp2ditanova)
+```
+
+Now plot the spatial trend from the fitted models. 
+
+No PSANOVA decomposition using a sf object with polygons geometry 
+
+```{r plot2dpolygons_noanova}
+plot_sp2d(sp2dit, data = unemp_it_new_short_sf)
+```
+
+For PSANOVA case plot the 2d trend and the decomposition in main effects and interaction.
+
+```{r plot2dpolygons_anova_unempit}
+plot_sp2d(sp2ditanova, data = unemp_it_new_short_sf, 
+          addmain = TRUE, addint = TRUE)
+```
+
+## Examples of mapping 3d spatial trends with spatial polygons
+
+```{r 3dmodels_unempit}
+form3dit_psanova <- unrate ~ partrate + agri + cons +
+  pspl(serv, nknots = 15) + 
+  pspl(empgrowth, nknots = 20) +
+  pspt(longitude, latitude, year, 
+       nknots = c(18, 18, 8),
+       psanova = TRUE, 
+       nest_sp1 = c(1, 2, 3), 
+       nest_sp2 = c(1, 2, 3),
+       nest_time = c(1, 2, 2))
+```
+
+```{r fit3dmodels_unempit}
+sp3ditanova <- pspatfit(form3dit_psanova, data = unemp_it_new_polyg_sf)
+summary(sp3ditanova)
+```
+
+Spatial Trend in 1996, 2005, 2019. PS-ANOVA case with polygons geometry (to add maps of *f1_main*, *f2_main* and *f12_int* change the arguments *addmain* and *addint*, respectively)
+
+```{r plot3dpolygons_anova_unempit}
+plot_sp3d(sp3ditanova, data = unemp_it_new_polyg_sf, 
+          time_var = "year", 
+          time_index = c(1996, 2005, 2019),
+          addmain = FALSE, addint = FALSE)
+```
+
+## Examples of mapping temporal trends fitted with a spatio-temporal PSANOVA trend
+
+```{r plot3dtemp_anova_unempit}
+plot_sptime(sp3ditanova, data = unemp_it_new_polyg_sf, 
+            time_var = "year", 
+            reg_var = "prov")
+```
+

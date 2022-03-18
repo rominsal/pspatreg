@@ -78,6 +78,8 @@
 #' terms_nopar <- fit_terms(gamsar, list_varnopar)
 #' 
 #' ######################  Plot non-parametric terms
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(terms_nopar, unemp_it)
 #'   
 #' ###############################################
@@ -90,7 +92,7 @@
 #'                   pspl(serv,nknots = 15) + pspl(empgrowth, nknots = 20) +
 #'                   pspt(long, lat, nknots = c(20,20), psanova = TRUE,
 #'                   nest_sp1 = c(1,2), nest_sp2 = c(1,2))
-#' # Spatial trend fixed for period 1996-2014
+#' # Spatial trend fixed for period 1996-2019
 #' geospanova <- pspatfit(form3, data = unemp_it)
 #' summary(geospanova)
 #' ### Plot spatial trend and interaction (ANOVA)
@@ -108,26 +110,20 @@
 #'                   pspt(long, lat, year, nknots = c(18,18,8), psanova = TRUE,
 #'                   nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
 #'                   nest_time = c(1,2,2), ntime = 19)
-#' sptanova <- pspatfit(form4, data = unemp_it,
-#'                   control = list(thr = 1e-2, maxit = 200, trace = FALSE))
+#' sptanova <- pspatfit(form4, data = unemp_it, 
+#'                      control = list(tol = 1e-2))
 #' summary(sptanova)
 #' 
 #' ####### Plot spatio-temporal trend, 3d, (ANOVA)
-#' # To use plot_sp3d() we have to give and .sf object.
-#' # first, we create an .sf object
-#' 
-#' library(tidymodels)
-#' library(tune)
-#' library(spdep)
-#' library(ggplot2)
-#' library(dplyr)
-#' library(pspatreg)
-#' library(tripack)
-#' library(rgeos)
-#' library(dbscan)
+#' ###### Create sf object of the spatial panels 
+#' ###### to do spatio-temporal plots of provinces
+#' library(sf)
+#' map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+#' unemp_it_sf <- st_as_sf(dplyr::left_join(
+#'                                 unemp_it, map_it,  
+#'                         by = c("prov" = "COD_PRO")))
 #' 
 #' ######## preparing the data
-#' unemp_it_sf <- sf::st_as_sf(unemp_it, coords = c("long", "lat"))
 #' 
 #' plot_sp3d(sptanova, data = unemp_it_sf, 
 #' time_var = "year", 

@@ -205,7 +205,9 @@
 #'   }
 #'
 #' @importFrom akima interp
-#' @importFrom ggplot2 ggplot geom_line ggtitle labs
+#' @importFrom dplyr left_join
+#' @importFrom fields image.plot
+#' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim
 #' @importFrom graphics image contour matplot title points
 #' @importFrom MASS ginv mvrnorm
 #' @importFrom Matrix bandSparse bdiag crossprod determinant  
@@ -219,7 +221,8 @@
 #' @importFrom spatialreg get.ZeroPolicyOption create_WX   
 #' @importFrom spatialreg can.be.simmed jacobianSetup do_ldet 
 #' @importFrom spatialreg intImpacts lmSLX invIrW trW
-#' @importFrom spdep listw2mat mat2listw  
+#' @importFrom spdep listw2mat mat2listw nb2listw    
+#' @importFrom spdep tri2nb graph2nb soi.graph is.symmetric.nb  
 #' @importFrom splines spline.des  
 #' @importFrom stats pchisq pnorm pt rnorm 
 #' @importFrom stats coefficients fitted residuals printCoefmat

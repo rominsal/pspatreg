@@ -51,6 +51,8 @@
 #' list_varnopar <- c("serv", "empgrowth")
 #' terms_nopar <- fit_terms(gamsar, list_varnopar)
 #' ######################  Plot non-parametric terms
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(terms_nopar, unemp_it)
 #'  
 #' @export

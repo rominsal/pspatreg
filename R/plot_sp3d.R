@@ -18,18 +18,15 @@
 #' @examples
 #' 
 #' library(pspatreg)
-#' data("unemp_it_new_polyg_sf")
+#' library(sf)
 #' data("unemp_it")
-#' unemp_it <- unemp_it_new_polyg_sf
-#' rm(unemp_it_new_polyg_sf) # Only to be consistent with the names...
-#' colnames(Wsp_it) <- rownames(Wsp_it)
-#' Wsp_it <- as.matrix(Wsp_it)
-#' Using spdep we transform the spatial weights matrix in a list of neighbours object:
-#'  
-#'  lwsp_it <- spdep::mat2listw(Wsp_it, 
-#'                              row.names = rownames(Wsp_it))
-#' 
-#' summary(lwsp_it)
+#' lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
+#' ###### Create sf object of the spatial panels 
+#' ###### to do spatio-temporal plots of Italian provinces
+#' map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+#' unemp_it_sf <- st_as_sf(dplyr::left_join(
+#'                                 unemp_it, map_it,  
+#'                         by = c("prov" = "COD_PRO")))
 #' ######## FORMULA of the model
 #' form3d_psanova_restr <- unrate ~ partrate + agri + cons +
 #' pspl(serv, nknots = 15) + 
@@ -43,18 +40,21 @@
 #'       f1t = FALSE, f2t = FALSE)
 #' 
 #' ####### FIT the model
-#' sp3danovasarar1 <- pspatfit(form3d_psanova_restr, 
-#' data = unemp_it, 
-#' listw = lwsp_it, 
-#' method = "Chebyshev", 
-#' type = "sar",
-#' cor = "ar1")
+#' sp3danova <- pspatfit(form3d_psanova_restr, 
+#'                          data = unemp_it_sf)
+#' summary(sp3danova)                          
 #' 
-#' ###### PLOT spatio-temporal trends
-#' plot_sp3d(sp3danovasarar1, data = unemp_it, 
-#' time_var = "year", 
-#' time_index = c(1996, 2005, 2019),
-#' addmain = FALSE, addint = FALSE)
+#' ###### PLOT spatio-temporal trends for different years
+#' plot_sp3d(sp3danova, data = unemp_it_sf, 
+#'           time_var = "year", 
+#'           time_index = c(1996, 2005, 2019),
+#'           addmain = FALSE, addint = FALSE)
+#' ###### PLOT spatio-temporal trend, main effects 
+#' ######      and interaction effect for a year
+#' plot_sp3d(sp3danova, data = unemp_it_sf, 
+#'           time_var = "year", 
+#'           time_index = c(2019),
+#'           addmain = TRUE, addint = TRUE)
 #' 
 #' @export
 plot_sp3d <- function(object, data,
@@ -68,9 +68,7 @@ plot_sp3d <- function(object, data,
   # 2. A database that could be an sf object or a dataframe.
   # 3. In the last case (dataframe) the names of the
   ##   spatial coordinates need to be supplied.
-  ## THE FUNCTION NEED TO BE DOCUMENTED IN THE USUAL WAY INCLUDING EXAMPLES.
-  ## THE EXAMPLES CAN BE EXTRACTED FROM "Examples_plots_maps_spatialtrends.Rmd"
-  ######################################################################
+ ######################################################################
   if (!(inherits(object, "pspatreg"))) 
     stop("object must be of class pspatreg")
   if (!(inherits(data, "sf"))) 
@@ -93,28 +91,46 @@ plot_sp3d <- function(object, data,
   if (object$psanova) {
     data$f1_main <- sp3dfitl$fitted_terms[, "f1_main"]
     data$f2_main <- sp3dfitl$fitted_terms[, "f2_main"]
-    data$f12_int <- sp3dfitl$fitted_terms[, "f12_int"] +
-                    sp3dfitl$fitted_terms[, "Intercept"]
-  }
+    data$f12_int <- sp3dfitl$fitted_terms[, "f12_int"]
+    data$intercept <- sp3dfitl$fitted_terms[, "Intercept"]
+  } 
   for (i in seq_along(time_index)) {
     year_i <- time_index[i]
     data_i <- data[time_var == year_i, ]
     df_i <- data_i[, c("sp3dtrend")]
-    plot(df_i, main = paste("Spatial Trend for : ", year_i))
+    df_i$sp3dtrend <- df_i$sp3dtrend - mean(df_i$sp3dtrend)
+    min_i <- min(df_i$sp3dtrend) 
+    max_i <- max(df_i$sp3dtrend) 
+    if (object$psanova && addmain) {
+      min_i <- min(c(min_i, data$f1_main, 
+                     data$f2_main))
+      max_i <- max(c(max_i, data$f1_main, 
+                     data$f2_main))
+    }
+    if (object$psanova && addint) {
+      min_i <- min(c(min_i, data$f12_int))
+      max_i <- max(c(max_i, data$f12_int))
+    }
+    range_i <- c(min_i - 0.01, max_i + 0.01)
+    breaks_i <- seq(min_i - 0.01, max_i + 0.01, 
+                    by = diff(range(range_i))/5) 
+    plot(df_i, main = paste("Spatial Trend (centered) for : ", 
+                            year_i), 
+        breaks = breaks_i)
     if (object$psanova && addmain) {
       readline(prompt="Press [enter] to continue")
       df_i <- data_i[, c("f1_main")]
-      plot(df_i, 
+      plot(df_i, breaks = breaks_i,
            main = paste("Spat. Trend: f1_main for : ", year_i))
       readline(prompt="Press [enter] to continue")
       df_i <- data_i[, c("f2_main")]
-      plot(df_i, 
+      plot(df_i, breaks = breaks_i,
            main =  paste("Spat. Trend: f2_main for : ", year_i))
     }
     if (object$psanova && addint) {
       readline(prompt="Press [enter] to continue")
       df_i <- data_i[, c("f12_int")]
-      plot(df_i, 
+      plot(df_i, breaks = breaks_i,
            main = paste("Spat. Trend: f12_int for : ", year_i))
     }
     readline(prompt = "Press [enter] to continue")

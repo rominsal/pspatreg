@@ -15,19 +15,11 @@
 #' @author Roman Minguez \email{roman.minguez@@uclm.es}
 #' @examples
 #' 
-#' library(AmesHousing)# The Ames housing data
-#' library(tidymodels)
-#' library(tune)
-#' library(spdep)
-#' library(ggplot2)
-#' library(dplyr)
 #' library(pspatreg)
-#' library(tripack)
-#' library(rgeos)
-#' library(dbscan)
+#' library(spdep)
 #' 
 #' ######## getting and preparing the data
-#' ames <- make_ames()# Raw Ames Housing Data
+#' ames <- AmesHousing::make_ames()# Raw Ames Housing Data
 #' ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
 #' ames_sf$Longitude <- ames$Longitude
 #' ames_sf$Latitude <- ames$Latitude
@@ -37,49 +29,52 @@
 #' ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
 #' 
 #' ########### Constructing the spatial weights matrix
-#' ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude)==FALSE,]
+#' ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
 #' coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
 #' ID <- row.names(as(ames_sf1, "sf"))
-#' col.tri.nb <- tri2nb(coord_sf1)
-#' soi_nb <- graph2nb(soi.graph(col.tri.nb,coord_sf1), row.names=ID)
-#' is.symmetric.nb(soi_nb,verbose=T,force=F)
-#' listW <- nb2listw(soi_nb, style="W",zero.policy=F)
+#' col_tri_nb <- tri2nb(coord_sf1)
+#' soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+#'                             coord_sf1), 
+#'                    row.names = ID)
+#' lw_ames <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 #' 
 #' 
 #' ######## formula of the model
 #' form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
-#' pspl(lnLot_Area, nknots = 20) + 
+#'  pspl(lnLot_Area, nknots = 20) + 
 #'  pspl(lnTotal_Bsmt_SF, nknots = 20) +
 #'  pspl(lnGr_Liv_Area, nknots = 20) +
-#'  pspt(Longitude,Latitude, nknots = c(10, 10), 
+#'  pspt(Longitude, Latitude, nknots = c(10, 10), 
 #'       psanova = FALSE)
 #' 
 #' ######## fit the model
 #' sp2dsar <- pspatfit(form2d, data = ames_sf1, 
-#' listw = listW, method = "Chebyshev", 
-#' type = "sar", control = list(trace = FALSE))
-#'
+#'                     listw = lw_ames, 
+#'                     method = "Chebyshev", 
+#'                     type = "sar")
 #' summary(sp2dsar)
-#' anova(sp2dsar)
 #' 
 #' ####### plot spatial trend for spatial point coordinate
 #' plot_sp2d(sp2dsar, data = ames_sf1)
 #' 
 #' ###### MODEL WITH ANOVA DESCOMPOSITION
 #'  form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
-#'  pspl(lnLot_Area, nknots = 20) + 
-#'  pspl(lnTotal_Bsmt_SF, nknots = 20) +
-#'  pspl(lnGr_Liv_Area, nknots = 20) +
-#'  pspt(Longitude,Latitude, nknots = c(10, 10), 
-#'       psanova = TRUE)
+#'   pspl(lnLot_Area, nknots = 20) + 
+#'   pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'   pspl(lnGr_Liv_Area, nknots = 20) +
+#'   pspt(Longitude, Latitude, nknots = c(10, 10), 
+#'        psanova = TRUE)
 #'       
-#' sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, 
-#'                         listw = listW,method = "Chebyshev", 
-#'                         type = "sar", control = list(trace = FALSE))
+#' sp2danovasar <- pspatfit(form2d_psanova, 
+#'                         data = ames_sf1, 
+#'                         listw = lw_ames,
+#'                         method = "Chebyshev", 
+#'                         type = "sar")
+#' summary(sp2danovasar)                         
 #'                         
 #' ###### PLOT ANOVA DESCOMPOSITION MODEL
-#' plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, 
-#' addint = TRUE)
+#' plot_sp2d(sp2danovasar, data = ames_sf1, 
+#'           addmain = TRUE, addint = TRUE)
 #' 
 #' @export
 plot_sp2d <- function(object, data, 
@@ -124,8 +119,29 @@ plot_sp2d <- function(object, data,
     spco <- st_coordinates(data)
     sp1 <- spco[, 1]
     sp2 <- spco[, 2]
+    sp2dtrend <- sp2dfitl$fitted_terms[, "spttrend"]
+    sp2dtrend <- sp2dtrend - mean(sp2dtrend)
+    min_i <- min(sp2dtrend) 
+    max_i <- max(sp2dtrend)
+    if (object$psanova) {
+      f1_main <- sp2dfitl$fitted_terms[, "f1_main"]
+      f2_main <- sp2dfitl$fitted_terms[, "f2_main"]
+      f12_int <- sp2dfitl$fitted_terms[, "f12_int"]
+      intercept <- sp2dfitl$fitted_terms[, "Intercept"]
+      if (addmain) {
+        min_i <- min(c(min_i, f1_main, f2_main))
+        max_i <- max(c(max_i, f1_main, f2_main))
+      }
+      if (addint) {
+        min_i <- min(c(min_i, f12_int))
+        max_i <- max(c(max_i, f12_int))
+      }
+    }
+    range_i <- c(min_i - 0.01, max_i + 0.01)
+    breaks_i <- seq(min_i - 0.01, max_i + 0.01, 
+                    by = diff(range(range_i))/15)
+    
     if (!(object$psanova)) {
-      sp2dtrend <- sp2dfitl$fitted_terms
       X <- seq(min(sp1), max(sp1), length = npoints)
       Y <- seq(min(sp2), max(sp2), length = npoints)
       dfintp <- interp(sp1, sp2, sp2dtrend,
@@ -133,42 +149,44 @@ plot_sp2d <- function(object, data,
                               linear = FALSE,
                               duplicate = "median",
                               extrap = FALSE)
-      image(X, Y, dfintp$z)
+      fields::image.plot(X, Y, dfintp$z, 
+                         breaks = breaks_i,
+                         col = heat.colors(
+                             n = (length(breaks_i)-1)))
       if (addcontour)
         contour(X, Y, dfintp$z, add = TRUE)
       if (addpoints)
         points(sp1, sp2, cex = cexpoints)
-      title(main = "Spatial Trend")
+      title(main = "Spatial Trend (centered)")
     } else { # psanova case
-      sp2dtrend <- sp2dfitl$fitted_terms[, "spttrend"]
-      f1_main <- sp2dfitl$fitted_terms[, "f1_main"]
-      f2_main <- sp2dfitl$fitted_terms[, "f2_main"]
-      f12_int <- sp2dfitl$fitted_terms[, "f12_int"] +
-                 sp2dfitl$fitted_terms[, "Intercept"]
       X <- seq(min(sp1), max(sp1), length = npoints)
       Y <- seq(min(sp2), max(sp2), length = npoints)
       df <- data.frame(sp1 = sp1, sp2 = sp2,
                        sp2dtrend = sp2dtrend,
                        f1_main = f1_main,
                        f2_main = f2_main,
-                       f12_int = f12_int)
+                       f12_int = f12_int,
+                       intercept = intercept)
       dfintp <- interp(sp1, sp2, sp2dtrend,
                               xo = X, yo = Y,
                               linear = FALSE,
                               duplicate = "median",
                               extrap = FALSE)
-      image(X, Y, dfintp$z)
+      fields::image.plot(X, Y, dfintp$z,
+                         breaks = breaks_i,
+                         col = heat.colors(
+                           n = (length(breaks_i)-1)))
       if (addcontour)
         contour(X, Y, dfintp$z, add = TRUE)
       if (addpoints)
         points(sp1, sp2, cex = cexpoints)
-      title(main = "Spatial Trend")
+      title(main = "Spatial Trend (centered)")
       if (addmain) {
         readline(prompt="Press [enter] to continue")
-        f1plot <- ggplot(data = df, 
-                         mapping = aes(x = sp1,
-                                       y = f1_main)) +
-                  geom_line() +
+        f1plot <- ggplot(data = df) +
+                  geom_line(mapping = aes(x = sp1,
+                                          y = f1_main)) +
+                  ggplot2::ylim(min_i, max_i) +
                   ggtitle("Spat. Trend: f1_main")
         print(f1plot)
         readline(prompt="Press [enter] to continue")
@@ -176,6 +194,7 @@ plot_sp2d <- function(object, data,
                          mapping = aes(x = sp2,
                                        y = f2_main)) +
                   geom_line() +
+                  ggplot2::ylim(min_i, max_i) +
                   ggtitle("Spat. Trend: f2_main")
         print(f2plot)
       }
@@ -186,7 +205,10 @@ plot_sp2d <- function(object, data,
                                 linear = FALSE,
                                 duplicate = "median",
                                 extrap = FALSE)
-        image(X, Y, dfintp$z)
+        fields::image.plot(X, Y, dfintp$z,
+                           breaks = breaks_i,
+                           col = heat.colors(
+                             n = (length(breaks_i)-1)))
         if (addcontour)
           contour(X, Y, dfintp$z, add = TRUE)
         if (addpoints)
@@ -212,15 +234,14 @@ plot_sp2d <- function(object, data,
         data$f2_main <- sp2dfitl$fitted_terms[, "f2_main"]
         df <- data[, c("f2_main")]
         plot(df, main = "Spat. Trend: f2_main")
-
       }
       if (addint) {
         readline(prompt="Press [enter] to continue")
-        data$f12_int <- sp2dfitl$fitted_terms[, "f12_int"] +
-          sp2dfitl$fitted_terms[, "Intercept"]
+        data$f12_int <- sp2dfitl$fitted_terms[, "f12_int"] 
         df <- data[, c("f12_int")]
         plot(df, main = "Spat. Trend: f12_int")
       }
+      df$intercept <- sp2dfitl$fitted_terms[, "Intercept"]
     }
   }
 }

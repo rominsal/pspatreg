@@ -2,19 +2,22 @@
 #' @rdname pspatfit
 #'
 #' @title Estimate spatial or spatio-temporal semiparametric 
-#'   PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+#'   regression models from a spatial econometric perspective.
 #'
 #' @description Estimate geoadditive spatial or spatio-temporal 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression 
-#'   models including parametric and non-parametric 
+#'   semiparametric regression models of type \emph{ps-sar}, \emph{ps-sem}, \emph{ps-sarar}, 
+#'   \emph{ps-sdm}, \emph{ps-sdem} or
+#'   \emph{ps-slx}. These type of specifications are very
+#'   general and they can include parametric and non-parametric 
 #'   covariates, spatial or spatio-temporal non-parametric
-#'   trends and spatial lags of the dependent variable and/or 
+#'   trends and spatial lags of the dependent and independent variables and/or 
 #'   the noise of the model. 
 #'   The non-parametric terms (either trends or covariates) 
 #'   are modeled using P-Splines. 
 #'   The non-parametric trend can be decomposed in an ANOVA way 
 #'   including main and interactions effects of 2nd and 3rd order. 
-#'   The estimation method is Restricted Maximum Likelihood (REML).
+#'   The estimation method can be restricted maximum likelihood (REML)
+#'   or maximum likelihood (ML).
 #'
 #' @param formula A formula similar to GAM specification including
 #'   parametric and non-parametric terms. Parametric covariates
@@ -34,7 +37,7 @@
 #'   \code{zero.policy} to \code{TRUE} because this subsetting may 
 #'   create no-neighbour observations.    
 #' @param listw Default = \code{NULL} This will create a model with no spatial dependency.
-#'   To include spatial dependency, listw should be a spatial neighbours list object 
+#'   To include spatial dependency, \code{listw} should be a spatial neighbours list object 
 #'   created for example by \code{\link[spdep]{nb2listw}} from \pkg{spdep}
 #'   package; if \code{\link[spdep]{nb2listw}} not given, set to 
 #'   the same spatial weights as the \code{listw} argument. It can
@@ -70,15 +73,28 @@
 #'   \code{\link[spatialreg]{lagsarlm}} function in \pkg{spatialreg} package. 
 #'   If \code{TRUE} assign zero to the lagged value of zones without 
 #'   neighbours, if \code{FALSE} assign \code{NA} - causing 
-#'   \code{pspat()} to terminate with an error. Default = \code{NULL}. 
-#' @param type Type of spatial model specification: Default = "sim" this creates
-#'   a model with no type of spatial dependency. Types of models available:
-#'   sar", "sem", "sdm", "sdem", "sarar", or "slx". When creating a "slx", "sdem"
-#'   or "sdm" model it is necessary to include the formula of the durbin part in 
-#'   the \code{Durbin} parameter. There are examples on how to create these models.
-#' @param Durbin Default = \code{NULL}. If model is of type = "sdm", "sdem" or "slx" 
-#'   Parameter Durbin is a formula of a subset of explanatory variables to lag on
-#'   this part of the model.
+#'   \code{pspatfit()} to terminate with an error. Default = \code{NULL}. 
+#' @param type Type of spatial model specification following 
+#'   the usual spatial econometric terminology. 
+#'   Default = \code{"sim"} this creates
+#'   a model with no type of spatial dependency. 
+#'   Types of spatial models available (similar to 
+#'   \pkg{spsur} package):
+#'   \code{"sar"}, \code{"sem"}, \code{"sdm"}, 
+#'   \code{"sdem"}, \code{"sarar"}, or \code{"slx"}. 
+#'   When creating a \code{"slx"}, \code{"sdem"}
+#'   or \code{"sdm"} model, it is necessary to include the formula of the Durbin part in 
+#'   the \code{Durbin} argument in the same way than 
+#'   \pkg{spsur} or \pkg{spatialreg} packages.
+#'   There are examples on how to create these models 
+#'   in \emph{Examples} section.
+#' @param Durbin Default = \code{NULL}. 
+#'   If model is of \code{type = "sdm"}, \code{"sdem"} or 
+#'   \code{"slx"} then this argument should be a formula
+#'    of the subset of explanatory variables to be 
+#'    spatially lagged in the right hand side part of 
+#'    the model. See \code{\link[spsur]{spsurml}} for 
+#'    a similar argument.
 #' @param cor Type of temporal correlation for temporal data. Possible values 
 #'   are \code{"none"} (default) or \code{"ar1"}.
 #' @param demean Logical value to include a demeaning 
@@ -93,15 +109,17 @@
 #' @param index Vector of variables indexing panel data. 
 #'   First variable corresponds to individuals and second 
 #'   variable corresponds to temporal coordinate (fast index). 
-#'   Follows the same rules than \code{\link[plm]{plm}} function
-#'   in package **plm**.        
+#'   It follows the same rules than \code{\link[plm]{plm}} function
+#'   in package \pkg{plm}.        
 #' @param dynamic Logical value to set a dynamic model.
 #'   Dynamic models include a temporal lag of the dependent
 #'   variable in the right-hand side of the equation.
 #'   Default = \code{FALSE}. 
-#' @param control List of extra control arguments - see section below
+#' @param control List of extra control arguments. See 
+#'   \emph{Control Arguments} section below.
 #'
-#' @details Function to estimate the model:
+#' @section Details: 
+#' Function to estimate the model
 #'   \deqn{ y = (\rho*W_{N} \otimes I_T) y + X \beta +
 #'     f(s_1,s_2,\tau_{t}) + \sum_{i=1}^k g(z_i) + \epsilon }
 #'   where:
@@ -122,55 +140,67 @@
 #'   }
 #'
 #' \describe{
-#'   \item{Including Non-Parametric terms}{
+#'   \item{Including non-parametric terms}{
 #'   The non-parametric terms are included in \code{formula} using
 #'   \code{pspt(.)} for spatial or spatio-temporal trends and 
 #'   \code{pspl(.)} for other non-parametric smooth additive terms.
-#'
-#'   For example, if a model includes a spatio-temporal trend with 
-#'   \emph{long}, and \emph{lat} as spatial coordinates and \emph{year} 
-#'   as temporal coordinate; two  non-parametric covariates (\emph{empgrowth} 
-#'   and \emph{serv}) and three parametric covariates (\emph{partrate}, 
-#'   \emph{agri} and \emph{cons}), the formula (choosing default values
-#'   for each term) should be written as: \cr
-#'
+#'   For example, if a model includes:
+#'    \itemize{
+#'      \item An spatio-temporal trend with 
+#'         variables \emph{long} and \emph{lat} 
+#'         as spatial coordinates,and \emph{year} 
+#'         as temporal coordinate.
+#'      \item Two non-parametric covariates named 
+#'        \emph{empgrowth} and \emph{serv}.
+#'      \item  Three parametric covariates named 
+#'        \emph{partrate}, \emph{agri} and \emph{cons}.
+#'    }
+#'    Then, the formula should be written as (choosing default values
+#'    for each term): \cr
+#'    
 #'     \code{ unrate ~ partrate + agri + cons +
 #'                    pspl(serv) + pspl(empgrowth) +
-#'                    pspt(long,lat,year) } \cr
+#'                    pspt(long,lat,year) } 
+#'      \cr
 #'
-#'   For spatial trend case the term \code{pspt(.)} does not include a 
+#'   For a spatial trend case, the term \code{pspt(.)} does not include a 
 #'   temporal coordinate, that is, in the previous example would be 
 #'   specified as \code{pspt(long,lat)}.
 #'   }
 #'   
-#'   \item{How to use pspl() and pspt()}{   
-#'   Note that both in pspl(.) and pspt(.) we have to include \code{nknots} 
+#'   \item{How to use \code{pspl()} and \code{pspt()}}{   
+#'   Note that both in \code{pspl(.)} and \code{pspt(.)}, we have 
+#'   to include the number of knots, named \code{nknots}, 
 #'   which is the dimension of the basis used to represent the smooth term.
-#'   nknots should not be less than the dimension of the null space of the penalty
-#'   for the term see \code{\link[mgcv:null.space.dimension]{null.space.dimension}} from 
-#'   package mgcv and see \code{\link[mgcv:choose.k]{choose.k}} to know how to choose nknots
-#'   also from package mgcv.
+#'   The value of \code{nknots} should not be less than the dimension of the null space of the penalty
+#'   for the term, see \code{\link[mgcv:null.space.dimension]{null.space.dimension}} 
+#'   and \code{\link[mgcv:choose.k]{choose.k}} from \pkg{mgcv} 
+#'   package to know how to choose \code{nknots}.
 #'   
-#'   In pspl(.), the default nknots = 10 see \code{\link{pspl}}. In this term we can only
-#'   include single variables, so if we want more than one non-parametric variable
-#'   we will use pspl(.) more than once, each one with the desired number of nknots.
+#'   In \code{pspl(.)} the default is \code{nknots = 10}, see the help of \code{\link{pspl}} function.
+#'   In this term we can only include single variables, so if we want more than one 
+#'   non-parametric variable we will use a \code{pspl(.)} term for each nonparametric variable.
 #'   
-#'   pspt(.) is used for spatial smoothing or spatio-temporal smoothing. The default
-#'   is time = NULL see \code{\link{pspt}} and default nknots = c(10,10,5). If only 
-#'   include spatial smoothing, nknots will be a length 2 vector indicating the base 
-#'   for each spatial variable (long, lat). If spatio-temporal smoothing, it will be 
-#'   a length 3 vector.
+#'   On the other hand, \code{pspt(.)} is used for spatial smoothing 
+#'   (when temporal coordinate is \code{NULL})  or 
+#'   spatio-temporal smoothing (when a variable is provided for
+#'   the temporal coordinate). 
+#'   The default for the temporal coordinate is \code{time = NULL}, 
+#'   see the help of \code{\link{pspt}}, and the default number of knots
+#'   are \code{nknots = c(10, 10, 5)}. If only 
+#'   include spatial smoothing, \code{nknots} will be a length 2 vector 
+#'   indicating the basis for each spatial coordinate. 
+#'   For spatio-temporal smoothing, it will be a length 3 vector.
 #'   }
 #'   
 #'   \item{ANOVA descomposition}{
-#'
-#'   In many situations the  spatio-temporal trend given by 
-#'   \eqn{f(s_1,s_2,\tau_t)} can be very complex and the use of a 
+#'   In many situations the  spatio-temporal trend, given by 
+#'   \eqn{f(s_1,s_2,\tau_t)}, can be very complex and the use of a 
 #'   multidimensional smooth function may not be flexible enough to 
 #'   capture the structure in the data. Furthermore, the estimation of 
 #'   this trend can become computationally intensive especially for 
 #'   large databases.\cr
-#'   To solve this problem, Lee and Durbán (2011) proposed an ANOVA-type
+#'   To solve this problem, Lee and Durban (2011) proposed an ANOVA-type
 #'   decomposition of this spatio-temporal trend where spatial and 
 #'   temporal main effects, and second- and third-order interaction 
 #'   effects can be identified as:
@@ -179,99 +209,157 @@
 #'          f_{1,2}(s_1, s_2) +  f_{1,t}(s_1, \tau_t) +
 #'          f_{2,t}(s_2, \tau_t) + f_{1,2,t}(s_1, s_2, \tau_t) }
 #'   
-#'   In this equation \eqn{f_1(s_1), f_2(s_2)} and \eqn{f_t(\tau_t)} 
-#'   are the main effects, \eqn{f_{1,2}(s_1,s_2), f_{1,t}(s_1,\tau_t)} 
-#'   and \eqn{f_{2,t}(s_2,\tau_t)} are the second-order interaction 
-#'   effects and \eqn{f_{1,2,t}(s_1,s_2,\tau_t)} is the third-order 
-#'   interaction effect. In this case, each effect can have its own 
+#'   In this equation the decomposition of the spatio-temporal trend 
+#'   is as follows:
+#'   \itemize{
+#'     \item Main effects given by the functions 
+#'       \eqn{f_1(s_1), f_2(s_2)} and \eqn{f_t(\tau_t)}.
+#'     \item Second-order interaction effects given by the functions 
+#'       \eqn{f_{1,2}(s_1,s_2), f_{1,t}(s_1,\tau_t)} 
+#'       and \eqn{f_{2,t}(s_2,\tau_t)}.
+#'     \item Third-order interaction effect given by the 
+#'       function \eqn{f_{1,2,t}(s_1,s_2,\tau_t)}.    
+#'   }
+#'   
+#'   In this case, each effect can have its own 
 #'   degree of smoothing allowing a greater flexibility for the 
 #'   spatio-temporal trend. The ANOVA decomposition of the trend
 #'   can be set as an argument in \code{pspt(.)} terms choosing
 #'   \code{psanova = TRUE}.
 #'   
-#'   For example to choose an ANOVA decomposition in previous case 
-#'   we can set \code{pspt(long, lat, year, nknots = c(18,18,8),
-#'   psanova = TRUE)}. Calculating up to third-order interactions
-#'   can be very computationally expensive. To deal with this there 
-#'   is the possibility to select subgroups of interaction effects for
-#'   the second- and third-order effects. To do this there are three
-#'   parameters available inside \code{pspt()} to define the subgroups.
-#'   These are \code{nest_sp1}, \code{nest_sp2}, \code{nest_time}. These
-#'   are vector parameters in which to include numbers to divide the values
-#'   inside the \code{nknots} parameter. For example, if we set nest_sp1 =
-#'   c(1,2,2) we will have all nots for s_1 effect, 18/2 for each second-order
-#'   effects with s_1, and 8/2 nots for the third order effect with s_1. It
-#'   is important that the numbers must be divisors of the values in nknots.
-#'   See \emph{Examples} for more details.
+#'   For example to choose an ANOVA decomposition in the 
+#'   previous case we can set: \cr
 #'   
-#'   Also, if we want to set any main effect to 0 we can do this setting 
-#'   the parameters \code{f1_main}, \code{f2_main} or \code{ft_main} to FALSE,
-#'   The Default is TRUE.
-#'   As with the main effects, we can do the same with second- and third-order
-#'   effects with parameters \code{f12_int}, \code{f1t_int}, \code{f2t_int}, 
-#'   \code{f12t_int}.
-#'   } }
-#'
-#'   In most empirical cases main effects are more flexible than 
-#'   interaction effects and therefore, the number of knots in B-Spline 
+#'    \code{pspt(long, lat, year, nknots = c(18,18,8),
+#'   psanova = TRUE)}
+#'   \cr
+#'   
+#'   In most empirical cases main effects functions are more flexible than 
+#'   interaction effects functions and therefore, the number of knots in B-Spline 
 #'   bases for interaction effects do not need to be as big as the 
-#'   number of knots for main effects. \cr
+#'   number of knots for main effects. 
 #'   \emph{Lee et al.}, (2013) proposed a nested basis procedure
-#'   in which the number of knots for the interaction effects are 
+#'   in which the number of knots for the interaction effects functions are 
 #'   reduced using \emph{divisors} such that the space spanned by 
 #'   B-spline bases used for interaction effects are a subset of the 
 #'   space spanned by B-spline bases used for main effects. 
 #'   The \emph{divisors} can be specified as an argument in 
-#'   \code{pspt(.)} terms. See \emph{Examples} for details.
+#'   \code{pspt(.)} terms. \cr 
+#'   To do this, there are three
+#'   arguments available inside \code{pspt()} to define the divisors.
+#'   These arguments are named \code{nest_sp1}, \code{nest_sp2} and 
+#'   \code{nest_time}, respectively. 
+#'   The value for these arguments
+#'   are vector parameters including divisors of
+#'   the \code{nknots} values. \cr
+#'   
+#'   For example, if we set \code{nest_sp1 =
+#'   c(1,2,2)} between the arguments of \code{pspl(.)}, 
+#'   we will have all knots for main effect of \emph{s_1}, 
+#'   \emph{18/2=9} knots for each second-order effect including \emph{s_1}, 
+#'   and \emph{8/2=4} knots for the third order effect including \emph{s_1}. It
+#'   is important that the vector of numbers will be integer divisors 
+#'   of the values in \code{nknots}.
+#'   See section \emph{Examples} for more details.
+#'   
+#'   Eventually, any effect function can be excluded of the ps-anova
+#'   spatio-temporal trend. To exclude main effects, the arguments  
+#'   \code{f1_main}, \code{f2_main} or \code{ft_main} have to be set to
+#'   \code{FALSE} (default=\code{TRUE}).
+#'   We can also exclude the second- and third-order
+#'   effects functions setting to \code{FALSE} the arguments \code{f12_int}, \code{f1t_int}, 
+#'   \code{f2t_int} or \code{f12t_int} in \code{pspl(.)}.
+#'   } }
 #'
-#'   All the terms are jointly fitted using Separation of Anisotropic 
-#'   Penalties (SAP) algorithm (see \emph{Rodríguez-Álvarez et al., (2015)}) 
+#'   All the terms included in the model are jointly fitted using Separation of Anisotropic 
+#'   Penalties (SAP) algorithm (see \emph{Rodriguez-Alvarez et al., (2015)}) 
 #'   which allows to the mixed model reparameterization of the model. 
-#'   When \emph{sar} or \emph{ar1} arguments are set equal to \emph{TRUE},
-#'   \eqn{\rho} and \eqn{\phi} parameters are numerically estimated using 
-#'   function \code{\link[nloptr]{nloptr}} implemented in pakage \pkg{nloptr}.
+#'   For type of models \code{"sar", "sem", "sdm", "sdem", "sarar"}  or 
+#'   \code{cor = "ar1"}, the parameters \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} 
+#'   are numerically estimated using 
+#'   \code{\link[minqa]{bobyqa}} function implemented in pakage \pkg{minqa}.
 #'   In these cases, an iterative process between SAP and numerical 
-#'   optimization of \eqn{\rho} and \eqn{\phi} is applied until
-#'   convergence. See details in \emph{Mínguez et al.}, (2018).
+#'   optimization of \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} is applied until
+#'   convergence. See details in \emph{Minguez et al.}, (2018).
 #'   
-#'   \describe{
+#'  \describe{
 #'   
-#'   \item{Plotting non-parametric effects}{
-#'   There are two ways of plotting non-parametric effects
-#'   \itemize{
-#'   \item{fit_terms() + plot_terms()} \code{fit_terms()} estimates F(x) with the
-#'   variables that you introduce. This way you can estimate the effects of all or just some 
-#'   non-parametric variables. \code{plot_terms()} plots F(X)
-#'   \deqn{list_varnopar <- c("VAR1", "VAR2")}
-#'   \deqn{terms_nopar <- fit_terms(MODEL, list_varnopar)}
-#'   \deqn{plot_terms(terms_nopar, DATA)}
+#'  \item{Plotting non-parametric terms}{
+#'    To plot the non-linear functions corresponding to 
+#'    non-parametric terms we need to compute the fitted values,
+#'   and standard erros, using \code{fit_terms()} function 
+#'   and, afterwards, use \code{plot_terms()} function to 
+#'   plot the non-linear functions. \cr 
+#'   An example of how plot the functions of non-parametric 
+#'   terms given by \code{"var1"} and \code{"var2"} variables is given by 
+#'   the next lines of code (it is assumed that a previous 
+#'   model has been fitted using \code{pspatfit(.)} and 
+#'   saved as an object named \code{model}): \cr
 #'   
-#'   \item{impactsnopar() + plot_impactsnopar()} With this function 
-#'   you do both things at once if the parameter \code{viewplot} = TRUE. This function
-#'   will plot all non-parametric effects. If \code{viewplot} = FALSE, use plot_impactsnopar()
-#'   \deqn{eff_nparvar <- impactsnopar(MODEL, listw = W, viewplot = TRUE)}
-#'   \deqn{eff_nparvar <- impactsnopar(MODEL, listw = W, viewplot = FALSE)}
-#'   \deqn{plot_impactsnopar(eff_nparvar, data = DATA)}
+#'   \code{list_varnopar <- c("var1", "var2")} \cr
+#'   \code{terms_nopar <- fit_terms(model, list_varnopar)} \cr
+#'   \code{plot_terms(terms_nopar, data)} 
+#'   \cr
 #'   
-#'   The default plotting method includes a smoothing term, with \code{smooth} = FALSE
-#'   the resulting plot will not be smoothed.
+#'   The \code{data} argument of \code{plot_terms()} usually 
+#'   corresponds to the dataframe used to fitted the model 
+#'   although a different database can be used to plot the 
+#'   non-parametric terms.}
+#'  
+#'  \item{Spatial impacts}{
+#'    For the spatial models given by  \code{type = "sar"}, 
+#'    \code{"sdm"}, \code{"sdem"}, \code{"sarar"} 
+#'    or \code{"slx"} it is possible to compute spatial 
+#'    spillovers as usual in spatial econometric specifications. 
+#'    Nevertheless, in this case we need to distinguish between 
+#'    parametric and non-parametric covariates when computing spatial 
+#'    impacts.}
+#'    \itemize{
+#'      \item {spatial impacts for parametric covariates}{
+#'       In this case, the spatial impacts are computed in the 
+#'       usual way using simulation. See LeSage and Page (2009) 
+#'       for computational details. The function \code{impactspar()}
+#'       computes the direct, indirect and total impacts for 
+#'       parametric covariates and return and object similar to 
+#'       the case of \pkg{spatialreg} and \pkg{spsur} packages.
+#'       The inference for \code{"sar"}, \code{"sdm"}, 
+#'       and \code{"sarar"} types is based on simulations 
+#'       and for \code{"slx"} and \code{"sdem"} types the 
+#'       standard errors or total impacts are computed using 
+#'       the variance-covariance matrix of the fitted model. 
+#'       The \code{summary()} method can be used to present the 
+#'       the complete table of spatial impacts in this parametric case.
+#'       See the help of \code{\link{impactspar}} to know the 
+#'       additional arguments of the function. A little example 
+#'       is given in the next lines of code:\cr
+#'       
+#'       \code{imp_parvar <- impactspar(MODEL, listw = W)} \cr
+#'       \code{summary(imp_parvar)}
+#'       \cr
 #'   }
+#'   \item {spatial impacts for non-parametric covariates}{
+#'     In this case direct, indirect and total 
+#'     \emph{spatial impacts functions} are 
+#'     obtained using \code{impactsnopar}. The details of 
+#'     computation and inference can be obtained from the help 
+#'     of \code{\link{impactsnopar}}. 
+#'     The argument \code{viewplot} of \code{impactsnopar} 
+#'     have to be set as \code{TRUE} to plot the spatial impacts 
+#'     functions. Another way to get the same plots is using 
+#'     \code{plot_impactsnopar} function with the output 
+#'     of \code{impactsnopar}. 
+#'     Next lines give an example of both cases: \cr
+#'       
+#'     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = TRUE)} \cr
+#'     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = FALSE)} \cr
+#'     \code{plot_impactsnopar(imp_nparvar, data = DATA)} \cr
 #'   }
-#'   
-#'   \item{Obtaining parametric effects}{
-#'   When calculating parametric effects, the resulting effects will be returned with a 
-#'   summary.
-#'   \code{impactspar()} Is the function to estimate the effects of parametric variables
-#'   to output them use \code{summary}. This function will calculate the effects of all 
-#'   parametric variables in the model.
-#'   
-#'   \deqn{eff_parvar <- impactspar(MODEL, listw = W)}
-#'   \deqn{summary(eff_parvar)}
-#'   }
-#'   
-#'   }   
+#'  } 
+#' }
+#' 
+#'      
 #'
-#' @return A list object of class \emph{pspat}
+#' @return A list object of class \emph{pspatreg}
 #' \tabular{ll}{
 #'  \code{call} \tab Matched call. \cr
 #'  \code{terms} \tab The terms object used. \cr
@@ -346,15 +434,16 @@
 #'  \code{Z} \tab Model matrix for random effects. \cr
 #' }
 #'
-#' @section Control arguments:
+#' @section Control Arguments:
 #' \tabular{ll}{
 #'   \code{optim} \tab method of estimation between 
 #'     restricted maximum likelihood, \code{"llik_reml"} or
 #'     maximum likelihood, \code{"llik"}. 
 #'     Default = \code{"llik_reml"}. \cr
 #'   \code{typese} \tab method to compute variances and 
-#'     standard errors. Default: \code{"sandwich"}. The
-#'     other option is \code{"bayesian"} \cr   
+#'     standard errors. Default: \code{"sandwich"} corresponding 
+#'     to the frequentist case. The other option is \code{"bayesian"}.
+#'     See Fahrmeir et al, pp. 375 for details of computations. \cr   
 #'   \code{vary_init} \tab Initial value of the noise variance in the model.
 #'     Default = \code{NULL}. If \code{NULL} the initial variance
 #'     is the sample variance of the dependent variable. \cr
@@ -406,7 +495,13 @@
 #'  } 
 #' 
 #'
-#' @author Roman Minguez \email{roman.minguez@@uclm.es}
+#' @author 
+#'   \tabular{ll}{
+#'     Roman Minguez \tab \email{roman.minguez@@uclm.es} \cr
+#'     Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr
+#'     Maria Durban \tab \email{mdurban@@est-econ.uc3m.es} \cr
+#'     Gonzalo Espana-Heredia \tab \email{gehllanza@@gmail.com} \cr
+#'   }   
 #'
 #' @seealso
 #' \itemize{
@@ -424,50 +519,56 @@
 #' }
 #'
 #' @references \itemize{ 
-#'   \item Basile, R., Durbán, M., Mínguez, R., Montero, J. M., and 
+#'   \item Basile, R.; Durban, M.; Minguez, R.; Montero, J. M.; and 
 #'     Mur, J. (2014). Modeling regional economic dynamics: Spatial
 #'     dependence, spatial heterogeneity and nonlinearities. 
 #'     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
+#'     <doi: 10.1016/j.jedc.2014.06.011>
 #'
 #'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
 #'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
-#'
-#'   \item Lee, D. and Durbán, M. (2011). P-Spline ANOVA Type Interaction 
+#'     
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+#'     \emph{Regression. Models, Methods and Applications}.
+#'      Springer.
+#'     
+#'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69.
+#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
 #'
 #'   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
 #'     two-dimensional smoothing with P-spline ANOVA mixed models 
 #'     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-#'     (61), 22-37.
+#'     (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
 #'
 #'   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
 #'     Spatial Econometrics}. CRC Press, Boca Raton.
 #'
-#'   \item Mínguez, R.; Basile, R. and Durbán, M. (2018). An Alternative 
-#'     Semiparametric Model for Spatial Panel Data. Under evaluation in 
-#'     \emph{Statistical Methods and Applications}.
+#'   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+#'     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+#'     (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
 #'
-#'   \item Montero, J., Mínguez, R., and Durbán, M. (2012). SAR models 
+#'   \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
 #'     with nonparametric spatial trends: A P-Spline approach. 
-#'     \emph{Estadística Espanola}, (54:177), 89-111.
+#'     \emph{Estadistica Espanola}, (54:177), 89-111.
 #'
-#'   \item Rodríguez-Alvarez, M. X.; Kneib, T.; Durban, M.; Lee, D.J.
+#'   \item Rodriguez-Alvarez, M. X.; Kneib, T.; Durban, M.; Lee, D.J.
 #'     and Eilers, P. (2015). Fast smoothing parameter separation 
 #'     in multidimensional generalized P-splines: the SAP algorithm.
-#'     \emph{Statistics and Computing} 25 (5), 941-957.
+#'     \emph{Statistics and Computing} 25 (5), 941-957. 
+#'     <doi: 10.1007/s11222-014-9464-2>
 #' }
 #'
 #' @examples 
 #' ################################################
 #' ###################### Examples using a panel data of rate of
-#' ###################### unemployment for 103 Italian provinces in 1996-2014.
+#' ###################### unemployment for 103 Italian provinces in 1996-2019.
 #' 
 #' ##########################
 #' ### GAM model with library pspatreg vs library mgcv
 #' library(pspatreg)
 #' data(unemp_it)
-#' unemp_it_short <- unemp_it[unemp_it$year >= 2014,]
+#' unemp_it_short <- unemp_it[unemp_it$year >= 2019,]
 #' lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
 #' 
 #' ######################  GAM pure with pspatreg
@@ -477,14 +578,6 @@
 #' gampure <- pspatfit(form1, data = unemp_it_short)
 #' summary(gampure)
 #' 
-#' ######################  GAM with mgcv
-#' library(mgcv)
-#' form1_mgcv <- unrate ~ partrate + agri + cons +
-#'                        s(serv, bs = "ps", m = 2, k = 15) +
-#'                        s(empgrowth, bs = "ps", m = 2, k = 20)
-#' gampure_mgcv <- gam(form1_mgcv, data = unemp_it_short, method = "REML")
-#' summary(gampure_mgcv)
-#' vis.gam(gampure_mgcv, view = c("serv", "empgrowth") , theta = -45)
 #' ######################  Get Non-parametric terms of GAM with pspatreg
 #' list_varnopar <- c("serv", "empgrowth")
 #' terms_nopar <- fit_terms(gampure, list_varnopar)
@@ -497,7 +590,7 @@
 #' ### Control argument trace = TRUE to show intermediate results during 
 #' ### the estimation process
 #' gamsar <- pspatfit(form1, data = unemp_it_short, 
-#'                type = "sar", listw = Wsp_it, 
+#'                type = "sar", listw = lwsp_it, 
 #'                control = list(trace = TRUE))
 #' summary(gamsar)
 #' ### Compare gamsar with gam model
@@ -505,16 +598,16 @@
 #' 
 #' ###################### Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = TRUE)
-#' eff_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)
+#' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = TRUE)
 #' 
 #' ###################### Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
-#' eff_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = FALSE)
-#' plot_impactsnopar(eff_nparvar, data = unemp_it_short, smooth = TRUE)
+#' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
+#' plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
 #' 
 #' ###################### Parametric Total, Direct and Indirect impacts
-#' eff_parvar <- impactspar(gamsar, listw = Wsp_it)
-#' summary(eff_parvar)
+#' imp_parvar <- impactspar(gamsar, listw = lwsp_it)
+#' summary(imp_parvar)
 #'
 #'
 #' ###############################################
@@ -546,17 +639,15 @@
 #'  
 #' ### SEM
 #' geospsem <- pspatfit(form2, data = unemp_it_short, 
-#'                  listw = Wsp_it, 
+#'                  listw = lwsp_it, 
 #'                  method = "Chebyshev", 
-#'                  type = "sem", 
-#'                  control = list(trace = TRUE))
+#'                  type = "sem")
 #' 
 #' ### SARAR
 #' geospsarar <- pspatfit(form2, data = unemp_it_short, 
-#'                  listw = Wsp_it, 
+#'                  listw = lwsp_it, 
 #'                  method = "Chebyshev", 
-#'                  type = "sarar", 
-#'                  control = list(trace = TRUE))
+#'                  type = "sarar")
 #'                  
 #'                  
 #' summary(geospsar)
@@ -570,25 +661,25 @@
 #'      xlab = 'fitted values', ylab = "unrate",
 #'      type = "p", cex.lab = 1.3, cex.main = 1.3,
 #'      main = "Spatial semiparametric model with spatial lag",
-#'      sub = "Spatial trend fixed for period 2014")
+#'      sub = "Spatial trend fixed for period 2019")
 #'      
 #' plot(geospsar$fitted.values, geospsar$residuals, 
 #'      xlab = 'fitted values', ylab = "residuals",
 #'      type = "p", cex.lab = 1.3, cex.main=1.3,
 #'      main = "Spatial semiparametric model with spatial lag",
-#'      sub = "Spatial trend fixed for period 2014")
+#'      sub = "Spatial trend fixed for period 2019")
 #'
 #'              
 #'  
 #' ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
-#' eff_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
-#' eff_nparvar_no_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = FALSE)
+#' imp_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
+#' imp_nparvar_no_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = FALSE)
 #' 
 #' 
 #' ###### Parametric Total, Direct and Indirect impacts
 #' list_varpar <- c("partrate","agri","cons")
-#' eff_parvar <- impactspar(geospsar, listw = lwsp_it)
-#' summary(eff_parvar)
+#' imp_parvar <- impactspar(geospsar, listw = lwsp_it)
+#' summary(imp_parvar)
 #' 
 #' 
 #' ############################################
@@ -667,9 +758,9 @@
 #'                        nest_sp1 = c(1, 2), 
 #'                        nest_sp2 = c(1, 2))
 #'                        
-#' ##### Spatial trend fixed for period 1996-2014.
+#' ##### Spatial trend fixed for period 1996-2019.
 #' ##### in plot_sp2d(), if data is not an .sf object, you must indicate the spatial coordinates variables
-#' geospanova <- pspatfit(form3, data = unemp_it_short, control = list(trace = TRUE))
+#' geospanova <- pspatfit(form3, data = unemp_it_short)
 #' summary(geospanova)
 #' ### Plot spatial trend and interaction (ANOVA)
 #' 
@@ -681,7 +772,7 @@
 #' ### Same as the previous but include type = "sar" and parameter litsw
 #' ### Interaction term f12 with nested basis
 #' geospanova_sar <- pspatfit(form3, data = unemp_it_short, 
-#'                        listw = Wsp_it, type = "sar")
+#'                        listw = lwsp_it, type = "sar")
 #' summary(geospanova_sar)
 #'
 #'
@@ -695,7 +786,7 @@
 #'                    psanova = TRUE, nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
 #'                    nest_time = c(1,2,2))
 #'  sptanova <- pspatfit(form4, data = unemp_it,
-#'                   control = list(tol = 1e-2, maxit = 200, trace = TRUE))
+#'                   control = list(tol = 1e-2))
 #'  summary(sptanova)
 #'  
 #'  ####### Plot just spatial trend, 2d, (ANOVA)
@@ -703,22 +794,13 @@
 #'  addint = TRUE, coordinates = unemp_it[, c("long", "lat")])
 #' 
 #'  ####### Plot spatio-temporal trend, 3d, (ANOVA)
-#' # To use plot_sp3d() we have to give and .sf object.
-#' # first, we create an .sf object
-#' 
-#' library(tidymodels)
-#' library(tune)
-#' library(spdep)
-#' library(ggplot2)
-#' library(dplyr)
-#' library(pspatreg)
-#' library(tripack)
-#' library(rgeos)
-#' library(dbscan)
-#' 
-#' ######## preparing the data
-#' unemp_it_sf <- sf::st_as_sf(unemp_it, coords = c("long", "lat"))
-#' 
+##' ###### Create sf object of the spatial panels 
+#'  ###### to do spatio-temporal plots of Italian provinces
+#' library(sf)
+#' map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+#' unemp_it_sf <- st_as_sf(dplyr::left_join(
+#'                                 unemp_it, map_it,  
+#'                         by = c("prov" = "COD_PRO")))
 #' plot_sp3d(sptanova, data = unemp_it_sf, 
 #' time_var = "year", 
 #' time_index = c(1996, 2005, 2019),
@@ -726,26 +808,26 @@
 #'
 #'
 #'  ### Spatio-temporal semiparametric ANOVA model with spatial lag
-#'  sptanova_sar <- pspatfit(form4, data = unemp_it, listw = Wsp_it, type = "sar",
-#'                       control = list(thr = 1e-1, maxit = 100, trace = FALSE))
+#'  sptanova_sar <- pspatfit(form4, data = unemp_it, listw = lwsp_it, type = "sar",
+#'                       control = list(tol = 1e-1))
 #'  summary(sptanova_sar)
 #'  
 #'  
 #'  #########################################
 #'  ### Spatio-temporal semiparametric ANOVA model with spatial lag
 #'  ### and temporal autorregresive noise
-#'  sptanova_sar_ar1 <- pspatfit(form4, data = unemp_it, listw = Wsp_it, type = "sar",
-#'                           ar1 = TRUE, control = list(thr = 1e-1, 
-#'                                                  maxit = 200, trace = FALSE))
+#'  sptanova_sar_ar1 <- pspatfit(form4, data = unemp_it, listw = lwsp_it, type = "sar",
+#'                           cor = "ar1", 
+#'                           control = list(tol = 1e-1))
 #'  summary(sptanova_sar_ar1)
 #'  ###### Non-Parametric Total, Direct and Indirect Effects
 #'  list_varnopar <- c("serv", "empgrowth")
-#'  eff_nparvar <- impactsnopar(sptanova_sar_ar1, listw = Wsp_it, viewplot = TRUE)
+#'  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
 
 #'  ###### Parametric Total, Direct and Indirect Effects
 #'  list_varpar <- c("partrate","agri","cons")
-#'  eff_parvar <- impactspar(sptanova_sar_ar1, listw = lwp_it)
-#'  summary(eff_parvar)
+#'  imp_parvar <- impactspar(sptanova_sar_ar1, listw = lwp_it)
+#'  summary(imp_parvar)
 #'  
 #'  
 #'  ###############################################
@@ -759,7 +841,7 @@
 #'                   nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
 #'                   nest_time = c(1,2,2), f2t_int = FALSE)
 #'  sptanova2 <- pspatfit(form5, data = unemp_it_short,
-#'                   control = list(thr=1e-2, maxit = 200, trace = TRUE))
+#'                   control = list(tol=1e-2))
 #'  summary(sptanova2)
 #'  
 #' ######################  demeaning

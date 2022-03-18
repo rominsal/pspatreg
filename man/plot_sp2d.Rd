@@ -41,19 +41,11 @@ DESCRIBE THE FUNCTION...
 }
 \examples{
 
-library(AmesHousing)# The Ames housing data
-library(tidymodels)
-library(tune)
-library(spdep)
-library(ggplot2)
-library(dplyr)
 library(pspatreg)
-library(tripack)
-library(rgeos)
-library(dbscan)
+library(spdep)
 
 ######## getting and preparing the data
-ames <- make_ames()# Raw Ames Housing Data
+ames <- AmesHousing::make_ames()# Raw Ames Housing Data
 ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
 ames_sf$Latitude <- ames$Latitude
@@ -63,49 +55,52 @@ ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
 ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
 
 ########### Constructing the spatial weights matrix
-ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude)==FALSE,]
+ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
 coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
 ID <- row.names(as(ames_sf1, "sf"))
-col.tri.nb <- tri2nb(coord_sf1)
-soi_nb <- graph2nb(soi.graph(col.tri.nb,coord_sf1), row.names=ID)
-is.symmetric.nb(soi_nb,verbose=T,force=F)
-listW <- nb2listw(soi_nb, style="W",zero.policy=F)
+col_tri_nb <- tri2nb(coord_sf1)
+soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+                            coord_sf1), 
+                   row.names = ID)
+lw_ames <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 
 
 ######## formula of the model
 form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
-pspl(lnLot_Area, nknots = 20) + 
+ pspl(lnLot_Area, nknots = 20) + 
  pspl(lnTotal_Bsmt_SF, nknots = 20) +
  pspl(lnGr_Liv_Area, nknots = 20) +
- pspt(Longitude,Latitude, nknots = c(10, 10), 
+ pspt(Longitude, Latitude, nknots = c(10, 10), 
       psanova = FALSE)
 
 ######## fit the model
 sp2dsar <- pspatfit(form2d, data = ames_sf1, 
-listw = listW, method = "Chebyshev", 
-type = "sar", control = list(trace = FALSE))
-
+                    listw = lw_ames, 
+                    method = "Chebyshev", 
+                    type = "sar")
 summary(sp2dsar)
-anova(sp2dsar)
 
 ####### plot spatial trend for spatial point coordinate
 plot_sp2d(sp2dsar, data = ames_sf1)
 
 ###### MODEL WITH ANOVA DESCOMPOSITION
  form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
- pspl(lnLot_Area, nknots = 20) + 
- pspl(lnTotal_Bsmt_SF, nknots = 20) +
- pspl(lnGr_Liv_Area, nknots = 20) +
- pspt(Longitude,Latitude, nknots = c(10, 10), 
-      psanova = TRUE)
+  pspl(lnLot_Area, nknots = 20) + 
+  pspl(lnTotal_Bsmt_SF, nknots = 20) +
+  pspl(lnGr_Liv_Area, nknots = 20) +
+  pspt(Longitude, Latitude, nknots = c(10, 10), 
+       psanova = TRUE)
       
-sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, 
-                        listw = listW,method = "Chebyshev", 
-                        type = "sar", control = list(trace = FALSE))
+sp2danovasar <- pspatfit(form2d_psanova, 
+                        data = ames_sf1, 
+                        listw = lw_ames,
+                        method = "Chebyshev", 
+                        type = "sar")
+summary(sp2danovasar)                         
                         
 ###### PLOT ANOVA DESCOMPOSITION MODEL
-plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, 
-addint = TRUE)
+plot_sp2d(sp2danovasar, data = ames_sf1, 
+          addmain = TRUE, addint = TRUE)
 
 }
 \author{

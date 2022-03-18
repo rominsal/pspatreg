@@ -448,7 +448,6 @@ fit_pspat <- function(env, con) {
   
   ########## COVARIANCE MATRICES FIXED AND RANDOM EFFECTS
   ## pp.375 Fahrmeir et al.
-  ## CHECK IF I NEED TO CHANGE X FOR XSTAR AND Z FOR ZSTAR...
   ## Bayesian Covariance Matrix
   if (con$trace) start <- proc.time()[3]
   if (!is.null(rho)) {
