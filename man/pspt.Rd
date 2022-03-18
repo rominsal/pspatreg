@@ -183,7 +183,7 @@ data(unemp_it); Wsp <- Wsp_it
                    psanova = TRUE, nest_sp1 = c(1,2,2), nest_sp2 = c(1,2,2),
                    nest_time = c(1,2,2), ntime = 19)
  sptanova <- pspatfit(form4,data = unemp_it,
-                  control = list(thr = 1e-2, maxit = 200, trace = FALSE))
+                  control = list(tol = 1e-2))
  summary(sptanova)
  
 
@@ -196,7 +196,7 @@ data(unemp_it); Wsp <- Wsp_it
                    psanova = TRUE, nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
                    nest_time = c(1,2,2), ntime = 19, f1t_int = FALSE)
  sptanova2 <- pspatfit(form5, data = unemp_it,
-                  control = list(thr = 1e-2, maxit = 200, trace = FALSE))
+                  control = list(tol = 1e-2))
  summary(sptanova2)
 }
 \references{

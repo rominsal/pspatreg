@@ -5,7 +5,7 @@
 \alias{unemp_it}
 \title{Regional unemployment rates Italian provinces}
 \format{
-A data frame with 1957 rows and 17 variables:
+A data frame with 2472 rows and 17 variables:
 \describe{
   \item{prov}{province (NUTS-3) coded as a name.}
   \item{reg}{region (NUTS-2) coded as a name.}

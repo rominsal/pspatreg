@@ -62,8 +62,8 @@
 #'  gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
 #'  summary(gamsar)
 #'  ###### Parametric Total, Direct and Indirect Effects
-#'  eff_parvar <- impactspar(gamsar, listw = Wsp_it)
-#'  summary(eff_parvar)
+#'  imp_parvar <- impactspar(gamsar, listw = Wsp_it)
+#'  summary(imp_parvar)
 #'  
 #' ######################   PSAR-ANOVA with spatial trend
 #' form2 <- unrate ~ partrate + agri + cons +
@@ -72,11 +72,11 @@
 #'                   nest_sp1=c(1,2),nest_sp2=c(1,2))
 #' ##### Spatial trend fixed for period 1996-2014
 #' geospanova_sar <- pspatfit(form2, data = unemp_it, listw = Wsp_it,type = "sar", 
-#'                    control = list(thr = 1e-1, maxit = 200, trace = FALSE))
+#'                    control = list(tol = 1e-1))
 #' summary(geospanova_sar)
 #'  ###### Parametric Total, Direct and Indirect Effects
-#'  eff_parvar <- impactspar(geospanova_sar, listw = Wsp_it)
-#'  summary(eff_parvar)
+#'  imp_parvar <- impactspar(geospanova_sar, listw = Wsp_it)
+#'  summary(imp_parvar)
 #'  
 #' ######################   PSAR-ANOVA with spatio-temporal trend and 
 #' ######################   temporal autorregresive noise
@@ -85,8 +85,9 @@
 #'                    pspt(long,lat,year,nknots=c(18,18,8),psanova=TRUE,
 #'                    nest_sp1=c(1,2,3),nest_sp2=c(1,2,3),
 #'                    nest_time=c(1,2,2),ntime=19)
-#' sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, listw = Wsp_it, type = "sar", ar1=TRUE, 
-#'                     control = list(thr = 1e-1, maxit = 200, trace = FALSE))
+#' sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, listw = Wsp_it, 
+#'                              type = "sar", cor = "ar1", 
+#'                              control = list(tol = 1e-1))
 #' summary(sptanova_sar_ar1)
 #'  ##### Parametric Total, Direct and Indirect Effects
 #'  eff_parvar <- impactspar(sptanova_sar_ar1, listw = Wsp_it)

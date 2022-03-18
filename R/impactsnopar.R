@@ -82,7 +82,7 @@
 #'  gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
 #'  summary(gamsar)
 #'  ###### Non-Parametric Total, Direct and Indirect impects
-#'  eff_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)
+#'  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)
 #'  
 #' ######################   PSAR-ANOVA with spatial trend
 #' form2 <- unrate ~ partrate + agri + cons +
@@ -91,10 +91,10 @@
 #'                   nest_sp1=c(1,2),nest_sp2=c(1,2))
 #' ##### Spatial trend fixed for period 1996-2014
 #' geospanova_sar <- pspatfit(form2, data=unemp_it, listw = Wsp_it, type = "sar", 
-#'                            control=list(tol=1e-1, maxit=200, trace=FALSE))
+#'                            control=list(tol = 1e-1))
 #' summary(geospanova_sar)
 #'  ###### Non-Parametric Total, Direct and Indirect impects
-#'  eff_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
+#'  imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
 #'  
 #' ######################   PSAR-ANOVA with spatio-temporal trend and 
 #' ######################   temporal autorregresive noise
@@ -103,11 +103,12 @@
 #'                    pspt(long,lat,year,nknots=c(18,18,8),psanova=TRUE,
 #'                    nest_sp1=c(1,2,3),nest_sp2=c(1,2,3),
 #'                    nest_time=c(1,2,2),ntime=19)
-#' sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, Wsp = Wsp_it, type = "sar", ar1=TRUE,
-#'                     control=list(thr=1e-1, maxit=200, trace=FALSE))
+#' sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, listw = Wsp_it, 
+#'                               type = "sar", cor = "ar1",
+#'                               control=list(tol=1e-1))
 #' summary(sptanova_sar_ar1)
 #'  ###### Non-Parametric Total, Direct and Indirect impects
-#'  eff_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
+#'  imp_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
 #'
 #' @keywords Indirect impects, Direct impects, SAR, non-parametric covariates.
 #'

@@ -3,7 +3,7 @@
 #' A panel dataset containing unemployment rates and other economic
 #' variables for Italian NUTS-3 provinces during the years 1996-2014.
 #'
-#' @format A data frame with 1957 rows and 17 variables:
+#' @format A data frame with 2472 rows and 17 variables:
 #' \describe{
 #'   \item{prov}{province (NUTS-3) coded as a name.}
 #'   \item{reg}{region (NUTS-2) coded as a name.}

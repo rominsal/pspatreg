@@ -36,18 +36,15 @@ DESCRIBE THE FUNCTION...
 \examples{
 
 library(pspatreg)
-data("unemp_it_new_polyg_sf")
+library(sf)
 data("unemp_it")
-unemp_it <- unemp_it_new_polyg_sf
-rm(unemp_it_new_polyg_sf) # Only to be consistent with the names...
-colnames(Wsp_it) <- rownames(Wsp_it)
-Wsp_it <- as.matrix(Wsp_it)
-Using spdep we transform the spatial weights matrix in a list of neighbours object:
- 
- lwsp_it <- spdep::mat2listw(Wsp_it, 
-                             row.names = rownames(Wsp_it))
-
-summary(lwsp_it)
+lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
+###### Create sf object of the spatial panels 
+###### to do spatio-temporal plots of Italian provinces
+map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+unemp_it_sf <- st_as_sf(dplyr::left_join(
+                                unemp_it, map_it,  
+                        by = c("prov" = "COD_PRO")))
 ######## FORMULA of the model
 form3d_psanova_restr <- unrate ~ partrate + agri + cons +
 pspl(serv, nknots = 15) + 
@@ -61,18 +58,21 @@ pspl(serv, nknots = 15) +
       f1t = FALSE, f2t = FALSE)
 
 ####### FIT the model
-sp3danovasarar1 <- pspatfit(form3d_psanova_restr, 
-data = unemp_it, 
-listw = lwsp_it, 
-method = "Chebyshev", 
-type = "sar",
-cor = "ar1")
+sp3danova <- pspatfit(form3d_psanova_restr, 
+                         data = unemp_it_sf)
+summary(sp3danova)                          
 
-###### PLOT spatio-temporal trends
-plot_sp3d(sp3danovasarar1, data = unemp_it, 
-time_var = "year", 
-time_index = c(1996, 2005, 2019),
-addmain = FALSE, addint = FALSE)
+###### PLOT spatio-temporal trends for different years
+plot_sp3d(sp3danova, data = unemp_it_sf, 
+          time_var = "year", 
+          time_index = c(1996, 2005, 2019),
+          addmain = FALSE, addint = FALSE)
+###### PLOT spatio-temporal trend, main effects 
+######      and interaction effect for a year
+plot_sp3d(sp3danova, data = unemp_it_sf, 
+          time_var = "year", 
+          time_index = c(2019),
+          addmain = TRUE, addint = TRUE)
 
 }
 \author{
