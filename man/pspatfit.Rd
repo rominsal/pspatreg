@@ -233,7 +233,7 @@ Estimate geoadditive spatial or spatio-temporal
 }
 \section{Details}{
  
-Function to estimate the model
+Function to estimate the model:
   \deqn{ y = (\rho*W_{N} \otimes I_T) y + X \beta +
     f(s_1,s_2,\tau_{t}) + \sum_{i=1}^k g(z_i) + \epsilon }
   where:
