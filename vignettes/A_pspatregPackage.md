@@ -381,7 +381,7 @@ map spatial and spatio-temporal trends, respectively, while
 3d; finally, and `plot_terms()` is used to plot smooth non-parametric
 terms.
 
-## Conpunting marginal effects
+## Computing marginal effects
 
 In the case of a semiparametric model without the spatial lag of the
 dependent variable (PS model), if all regressors are manipulated

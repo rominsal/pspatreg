@@ -3,9 +3,11 @@ title: "An introduction to pspatreg"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
 date: "`r Sys.Date()`"
 output:
-  github_document:
-            toc: true
-            toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 2
+    keep_md: true
+    keep_html: true
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{An introduction to pspatreg}
