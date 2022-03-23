@@ -18,14 +18,6 @@ plot_sp3d(object, data, time_var, time_index, addmain = TRUE, addint = TRUE)
 \item{addmain}{Add f1_main and f2_main plots in psanova case.}
 
 \item{addint}{Add f12_int in psanova case.}
-
-\item{coordinates}{coordinates matrix if *data* is not an sf object.}
-
-\item{npoints}{number of points to use in the interpolation.}
-
-\item{addcontour}{Logical value to add contour lines.}
-
-\item{addpoints}{Logical value to add spatial points to the graphics.}
 }
 \value{
 plots and maps of the spatial trends
@@ -41,7 +33,8 @@ data("unemp_it")
 lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
 ###### Create sf object of the spatial panels 
 ###### to do spatio-temporal plots of Italian provinces
-map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
+map_it <- st_read(dsn = pathmap)
 unemp_it_sf <- st_as_sf(dplyr::left_join(
                                 unemp_it, map_it,  
                         by = c("prov" = "COD_PRO")))

@@ -13,7 +13,13 @@
 #' @param conflevel numerical value for the confidence interval of the
 #'   term. Default 0.95.
 #' @param listw used to compute spatial lags for Durbin specifications. 
-#'   Default *NULL* 
+#'   Default =  \code{NULL}
+#' @param dynamic Logical value to set a dynamic model.
+#'   Dynamic models include a temporal lag of the dependent
+#'   variable in the right-hand side of the equation.
+#'   Default = \code{FALSE}.
+#' @param nt  Number of temporal periods. It is needed
+#'   for dynamic models.  
 #'
 #' @return list with the plots of the terms for each non-parametric 
 #'   covariate included in the object returned from \code{\link{fit_terms}}.
@@ -123,6 +129,7 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
     } else var <- as.matrix(data[, c(name_var)])
     colnames(var) <- name_var
     ord <- order(var)
+    par(mar = c(1, 1, 1, 1))
     par(mfrow = c(2, 1))
     plot(var[ord], fit_var[ord], 
          type = "l",

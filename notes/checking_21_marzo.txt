@@ -1,0 +1,999 @@
+   partrate   0.2139089  0.0212320 10.0748   <2e-16 ***
+   agri      -0.0193109  0.0202763 -0.9524   0.3410    
+   cons      -0.0370029  0.0406506 -0.9103   0.3628    
+   rho        0.0021687  0.0219145  0.0990   0.9212    
+   phi        0.3320457  0.0137641 24.1240   <2e-16 ***
+   ---
+   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+   
+    Non-Parametric Terms 
+                                   EDF
+   pspl(serv, nknots = 15)      15.558
+   pspl(empgrowth, nknots = 20) 12.517
+   
+    Non-Parametric Spatio-Temporal Trend 
+           EDF
+   f1   10.857
+   f2   10.036
+   ft   12.080
+   f12  42.432
+   f1t   3.465
+   f2t  26.233
+   f12t 50.269
+   
+    Goodness-of-Fit 
+   
+   EDF Total: 195.448  Sigma: 1.57946
+   AIC:       5528.37 BIC:  6664.47>  ###### Non-Parametric Total, Direct and Indirect Impacts
+   >  list_varnopar <- c("serv", "empgrowth")
+   >  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
+   Press [enter] to continue
+   Press [enter] to continue
+   >  ###### Parametric Total, Direct and Indirect Effects
+   >  list_varpar <- c("partrate","agri","cons")
+   >  imp_parvar <- impactspar(sptanova_sar_ar1, listw = lwsp_it)
+   >  summary(imp_parvar)
+   
+    Total Parametric Impacts (sar) 
+             Estimate Std. Error   t value Pr(>|t|)
+   partrate  0.214663   0.022454  9.560054   0.0000
+   agri     -0.020282   0.020269 -1.000622   0.3170
+   cons     -0.035202   0.039258 -0.896694   0.3699
+   
+    Direct Parametric Impacts (sar) 
+             Estimate Std. Error   t value Pr(>|t|)
+   partrate  0.214062   0.021556  9.930618   0.0000
+   agri     -0.020232   0.020209 -1.001162   0.3167
+   cons     -0.035108   0.039092 -0.898079   0.3691
+   
+    Indirect Parametric Impacts (sar) 
+               Estimate  Std. Error     t value Pr(>|t|)
+   partrate  6.0032e-04  4.7181e-03  1.2724e-01   0.8988
+   agri     -4.9678e-05  6.3689e-04 -7.8001e-02   0.9378
+   cons     -9.4342e-05  1.2086e-03 -7.8058e-02   0.9378
+   >  
+   >  
+   >  ###############################################
+   >  ### Spatio-temporal semiparametric ANOVA model without spatial lag
+   >  ### Now we repeat previous spatio-temporal model but restricting some interactions
+   >  ### Interaction terms f12,f1t and f12t with nested basis
+   >  ### Interaction term f2t restricted to 0
+   >   form5 <- unrate ~ partrate + agri + cons +
+   +                   pspl(serv, nknots=15) + pspl(empgrowth, nknots=20) +
+   +                   pspt(long, lat, year, nknots = c(18,18,6), psanova = TRUE,
+   +                   nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
+   +                   nest_time = c(1,2,2), f2t_int = FALSE)
+   >  sptanova2 <- pspatfit(form5, data = unemp_it_short,
+   +                   control = list(tol=1e-2))
+   Error in seq.default(xl - bdeg * dx, xr + bdeg * dx, by = dx) : 
+     'from' must be a finite number
+   Calls: pspatfit ... model.frame.default -> eval -> eval -> pspt -> pspl -> seq -> seq.default
+   Execution halted
+√  checking for non-standard things in the check directory
+√  checking for detritus in the temp directory
+   
+   See
+     'C:/Users/Roman.Minguez/AppData/Local/Temp/RtmpshJflW/pspatreg.Rcheck/00check.log'
+   for details.
+   
+   
+-- R CMD check results ------------ pspatreg 1.0 ----
+Duration: 3h 20m 2s
+
+> checking examples ... ERROR
+  Running examples in 'pspatreg-Ex.R' failed
+  The error most likely occurred in:
+  
+  > base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+  > ### Name: pspatfit
+  > ### Title: Estimate spatial or spatio-temporal semiparametric regression
+  > ###   models from a spatial econometric perspective.
+  > ### Aliases: pspatfit
+  > 
+  > ### ** Examples
+  > 
+  > ################################################
+  > ###################### Examples using a panel data of rate of
+  > ###################### unemployment for 103 Italian provinces in 1996-2019.
+  > 
+  > ##########################
+  > ### GAM model with library pspatreg vs library mgcv
+  > library(pspatreg)
+  > data(unemp_it)
+  > unemp_it_short <- unemp_it[unemp_it$year >= 2019,]
+  > lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
+  > 
+  > ######################  GAM pure with pspatreg
+  > form1 <- unrate ~ partrate + agri + cons +
+  +                  pspl(serv, nknots = 15) +
+  +                  pspl(empgrowth, nknots = 20)
+  > gampure <- pspatfit(form1, data = unemp_it_short)
+  
+  Fitting Model...
+  
+   Time to fit the model:  0.05 seconds 
+  > summary(gampure)
+  Call:
+  pspatfit(formula = form1, data = unemp_it_short)
+  
+   Parametric Terms 
+               Estimate Std. Error t value  Pr(>|t|)    
+  (Intercept) 42.975306   4.571365  9.4010 4.434e-15 ***
+  partrate    -0.643145   0.081289 -7.9118 5.718e-12 ***
+  agri         0.264625   0.092648  2.8562  0.005307 ** 
+  cons        -0.094369   0.295907 -0.3189  0.750520    
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      2.8588
+  pspl(empgrowth, nknots = 20) 4.8211
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 11.6799  Sigma: 3.09991
+  AIC:       366.438 BIC:  397.212> 
+  > ######################  Get Non-parametric terms of GAM with pspatreg
+  > list_varnopar <- c("serv", "empgrowth")
+  > terms_nopar <- fit_terms(gampure, list_varnopar)
+  > ######################  Plot non-parametric terms
+  > plot_terms(terms_nopar, unemp_it_short)
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > 
+  > #####################  GAM + SAR Model
+  > ### Same as gampure but we include neighbours matrix and type = "sar"
+  > ### Control argument trace = TRUE to show intermediate results during 
+  > ### the estimation process
+  > gamsar <- pspatfit(form1, data = unemp_it_short, 
+  +                type = "sar", listw = lwsp_it, 
+  +                control = list(trace = TRUE))
+  neighbourhood matrix eigenvalues
+  Computing eigenvalues ...
+  
+  
+  Fitting Model...
+  
+   Iteration SAP:  1
+   sig2u  9.877292
+   edfnopar:  3.07 3.91
+   Iteration SAP:  2
+   sig2u  9.912519
+   edfnopar:  2.08 3.5
+   Iteration SAP:  3
+   sig2u  9.737636
+   edfnopar:  3.18 4.73
+   Iteration SAP:  4
+   sig2u  9.72207
+   edfnopar:  2.83 4.78
+   Iteration SAP:  5
+   sig2u  9.71919
+   edfnopar:  2.85 4.8
+   Iteration SAP:  6
+   sig2u  9.71919
+   edfnopar:  2.84 4.8
+   Iteration:  1
+   spatial parameters  0.3618878
+   Iteration SAP:  1
+   sig2u  7.753582
+   edfnopar:  2.85 4.8
+   Iteration SAP:  2
+   sig2u  7.783628
+   edfnopar:  3 4.43
+   Iteration SAP:  3
+   sig2u  7.76218
+   edfnopar:  3.17 4.68
+   Iteration SAP:  4
+   sig2u  7.762061
+   edfnopar:  3.18 4.68
+   Iteration:  2
+   spatial parameters  0.388977
+   Iteration SAP:  1
+   sig2u  7.690918
+   edfnopar:  3.18 4.69
+   Iteration SAP:  2
+   sig2u  7.693895
+   edfnopar:  3.2 4.64
+   Iteration SAP:  3
+   sig2u  7.693041
+   edfnopar:  3.21 4.65
+   Iteration:  3
+   spatial parameters  0.3902452
+   Iteration SAP:  1
+   sig2u  7.689999
+   edfnopar:  3.21 4.65
+   Iteration SAP:  2
+   sig2u  7.690131
+   edfnopar:  3.21 4.65
+   Iteration:  4
+   spatial parameters  0.3903089
+   Time to fit the model:  0.76 seconds 
+  
+   Time to compute covariances:  0 seconds> summary(gamsar)
+  Call:
+  pspatfit(formula = form1, data = unemp_it_short, listw = lwsp_it, 
+      type = "sar", control = list(trace = TRUE))
+  
+   Parametric Terms 
+               Estimate Std. Error t value  Pr(>|t|)    
+  (Intercept) 28.756233   4.082617  7.0436 3.605e-10 ***
+  partrate    -0.438599   0.072657 -6.0365 3.446e-08 ***
+  agri         0.129171   0.083032  1.5557    0.1233    
+  cons        -0.041053   0.264291 -0.1553    0.8769    
+  rho          0.390309   0.084686  4.6089 1.328e-05 ***
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.2106
+  pspl(empgrowth, nknots = 20) 4.6522
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 12.8628  Sigma: 2.83042
+  AIC:       350.138 BIC:  384.028> ### Compare gamsar with gam model
+  > anova(gampure, gamsar)
+  Warning: LR test should be used only for nested models.
+           logLik rlogLik    edf    AIC    BIC LRtest      p.val
+  gampure -171.54 -175.16 11.680 366.44 403.04                  
+  gamsar  -162.21 -166.44 12.863 350.14 390.78 17.428 4.3117e-05
+  > 
+  > ######### Non-Parametric Total, Direct and Indirect impacts
+  > ### with impactsnopar(viewplot = TRUE)
+  > imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, 
+  +                             viewplot = TRUE)
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > ############ Non-Parametric Total, Direct and Indirect impacts
+  > ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
+  > imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
+  > plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > ###################### Parametric Total, Direct and Indirect impacts
+  > imp_parvar <- impactspar(gamsar, listw = lwsp_it)
+  > summary(imp_parvar)
+  
+   Total Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate -0.730151   0.160356 -4.553311   0.0000
+  agri      0.223462   0.143567  1.556502   0.1196
+  cons     -0.039736   0.470239 -0.084502   0.9327
+  
+   Direct Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate -0.465221   0.078471 -5.928558   0.0000
+  agri      0.141604   0.087368  1.620776   0.1051
+  cons     -0.025689   0.297172 -0.086444   0.9311
+  
+   Indirect Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate -0.264930   0.103775 -2.552917   0.0107
+  agri      0.081858   0.061635  1.328106   0.1841
+  cons     -0.014048   0.178905 -0.078520   0.9374
+  > 
+  > 
+  > ###############################################
+  > ### Spatial semiparametric model without spatial lag
+  > ### Add pspt(long, lat) to include non_parametric spatial variables
+  > ### psanova = FALSE to not decompose the effects
+  > form2 <- unrate ~ partrate + agri + cons +
+  +                 pspl(serv, nknots = 15) + 
+  +                 pspl(empgrowth, nknots = 20) +
+  +                 pspt(long, lat, nknots = c(20,20), 
+  +                      psanova = FALSE)
+  > geosp <- pspatfit(form2, data = unemp_it_short)                        
+  
+  Fitting Model...
+  
+   Time to fit the model:  5.32 seconds 
+  > summary(geosp)
+  Call:
+  pspatfit(formula = form2, data = unemp_it_short)
+  
+   Parametric Terms 
+            Estimate Std. Error t value Pr(>|t|)  
+  partrate -0.188887   0.096387 -1.9597  0.05332 .
+  agri     -0.057237   0.090508 -0.6324  0.52883  
+  cons     -0.117099   0.252918 -0.4630  0.64456  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.4138
+  pspl(empgrowth, nknots = 20) 4.7441
+  
+   Non-Parametric Spatio-Temporal Trend 
+                EDF
+  f(sp1, sp2) 3.063
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 18.2207  Sigma: 2.5226
+  AIC:       342.043 BIC:  390.05> 
+  > 
+  > ###############################################
+  > ### Spatial semiparametric model with spatial lag
+  > ### Type = "sar" for spatial lag
+  > ### method = "Chebyshev" to show it also works. method = "eigen" will work
+  > ### but not recommended for large samples
+  > ### SAR
+  > geospsar <- pspatfit(form2, data = unemp_it_short, 
+  +                  listw = lwsp_it, 
+  +                  method = "Chebyshev", 
+  +                  type = "sar")
+  
+  Fitting Model...
+  
+   Time to fit the model:  25.03 seconds 
+  > summary(geospsar)                  
+  Call:
+  pspatfit(formula = form2, data = unemp_it_short, listw = lwsp_it, 
+      type = "sar", method = "Chebyshev")
+  
+   Parametric Terms 
+            Estimate Std. Error t value Pr(>|t|)  
+  partrate -0.212863   0.093649 -2.2730   0.0255 *
+  agri     -0.036955   0.089838 -0.4114   0.6818  
+  cons     -0.036041   0.248621 -0.1450   0.8851  
+  rho       0.113379   0.107417  1.0555   0.2941  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.4253
+  pspl(empgrowth, nknots = 20) 4.6216
+  
+   Non-Parametric Spatio-Temporal Trend 
+               EDF
+  f(sp1, sp2) 0.29
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.3368  Sigma: 2.58705
+  AIC:       335.159 BIC:  378.202>  
+  > ### SEM
+  > geospsem <- pspatfit(form2, data = unemp_it_short, 
+  +                  listw = lwsp_it, 
+  +                  method = "Chebyshev", 
+  +                  type = "sem")
+  
+  Fitting Model...
+  
+   Time to fit the model:  20.7 seconds 
+  > 
+  > ### SARAR
+  > geospsarar <- pspatfit(form2, data = unemp_it_short, 
+  +                  listw = lwsp_it, 
+  +                  method = "Chebyshev", 
+  +                  type = "sarar")
+  
+  Fitting Model...
+  
+   Time to fit the model:  5922.42 seconds 
+  >                  
+  >                  
+  > summary(geospsar)
+  Call:
+  pspatfit(formula = form2, data = unemp_it_short, listw = lwsp_it, 
+      type = "sar", method = "Chebyshev")
+  
+   Parametric Terms 
+            Estimate Std. Error t value Pr(>|t|)  
+  partrate -0.212863   0.093649 -2.2730   0.0255 *
+  agri     -0.036955   0.089838 -0.4114   0.6818  
+  cons     -0.036041   0.248621 -0.1450   0.8851  
+  rho       0.113379   0.107417  1.0555   0.2941  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.4253
+  pspl(empgrowth, nknots = 20) 4.6216
+  
+   Non-Parametric Spatio-Temporal Trend 
+               EDF
+  f(sp1, sp2) 0.29
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.3368  Sigma: 2.58705
+  AIC:       335.159 BIC:  378.202> summary(geospsem)
+  Call:
+  pspatfit(formula = form2, data = unemp_it_short, listw = lwsp_it, 
+      type = "sem", method = "Chebyshev")
+  
+   Parametric Terms 
+            Estimate Std. Error t value Pr(>|t|)  
+  partrate -0.215259   0.097069 -2.2176   0.0292 *
+  agri     -0.037129   0.091020 -0.4079   0.6843  
+  cons     -0.050680   0.260132 -0.1948   0.8460  
+  delta     0.143459   0.120467  1.1909   0.2370  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.5122
+  pspl(empgrowth, nknots = 20) 4.5887
+  
+   Non-Parametric Spatio-Temporal Trend 
+                EDF
+  f(sp1, sp2) 0.339
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.4403  Sigma: 2.6015
+  AIC:       336.245 BIC:  379.561> summary(geospsarar)
+  Call:
+  pspatfit(formula = form2, data = unemp_it_short, listw = lwsp_it, 
+      type = "sarar", method = "Chebyshev")
+  
+   Parametric Terms 
+            Estimate Std. Error t value Pr(>|t|)  
+  partrate -0.214412   0.098548 -2.1757  0.03233 *
+  agri     -0.036356   0.091450 -0.3975  0.69195  
+  cons     -0.057288   0.265147 -0.2161  0.82945  
+  rho      -0.057144   0.303965 -0.1880  0.85133  
+  delta     0.200987   0.322574  0.6231  0.53489  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.5386
+  pspl(empgrowth, nknots = 20) 4.5678
+  
+   Non-Parametric Spatio-Temporal Trend 
+                EDF
+  f(sp1, sp2) 0.323
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 17.4295  Sigma: 2.62512
+  AIC:       338.681 BIC:  384.603> 
+  > 
+  > #####################################
+  > #### Fitted Values and Residuals
+  > plot(geospsar$fitted.values, unemp_it_short$unrate, 
+  +      xlab = 'fitted values', ylab = "unrate",
+  +      type = "p", cex.lab = 1.3, cex.main = 1.3,
+  +      main = "Spatial semiparametric model with spatial lag",
+  +      sub = "Spatial trend fixed for period 2019")
+  >      
+  > plot(geospsar$fitted.values, geospsar$residuals, 
+  +      xlab = 'fitted values', ylab = "residuals",
+  +      type = "p", cex.lab = 1.3, cex.main=1.3,
+  +      main = "Spatial semiparametric model with spatial lag",
+  +      sub = "Spatial trend fixed for period 2019")
+  > 
+  >              
+  >  
+  > #### Non-Parametric Total, Direct and Indirect impacts 
+  > #### for spatial sar. First with smooth, second without smoothing
+  > imp_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
+  Press [enter] to continue
+  Press [enter] to continue
+  > imp_nparvar_no_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = FALSE)
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > 
+  > ###### Parametric Total, Direct and Indirect impacts
+  > list_varpar <- c("partrate","agri","cons")
+  > imp_parvar <- impactspar(geospsar, listw = lwsp_it)
+  > summary(imp_parvar)
+  
+   Total Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate -0.244358   0.106109 -2.302894   0.0213
+  agri     -0.040290   0.102451 -0.393266   0.6941
+  cons     -0.038473   0.282041 -0.136408   0.8915
+  
+   Direct Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate -0.215218   0.089783 -2.397091   0.0165
+  agri     -0.035848   0.090166 -0.397581   0.6909
+  cons     -0.033940   0.244861 -0.138608   0.8898
+  
+   Indirect Parametric Impacts (sar) 
+             Estimate Std. Error    t value Pr(>|t|)
+  partrate -0.0291403  0.0329343 -0.8848013   0.3763
+  agri     -0.0044423  0.0167063 -0.2659050   0.7903
+  cons     -0.0045331  0.0511272 -0.0886632   0.9293
+  > 
+  > 
+  > ############################################
+  > ### Spatial Durbin Model with GAM
+  > ### Apart from defining type = "sdm" we have to include a
+  > ### formula in parameter Durbin for the Durbin part
+  > 
+  > ### lwsp_it is a list of neighbours as used un spdep and spatialreg packages
+  > ### In this package you can either input a neighbours matrix or list
+  > ### We do thi to show that both work
+  > 
+  > Wsp_it <- as.matrix(Wsp_it)
+  > lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
+  > 
+  > formgam <- unrate ~ partrate + agri + cons +
+  + pspl(serv, nknots = 15) + 
+  + pspl(empgrowth, nknots = 20)
+  > 
+  > durbinform <- ~ partrate + agri + pspl(serv, nknots = 13) 
+  > 
+  > gamsdm <- pspatfit(formgam, 
+  + data = unemp_it_short,
+  + listw = lwsp_it, 
+  + method = "eigen",
+  + type = "sdm",
+  + Durbin = durbinform)
+  
+  Fitting Model...
+  
+   Time to fit the model:  0.98 seconds 
+  > 
+  > summary(gamsdm)
+  Call:
+  pspatfit(formula = formgam, data = unemp_it_short, listw = lwsp_it, 
+      type = "sdm", method = "eigen", Durbin = durbinform)
+  
+   Parametric Terms 
+                 Estimate Std. Error t value  Pr(>|t|)    
+  (Intercept)   36.165050   5.244253  6.8961 8.373e-10 ***
+  partrate      -0.284415   0.101837 -2.7928  0.006434 ** 
+  agri           0.060319   0.093508  0.6451  0.520595    
+  cons          -0.130197   0.268735 -0.4845  0.629271    
+  Wlag.partrate -0.260316   0.109532 -2.3766  0.019683 *  
+  Wlag.agri      0.162424   0.112968  1.4378  0.154112    
+  rho            0.249128   0.103369  2.4101  0.018073 *  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.1061
+  pspl(empgrowth, nknots = 20) 4.3157
+  pspl(Wlag.serv, nknots = 13) 2.2592
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.6809  Sigma: 2.81496
+  AIC:       350.932 BIC:  394.882> 
+  > 
+  > ############################################
+  > ### Spatial Durbin Error Model with GAM
+  > 
+  > formgam <- unrate ~ partrate + agri + cons +
+  + pspl(serv, nknots = 15) + 
+  + pspl(empgrowth, nknots = 20)
+  > 
+  > durbinform <- ~ partrate + agri + pspl(serv, nknots = 13) 
+  > 
+  > gamsdem <- pspatfit(formgam, 
+  + data = unemp_it_short,
+  + listw = lwsp_it, 
+  + method = "eigen",
+  + type = "sdem",
+  + Durbin = durbinform)
+  
+  Fitting Model...
+  
+   Time to fit the model:  1.08 seconds 
+  > 
+  > summary(gamsdem)
+  Call:
+  pspatfit(formula = formgam, data = unemp_it_short, listw = lwsp_it, 
+      type = "sdem", method = "eigen", Durbin = durbinform)
+  
+   Parametric Terms 
+                 Estimate Std. Error t value  Pr(>|t|)    
+  (Intercept)   47.719799   6.050490  7.8869 8.609e-12 ***
+  partrate      -0.355819   0.098978 -3.5949 0.0005386 ***
+  agri           0.104634   0.093790  1.1156 0.2676724    
+  cons          -0.152379   0.294449 -0.5175 0.6061239    
+  Wlag.partrate -0.367289   0.108170 -3.3955 0.0010359 ** 
+  Wlag.agri      0.188819   0.116107  1.6263 0.1075292    
+  delta          0.200039   0.120023  1.6667 0.0991927 .  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.0505
+  pspl(empgrowth, nknots = 20) 4.2797
+  pspl(Wlag.serv, nknots = 13) 2.0655
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.3957  Sigma: 2.89474
+  AIC:       353.593 BIC:  396.791> 
+  > ########################################
+  > ### SLX model with GAM
+  > ### The same as the sdem model but type = "slx"
+  > 
+  > gamslx <- pspatfit(formgam, 
+  + data = unemp_it_short,
+  + listw = lwsp_it, 
+  + method = "eigen",
+  + type = "slx",
+  + Durbin = durbinform)
+  
+  Fitting Model...
+  
+   Time to fit the model:  0.04 seconds 
+  > 
+  > summary(gamslx)
+  Call:
+  pspatfit(formula = formgam, data = unemp_it_short, listw = lwsp_it, 
+      type = "slx", method = "eigen", Durbin = durbinform)
+  
+   Parametric Terms 
+                 Estimate Std. Error t value  Pr(>|t|)    
+  (Intercept)   47.692714   5.439097  8.7685 1.296e-13 ***
+  partrate      -0.310225   0.105206 -2.9487 0.0040927 ** 
+  agri           0.104842   0.096792  1.0832 0.2817163    
+  cons          -0.201661   0.278708 -0.7236 0.4712710    
+  Wlag.partrate -0.406055   0.113419 -3.5801 0.0005636 ***
+  Wlag.agri      0.182800   0.116992  1.5625 0.1217861    
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      2.7900
+  pspl(empgrowth, nknots = 20) 4.4391
+  pspl(Wlag.serv, nknots = 13) 2.3965
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 15.6256  Sigma: 2.86404
+  AIC:       354.925 BIC:  396.095> 
+  > 
+  > ###############################################
+  > ### Spatial semiparametric ANOVA model without spatial lag
+  > ### Parameters nest_sp1 and nest_sp2 indicate the following:
+  > ### the first value of the vector is the divisor of the first value of
+  > ### nknots un pspt(). Gives the nknots for the first-order interaction.
+  > ### The second value is the divisor for the second value in nknots giving
+  > ### the the nknots per each second-order interaction. They have to be divisible
+  > ### Interaction term f12 with nested basis
+  > form3 <- unrate ~ partrate + agri + cons +
+  +                   pspl(serv, nknots = 15) + 
+  +                   pspl(empgrowth, nknots = 20) +
+  +                   pspt(long, lat, nknots = c(20,20), 
+  +                        psanova = TRUE,
+  +                        nest_sp1 = c(1, 2), 
+  +                        nest_sp2 = c(1, 2))
+  >                        
+  > ##### Spatial trend fixed for period 1996-2019.
+  > ##### In plot_sp2d() function, if data is not an .sf object, 
+  > ##### you must indicate the spatial coordinates variables
+  > geospanova <- pspatfit(form3, data = unemp_it_short)
+  
+  Fitting Model...
+  
+   Time to fit the model:  0.48 seconds 
+  > summary(geospanova)
+  Call:
+  pspatfit(formula = form3, data = unemp_it_short)
+  
+   Parametric Terms 
+             Estimate Std. Error t value  Pr(>|t|)    
+  Intercept 21.498416   4.866748  4.4174 2.891e-05 ***
+  partrate  -0.184280   0.095212 -1.9355   0.05622 .  
+  agri      -0.049238   0.090875 -0.5418   0.58934    
+  cons      -0.076208   0.252022 -0.3024   0.76309    
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.3963
+  pspl(empgrowth, nknots = 20) 4.7704
+  
+   Non-Parametric Spatio-Temporal Trend 
+        EDF
+  f1  1.193
+  f2  0.523
+  f12 0.000
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.8827  Sigma: 2.54971
+  AIC:       338.401 BIC:  382.882> ### Plot spatial trend and interaction (ANOVA)
+  > 
+  > plot_sp2d(geospanova, data = unemp_it_short, addmain = TRUE, 
+  + addint = TRUE, coordinates = unemp_it_short[, c("long", "lat")])
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > ################################
+  > ### Spatial semiparametric ANOVA model with spatial lag
+  > ### Same as the previous but include type = "sar" and parameter litsw
+  > ### Interaction term f12 with nested basis
+  > geospanova_sar <- pspatfit(form3, data = unemp_it_short, 
+  +                        listw = lwsp_it, type = "sar")
+  
+  Fitting Model...
+  
+   Time to fit the model:  3.29 seconds 
+  > summary(geospanova_sar)
+  Call:
+  pspatfit(formula = form3, data = unemp_it_short, listw = lwsp_it, 
+      type = "sar")
+  
+   Parametric Terms 
+             Estimate Std. Error t value  Pr(>|t|)    
+  Intercept 20.865453   4.881017  4.2748 4.903e-05 ***
+  partrate  -0.206926   0.093910 -2.2035   0.03022 *  
+  agri      -0.039596   0.090028 -0.4398   0.66116    
+  cons      -0.045714   0.248681 -0.1838   0.85458    
+  rho        0.111184   0.107543  1.0339   0.30408    
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      3.4248
+  pspl(empgrowth, nknots = 20) 4.6230
+  
+   Non-Parametric Spatio-Temporal Trend 
+        EDF
+  f1  0.378
+  f2  0.040
+  f12 0.000
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 16.4651  Sigma: 2.58549
+  AIC:       335.52 BIC:  378.901> 
+  > 
+  >  ###############################################
+  >  ### Spatio-temporal semiparametric ANOVA model without spatial lag
+  >  ### Interaction terms f12,f1t,f2t and f12t with nested basis
+  >  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
+  >  form4 <- unrate ~ partrate + agri + cons +
+  +                    pspl(serv, nknots = 15) + pspl(empgrowth, nknots = 20) +
+  +                    pspt(long, lat, year, nknots = c(18,18,12),
+  +                    psanova = TRUE, nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
+  +                    nest_time = c(1,2,2))
+  >  sptanova <- pspatfit(form4, data = unemp_it,
+  +                   control = list(tol = 1e-2))
+  
+  Fitting Model...
+  
+   Time to fit the model:  145.81 seconds 
+  >  summary(sptanova)
+  Call:
+  pspatfit(formula = form4, data = unemp_it, control = list(tol = 0.01))
+  
+   Parametric Terms 
+              Estimate Std. Error t value Pr(>|t|)    
+  Intercept  1.3660955  3.2323461  0.4226   0.6726    
+  partrate   0.1982638  0.0215369  9.2058   <2e-16 ***
+  agri      -0.0071172  0.0178600 -0.3985   0.6903    
+  cons      -0.0456176  0.0383831 -1.1885   0.2348    
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      16.639
+  pspl(empgrowth, nknots = 20) 15.279
+  
+   Non-Parametric Spatio-Temporal Trend 
+          EDF
+  f1   11.095
+  f2    9.807
+  ft   11.674
+  f12  45.693
+  f1t   4.330
+  f2t  22.932
+  f12t 92.747
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 241.197  Sigma: 1.49503
+  AIC:       6132.67 BIC:  7534.69>  
+  >  ####### Plot just spatial trend, 2d, (ANOVA)
+  >  plot_sp2d(sptanova, data = unemp_it, addmain = TRUE, 
+  +  addint = TRUE, coordinates = unemp_it[, c("long", "lat")])
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  >  ####### Plot spatio-temporal trend, 3d, (ANOVA)
+  > ###### Create sf object of the spatial panels 
+  >  ###### to do spatio-temporal plots of Italian provinces
+  > library(sf)
+  Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+  > pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
+  > map_it <- st_read(dsn = pathmap)
+  Reading layer `Prov2001_WGS84' from data source 
+    `C:\Users\Roman.Minguez\AppData\Local\Temp\RtmpshJflW\pspatreg.Rcheck\pspatreg\extdata\Prov2001_WGS84.shp' 
+    using driver `ESRI Shapefile'
+  Simple feature collection with 103 features and 8 fields
+  Geometry type: MULTIPOLYGON
+  Dimension:     XY
+  Bounding box:  xmin: 313279.3 ymin: 3933520 xmax: 1312016 ymax: 5220291
+  Projected CRS: WGS 84 / UTM zone 32N
+  > unemp_it_sf <- st_as_sf(dplyr::left_join(
+  +                                 unemp_it, map_it,  
+  +                         by = c("prov" = "COD_PRO")))
+  > plot_sp3d(sptanova, data = unemp_it_sf, 
+  + time_var = "year", 
+  + time_index = c(1996, 2005, 2019),
+  + addmain = TRUE, addint = FALSE)
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  Press [enter] to continue
+  > 
+  > 
+  >  ### Spatio-temporal semiparametric ANOVA model with spatial lag
+  >  sptanova_sar <- pspatfit(form4, data = unemp_it, listw = lwsp_it, type = "sar",
+  +                       control = list(tol = 1e-1))
+  
+  Fitting Model...
+  
+   Time to fit the model:  225.06 seconds 
+  >  summary(sptanova_sar)
+  Call:
+  pspatfit(formula = form4, data = unemp_it, listw = lwsp_it, type = "sar", 
+      control = list(tol = 0.1))
+  
+   Parametric Terms 
+              Estimate Std. Error t value Pr(>|t|)    
+  Intercept  1.3638229  3.2325597  0.4219  0.67314    
+  partrate   0.1982828  0.0215417  9.2046  < 2e-16 ***
+  agri      -0.0071208  0.0178635 -0.3986  0.69021    
+  cons      -0.0456764  0.0383914 -1.1898  0.23427    
+  rho       -0.0427466  0.0224174 -1.9068  0.05667 .  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      16.638
+  pspl(empgrowth, nknots = 20) 15.269
+  
+   Non-Parametric Spatio-Temporal Trend 
+          EDF
+  f1   11.096
+  f2    9.807
+  ft   11.674
+  f12  45.688
+  f1t   4.329
+  f2t  22.958
+  f12t 92.623
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 242.083  Sigma: 1.57123
+  AIC:       6130.67 BIC:  7537.85>  
+  >  
+  >  #########################################
+  >  ### Spatio-temporal semiparametric ANOVA model with spatial lag
+  >  ### and temporal autorregresive noise
+  >  sptanova_sar_ar1 <- pspatfit(form4, data = unemp_it, listw = lwsp_it, type = "sar",
+  +                           cor = "ar1", 
+  +                           control = list(tol = 1e-1))
+  
+  Fitting Model...
+  
+   Time to fit the model:  1211.75 seconds 
+  >  summary(sptanova_sar_ar1)
+  Call:
+  pspatfit(formula = form4, data = unemp_it, listw = lwsp_it, type = "sar", 
+      cor = "ar1", control = list(tol = 0.1))
+  
+   Parametric Terms 
+              Estimate Std. Error t value Pr(>|t|)    
+  Intercept  2.0946246  3.2540192  0.6437   0.5198    
+  partrate   0.2139089  0.0212320 10.0748   <2e-16 ***
+  agri      -0.0193109  0.0202763 -0.9524   0.3410    
+  cons      -0.0370029  0.0406506 -0.9103   0.3628    
+  rho        0.0021687  0.0219145  0.0990   0.9212    
+  phi        0.3320457  0.0137641 24.1240   <2e-16 ***
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+   Non-Parametric Terms 
+                                  EDF
+  pspl(serv, nknots = 15)      15.558
+  pspl(empgrowth, nknots = 20) 12.517
+  
+   Non-Parametric Spatio-Temporal Trend 
+          EDF
+  f1   10.857
+  f2   10.036
+  ft   12.080
+  f12  42.432
+  f1t   3.465
+  f2t  26.233
+  f12t 50.269
+  
+   Goodness-of-Fit 
+  
+  EDF Total: 195.448  Sigma: 1.57946
+  AIC:       5528.37 BIC:  6664.47>  ###### Non-Parametric Total, Direct and Indirect Impacts
+  >  list_varnopar <- c("serv", "empgrowth")
+  >  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
+  Press [enter] to continue
+  Press [enter] to continue
+  >  ###### Parametric Total, Direct and Indirect Effects
+  >  list_varpar <- c("partrate","agri","cons")
+  >  imp_parvar <- impactspar(sptanova_sar_ar1, listw = lwsp_it)
+  >  summary(imp_parvar)
+  
+   Total Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate  0.214663   0.022454  9.560054   0.0000
+  agri     -0.020282   0.020269 -1.000622   0.3170
+  cons     -0.035202   0.039258 -0.896694   0.3699
+  
+   Direct Parametric Impacts (sar) 
+            Estimate Std. Error   t value Pr(>|t|)
+  partrate  0.214062   0.021556  9.930618   0.0000
+  agri     -0.020232   0.020209 -1.001162   0.3167
+  cons     -0.035108   0.039092 -0.898079   0.3691
+  
+   Indirect Parametric Impacts (sar) 
+              Estimate  Std. Error     t value Pr(>|t|)
+  partrate  6.0032e-04  4.7181e-03  1.2724e-01   0.8988
+  agri     -4.9678e-05  6.3689e-04 -7.8001e-02   0.9378
+  cons     -9.4342e-05  1.2086e-03 -7.8058e-02   0.9378
+  >  
+  >  
+  >  ###############################################
+  >  ### Spatio-temporal semiparametric ANOVA model without spatial lag
+  >  ### Now we repeat previous spatio-temporal model but restricting some interactions
+  >  ### Interaction terms f12,f1t and f12t with nested basis
+  >  ### Interaction term f2t restricted to 0
+  >   form5 <- unrate ~ partrate + agri + cons +
+  +                   pspl(serv, nknots=15) + pspl(empgrowth, nknots=20) +
+  +                   pspt(long, lat, year, nknots = c(18,18,6), psanova = TRUE,
+  +                   nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
+  +                   nest_time = c(1,2,2), f2t_int = FALSE)
+  >  sptanova2 <- pspatfit(form5, data = unemp_it_short,
+  +                   control = list(tol=1e-2))
+  Error in seq.default(xl - bdeg * dx, xr + bdeg * dx, by = dx) : 
+    'from' must be a finite number
+  Calls: pspatfit ... model.frame.default -> eval -> eval -> pspt -> pspl -> seq -> seq.default
+  Execution halted
+
+> checking for code/documentation mismatches ... WARNING
+  Data codoc mismatches from documentation object 'unemp_it':
+  Variables in data frame 'unemp_it'
+    Code: South agri area cons empgrowth ind lat ln_popdens long name
+          partrate popdens prov reg serv unrate year
+    Docs: South agri area cons empgrowth ind lat long partrate popdens
+          prov reg serv unrate year
+
+> checking installed package size ... NOTE
+    installed size is 14.3Mb
+    sub-directories of 1Mb or more:
+      extdata  13.8Mb
+
+> checking Rd files ... NOTE
+  prepare_Rd: pspatreg-package.Rd:21-23: Dropping empty section '1. Testing for spatial effects'
+  prepare_Rd: pspatreg-package.Rd:25-27: Dropping empty section '2. Estimation of the Spatial SUR models'
+  prepare_Rd: pspatreg-package.Rd:29-31: Dropping empty section '3. Diagnostic tests'
+  prepare_Rd: pspatreg-package.Rd:33-35: Dropping empty section '4. Marginal effects'
+  prepare_Rd: pspatreg-package.Rd:37-39: Dropping empty section '5. Additional functionalities'
+
+1 error x | 1 warning x | 2 notes x

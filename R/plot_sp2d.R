@@ -5,22 +5,26 @@
 #' @description  DESCRIBE THE FUNCTION...
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data either sf or dataframe with the data. 
-#' @param coordinates coordinates matrix if *data* is not an sf object.
+#' @param coordinates coordinates matrix if \code{data} is not an sf object.
 #' @param npoints number of points to use in the interpolation.
+#' @param cexpoints size of the points. Default = 0.25 
 #' @param addcontour Logical value to add contour lines.
 #' @param addpoints Logical value to add spatial points to the graphics.
 #' @param addmain Add f1_main and f2_main plots in psanova case.
 #' @param addint Add f12_int in psanova case.
+#' 
 #' @return plots and maps of the spatial trends                                  
 #' @author Roman Minguez \email{roman.minguez@@uclm.es}
 #' @examples
 #' 
 #' library(pspatreg)
+#' library(sf)
 #' library(spdep)
+#' library(dbscan)
 #' 
 #' ######## getting and preparing the data
-#' ames <- AmesHousing::make_ames()# Raw Ames Housing Data
-#' ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
+#' ames <- AmesHousing::make_ames() # Raw Ames Housing Data
+#' ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 #' ames_sf$Longitude <- ames$Longitude
 #' ames_sf$Latitude <- ames$Latitude
 #' ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)

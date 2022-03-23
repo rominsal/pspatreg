@@ -26,6 +26,9 @@ impact functions. Default 0.95.}
 \item{viewplot}{Default \code{TRUE} to plot impacts. If FALSE use \code{\link{plot_impactsnopar}} to plot impacts}
 
 \item{smooth}{Default \code{TRUE}. Whether to smooth fitted impacts or not.}
+
+\item{span}{span for the kernel of the smoothing (see \code{\link{loess}} 
+for details). Default c(0.1, 0.1, 0.2).}
 }
 \value{
 A list including
@@ -67,7 +70,7 @@ form1 <- unrate ~ partrate + agri + cons +
                  pspl(empgrowth,nknots=20) 
  gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
  summary(gamsar)
- ###### Non-Parametric Total, Direct and Indirect impects
+ ###### Non-Parametric Total, Direct and Indirect impacts
  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)
  
 ######################   PSAR-ANOVA with spatial trend
@@ -79,7 +82,7 @@ form2 <- unrate ~ partrate + agri + cons +
 geospanova_sar <- pspatfit(form2, data=unemp_it, listw = Wsp_it, type = "sar", 
                            control=list(tol = 1e-1))
 summary(geospanova_sar)
- ###### Non-Parametric Total, Direct and Indirect impects
+ ###### Non-Parametric Total, Direct and Indirect impacts
  imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
  
 ######################   PSAR-ANOVA with spatio-temporal trend and 
@@ -93,7 +96,7 @@ sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, listw = Wsp_it,
                               type = "sar", cor = "ar1",
                               control=list(tol=1e-1))
 summary(sptanova_sar_ar1)
- ###### Non-Parametric Total, Direct and Indirect impects
+ ###### Non-Parametric Total, Direct and Indirect impacts
  imp_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
 
 }

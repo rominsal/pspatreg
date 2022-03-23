@@ -18,7 +18,13 @@
 #' @param smooth logical value to choose smoothing of the effects function
 #'               prior to plot. Default TRUE.
 #' @param span span for the kernel of the smoothing (see \code{\link{loess}} 
-#'             for details). Default c(0.1,0.1,0.2). 
+#'             for details). Default c(0.1, 0.1, 0.2). 
+#' @param dynamic Logical value to set a dynamic model.
+#'   Dynamic models include a temporal lag of the dependent
+#'   variable in the right-hand side of the equation.
+#'   Default = \code{FALSE}.
+#' @param nt  Number of temporal periods. It is needed
+#'   for dynamic models.  
 #'
 #' @return plot of the direct, indirect and total impacts  function for each non-parametric
 #'   covariate included in the object returned from \code{\link{impactsnopar}}.
@@ -49,21 +55,23 @@
 #'  ###################### Examples using a panel data of rate of
 #'  ###################### unemployment for 103 Italian provinces in period 1996-2014.
 #' library(pspatreg)
-#' data(unemp_it); Wsp <- Wsp_it
+#' data(unemp_it)
+#' Wsp <- Wsp_it
 #' 
 #' ######################  No Spatial Trend: PSAR including a spatial 
 #' ######################  lag of the dependent variable
 #' form1 <- unrate ~ partrate + agri + cons +
-#'                  pspl(serv,nknots=15) +
-#'                  pspl(empgrowth,nknots=20) 
+#'                  pspl(serv, nknots = 15) +
+#'                  pspl(empgrowth, nknots = 20) 
 #'  gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
 #'  summary(gamsar)
-#'  ###### Non-Parametric Total, Direct and Indirect impects
-#'  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)
-#'  
+#'  ###### Non-Parametric Total, Direct and Indirect impacts
+#'  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)  
 #'  ##### This returns the same result but using plot_impactsnopar()
 #'  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = FALSE)
-#'  plot_impactsnopar(imp_nparvar, data = unemp_it, smooth = TRUE)
+#'  plot_impactsnopar(imp_nparvar, data = unemp_it, 
+#'                    smooth = TRUE, dynamic = FALSE,
+#'                    nt = 24)
 #'  
 #' ######################   PSAR-ANOVA with spatial trend
 #' form2 <- unrate ~ partrate + agri + cons +
@@ -79,7 +87,7 @@
 #'                            type = "sar", 
 #'                            control = list(tol = 1e-1))
 #' summary(geospanova_sar)
-#'  ###### Non-Parametric Total, Direct and Indirect impects
+#'  ###### Non-Parametric Total, Direct and Indirect impacts
 #'  imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = FALSE)
 #'  plot_impactsnopar(imp_nparvar2, data = unemp_it, smooth = TRUE)
 #'  
@@ -98,7 +106,7 @@
 #'                              cor = "ar1",
 #'                              control = list(tol = 1e-1))
 #' summary(sptanova_sar_ar1)
-#'  ###### Non-Parametric Total, Direct and Indirect impects
+#'  ###### Non-Parametric Total, Direct and Indirect impacts
 #'  imp_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
 #'  plot_impactsnopar(imp_nparvar3, data = unemp_it, smooth = TRUE)
 #'
@@ -106,10 +114,10 @@
 #'
 #' @export
 plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE, 
-                           span = c(0.1, 0.1, 0.2), 
+                           span = c(0.1, 0.1, 0.2),
                            dynamic = FALSE, 
                            nt = NULL) {
- if (inherits(data, "sf")) 
+  if (inherits(data, "sf")) 
     data <- st_drop_geometry(data)
  nfull <- nrow(data)
  if (dynamic) {
@@ -210,6 +218,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
         lowind_i <- lowind_i_smooth
       }       
    }
+    par(mar = c(1, 1, 1, 1))
     par(mfrow = c(3, 1))
     plot(var[ord], tot_i[ord], 
          type = "l",
@@ -221,7 +230,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1, 
          lwd = 2, 
          cex.main = 1.0, 
-         main = "Total Effects")
+         main = "Total Impacts")
     lines(var[ord], uptot_i[ord], 
           xlab = "", ylab = "", 
           type = "l", col = 2, lty = 2, lwd = 1.5)
@@ -243,7 +252,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1, 
          lwd = 2,
          cex.main = 1.0, 
-         main = "Direct Effects")
+         main = "Direct Impacts")
     lines(var[ord], updir_i[ord], 
           xlab = "", 
           ylab = "", 
@@ -269,7 +278,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1,
          lwd = 2,
          cex.main = 1.0, 
-         main = "Indirect Effects")
+         main = "Indirect Impacts")
     lines(var[ord], upind_i[ord], 
           xlab = "",
           ylab = "",

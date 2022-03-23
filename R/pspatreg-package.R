@@ -5,155 +5,156 @@
 #' @title Spatio-Temporal Semiparametric Regression Models with Spatial Lags.
 #'
 #' @description
-#'  CHANGE THE DESCRIPTION OF THE PACKAGE...\pkg{spsur} offers the user a collection of functions to estimate Spatial 
-#'   Seemingly Unrelated Regression (SUR) models by maximum likelihood or 
-#'   three-stage least squares, using spatial instrumental variables. 
-#'   Moreover, \pkg{spsur} obtains a collection of misspecification
-#'   tests for omitted or wrongly specified spatial structure. The user will 
-#'   find spatial models more popular in applied research such as the SUR-SLX, 
-#'   SUR-SLM, SUR-SEM, SUR-SDM, SUR-SDEM SUR-SARAR and SUR-GNM 
-#'   plus the spatially independent SUR, or SUR-SIM.
+#'  \pkg{pspatreg} offers the user a collection of functions to estimate 
+#'  and make inference of geoadditive spatial or spatio-temporal 
+#'  semiparametric regression models of type \emph{ps-sim}, \emph{ps-sar}, 
+#'  \emph{ps-sem}, \emph{ps-sarar}, \emph{ps-sdm}, \emph{ps-sdem} or 
+#'  \emph{ps-slx}. These type of specifications are very
+#'   general and they can include parametric and non-parametric 
+#'   covariates, spatial or spatio-temporal non-parametric
+#'   trends and spatial lags of the dependent and independent variables and/or 
+#'   the noise of the model. The non-parametric terms (either trends or 
+#'   covariates) are modeled using P-Splines. The non-parametric 
+#'   trend can be decomposed in an ANOVA way including main and 
+#'   interactions effects of 2nd and 3rd order. The estimation 
+#'   method can be restricted maximum likelihood (REML)
+#'   or maximum likelihood (ML).
 #'
 #' @details
-#'  CHANGE THE DETAILS...
-#'  Some functionalities that have been included in \pkg{sptpsar} package are:
+#'  Some functionalities that have been included in \pkg{pspatreg} package are:
 #'
-#' @section 1. Testing for spatial effects:
-#'   The function \code{\link{lmtestspsur}} provides a collection of 
-#'   Lagrange Multipliers, LM, for testing different forms of spatial 
-#'   dependence in SUR models. They are extended versions of
-#'   the well-known LM tests for omitted lags of the explained variable in 
-#'   the right hand side of the equation, LM-SLM, the LM tests for omitted 
-#'   spatial errors, LM-SEM, the join test of omitted spatial lags and 
-#'   spatial errors, LM-SARAR, and the robust version of the firt
-#'   two Lagrange Multipliers, LM*-SLM  and LM*-SEM. \cr
-#'   These tests can be applied to models always with a SUR nature. Roughly, 
-#'   we may distinguish two situations:
-#'   \itemize{
-#'    \item Datasets with a single equation \emph{G=1}, for different time 
-#'    periods \emph{Tm>1} and a certain number of spatial units in the 
-#'    cross-sectional dimension, \emph{N}. This is what we call
-#'    \emph{spatial panel datasets}. In this case, the SUR structure appears 
-#'    in form of (intra) serial dependence in the errors of each spatial unit.
-#'    \item Datasets with a several equations \emph{G>1}, different time 
-#'    periods \emph{Tm>1} and a certain number of spatial units, \emph{N}. 
-#'    The SUR structure appears, as usual, because the errors
-#'    of the spatial units for different equations are contemporaneously 
-#'    correlated.
+#' @section 1. Estimation of the geoadditive spatial or spatio-temporal semiparametric regression model:
+#'  \pkg{pspatreg} allows the estimation of geoadditive spatial or spatio-temporal 
+#'  semiparametric regression models which could include:
+#'  \itemize{
+#'    \item An spatial or spatio-temporal trend, that is,
+#'      a geoadditive model either for cross-section data or
+#'      for panel data. This trend can be decomposed in main 
+#'      and interaction functions in an ANOVA way. The spatial 
+#'      (or spatio-temporal) trend gather the potential spatial 
+#'      heterogeneity of the data. 
+#'    \item Parametric covariates as usual in regression models.
+#'    \item Non-parametric covariates in which the functional relationship 
+#'      is estimated from the data. Both the trends and non-parametric
+#'      covariates are modelled using P-splines.
+#'    \item Spatial dependence adding spatial lags of the dependent
+#'      and independent variables as usual in spatial econometric models.
+#'      These models gather the potential spatial spillovers.
 #'   }
-#'
-#'
-#' @section 2. Estimation of the Spatial SUR models:
-#'   As indicated above, \pkg{spsur} package may work with a list of 
-#'   different spatial specifications.
-#'   They are the following:
-#'   \itemize{
-#'     \item \emph{SUR-SIM}: SUR model without spatial effects
-#'            \deqn{ y_{tg} =  X_{tg} \beta_{g} + \epsilon_{tg} }
-#'     \item \emph{SUR-SLX}: SUR model with spatial lags of the regresors
-#'            \deqn{ y_{tg} = X_{tg} \beta_{g} + 
-#'                            WX_{tg} \theta_{g} + \epsilon_{tg} }
-#'     \item \emph{SUR-SLM}: SUR model with spatial lags of the endogenous
-#'            \deqn{y_{tg} = \rho_{g} Wy_{tg} + X_{tg} \beta_{g} + 
-#'                           \epsilon_{tg} }
-#'      \item \emph{SUR-SEM}: SUR model with spatial errors
-#'             \deqn{ y_{tg} = X_{tg} \beta_{g} + u_{tg} }
-#'             \deqn{ u_{tg} = \lambda_{g} Wu_{tg} + \epsilon_{tg} }
-#'      \item \emph{SUR-SDM}: SUR model with spatial lags of the endogenous 
-#'            variable and of the regressors or Spatial Durbin model
-#'            \deqn{ y_{tg} = \rho_{g} Wy_{tg} + X_{tg} \beta_{g} + 
-#'                             WX_{tg} \theta_{g} + \epsilon_{tg} }
-#'      \item \emph{SUR-SDEM}: SUR model with spatial errors and spatial 
-#'            lags of the endogenous variable and of the regressors
-#'             \deqn{ y_{tg} = X_{tg} \beta_{g} + WX_{tg} \theta_{g} + u_{tg} }
-#'              \deqn{ u_{tg} = \lambda_{g} W u_{tg} + \epsilon_{tg} }
-#'      \item \emph{SUR-SARAR}: Spatial lag model with spatial errors
-#'             \deqn{ y_{tg} = \rho_{g} Wy_{tg} + X_{tg} \beta_{g} + 
-#'                              u_{tg} }
-#'              \deqn{ u_{tg} = \lambda_{g} W u_{tg} + \epsilon_{tg} }
-#'      \item \emph{SUR-GNM}: SUR model with spatial lags of the explained 
-#'        variables, regressors and spatial errors
-#'       \deqn{ y_{tg} = \rho_{g} Wy_{tg} + X_{tg} \beta_{g} + 
-#'                         WX_{tg} \theta_{g} + u_{tg} }
-#'       \deqn{ u_{tg} = \lambda_{g} W u_{tg} + \epsilon_{tg} }
-#'    }
-#'          where \eqn{y_{tg}}, \eqn{u_{tg}} and \eqn{\epsilon_{tg}} are 
-#'          \emph{(Nx1)} vectors; \eqn{X_{tg}} is a matrix of regressors of 
-#'          order \emph{(NxP)}; \eqn{\rho_{g}} and \eqn{\lambda_{g}} are 
-#'          parameters of spatial dependence and \emph{W} is the
-#'          \emph{(NxN)} spatial weighting matrix.
-#'
-#'         These specifications can be estimated by maximum-likelihood 
-#'         methods, using the function \code{\link{spsurml}}. Moroever, 
-#'         the models that include spatial lags of the explained
-#'         variables in the right hand side of the equations, and the 
-#'         errors are assumed to be spatially incorrelated (namely, the 
-#'         SUR-SLM and the SUR-SDM), can also be estimated using
-#'         three-stage least-squares, \code{\link{spsur3sls}}, 
-#'         using spatial instrumental variable to correct for the problem of
-#'         endogeneity present in these cases.
-#'
-#' @section 3. Diagnostic tests:
-#'   Testing for inconsistencies or misspecifications in the results of an 
-#'   estimated (SUR) model should be a primary task for the user. \pkg{spsur} 
-#'   focuses, especifically, on two main question such as omitted
-#'   or wrongly specified spatial structure and the existence of structural 
-#'   breaks or relevant restrictions
-#'   in the parameters of the model. In this sense, the user will find:
-#'
-#'  \enumerate{
-#'    \item \emph{Marginal tests} \cr
-#'      The Marginal Multipliers test for omitted or wrongly specified spatial 
-#'      structure in the equations. They are routinely part of the output of 
-#'      the maximum-likelihood estimation, shown by \code{\link{spsurml}}. 
-#'      In particular, the LM(\eqn{\rho}|\eqn{\lambda}) tests for omitted 
-#'      spatial lags in a model specified with spatial errors (SUR-SEM; 
-#'      SUR-SDEM). The LM(\eqn{\lambda}|\eqn{\rho}) tests for omitted 
-#'      spatial error in a model specified with spatial lags
-#'      of the explained variable (SUR-SLM; SUR-SDM).
-#'
-#'    \item \emph{Coefficients stability tests} \cr
-#'      \pkg{spsur} includes two functions designed to test for linear 
-#'       restrictions on the \eqn{\beta} coefficients of the models and on 
-#'       the spatial coefficients (\eqn{\rho}s and \eqn{\lambda}s terms). 
-#'       The function for the first case is \code{\link{wald_betas}} and
-#'      \code{\link{wald_deltas}} that of the second case. The user has 
-#'      ample flexibility to define different forms of linear restrictions, 
-#'      so that it is possible, for example,
-#'      to test for their time constancy to identify structural breaks.
-#'  }
-#'
-#' @section 4. Marginal effects:
-#'   In recent years, since the publication of LeSage and Pace (2009), 
-#'   it has become popular in
-#'   spatial econometrics to evaluate the multiplier effects that a change in 
-#'   the value of a regressor, in a point in the space, has on the explained 
-#'   variable. \pkg{spsur} includes a function, \code{\link{impacts}}, 
-#'   that computes these effects. Specifically, \code{\link{impacts}} obtains
-#'   the average, over the \emph{N} spatial units and \emph{Tm} time periods, 
-#'   of such a change on the contemporaneous value of the explained variable 
-#'   located in the same point as the modified variable. This is the 
-#'   so-called \emph{Average Direct effect}. The \emph{Average Indirect 
-#'   effect} measure the proportion of the impact that spills-over to other 
-#'   locations. The sum of the two effects is the \emph{Average Total effect}. 
-#'   \cr
-#'   These estimates are complemented with a measure of statistical 
-#'   significance, following the randomization approach suggested by 
-#'   LeSage and Pace (2009).
-#'
-#' @section 5. Additional functionalities:
-#'   A particular feature of \pkg{spsur} is that the package allows to 
-#'   obtain simulated datasets with a SUR nature and the spatial structure 
-#'   decided by the user. This is the purpose of the function 
-#'   \code{\link{dgp_spsur}}. The function can be inserted into a more 
-#'   general code to solve, for example, Monte Carlo studies related to 
-#'   these type of models or, simply, to show some of the stylized 
-#'   characteristics of a SUR model with certain spatial structure.
+#'   Once specified, the whole model can be estimated using either 
+#'   restricted maximum-likelihood (REML) or maximum likelihood (ML).
+#'   The spatial econometric specifications allowed in \pkg{pspatreg}
+#'   are the following ones:  
+#'  \itemize{
+#'    \item \emph{ps-sim}: geoadditive semiparametric model without 
+#'      spatial effects (in addition to the spatial or spatio-temporal trend, 
+#'      if it is included).
+#'      \deqn{ y = f(s_1,s_2,\tau_{t}) y 
+#'                 + X \beta +
+#'                 + \sum_{i=1}^k g(z_i) 
+#'                 + \epsilon }
+#'      where:
+#'      \itemize{
+#'        \item \eqn{f(s_1,s_2,\tau_t)} is a smooth spatio-temporal trend
+#'          of the spatial coordinates \eqn{s1,s_2} and of the temporal
+#'          coordinates \eqn{\tau_t}.
+#'        \item \eqn{X} is a matrix including values of parametric covariates.
+#'        \item \eqn{g(z_i)} are non-parametric smooth functions of the
+#'          covariates \eqn{z_i}.
+#'        \item \eqn{\epsilon ~ N(0,R)} where \eqn{ R = \sigma^2 I_T} if errors
+#'          are uncorrelated or it follows an AR(1) temporal autoregressive 
+#'          structure for serially correlated errors.
+#'      }   
+#'    \item \emph{ps-slx}: geoadditive semiparametric model with 
+#'      spatial lags of the regresors (either parametric or non-parametric):
+#'      \deqn{ y =  f(s_1,s_2,\tau_{t}) 
+#'                + X \beta 
+#'                + (W_{N} \otimes I_T) X \theta  
+#'                + \sum_{i =1}^k g(z_i) 
+#'                + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
+#'                + \epsilon }
+#'      where:
+#'      \itemize{
+#'        \item \eqn{W_N} is the spatial weights matrix.
+#'        \item \eqn{I_T} is an identity matrix of order 
+#'          \eqn{T} (\emph{T = 1} for pure spatial data).
+#'      }
+#'    \item \emph{ps-sar}: geoadditive semiparametric model with spatial 
+#'      lag of the dependent variable
+#'      \deqn{ y = (\rho*W_{N} \otimes I_T) y 
+#'                + f(s_1,s_2,\tau_{t}) 
+#'                + X \beta 
+#'                + \sum_{i =1}^k g(z_i) 
+#'                + \epsilon }
+#'              
+#'    \item \emph{ps-sem}: geoadditive semiparametric model 
+#'      with a spatial lag of the noise of the model
+#'      \deqn{ y = f(s_1,s_2,\tau_{t}) 
+#'                 + X \beta 
+#'                 + \sum_{i =1}^k g(z_i) 
+#'                 + u }
+#'      \deqn{ u = (\delta*W_{N} \otimes I_T) u 
+#'                  + \epsilon }
+#'    \item \emph{ps-sdm}: geoadditive semiparametric model 
+#'      with spatial lags of the endogenous variable and 
+#'      of the regressors (spatial durbin model)
+#'      \deqn{ y = (\rho*W_{N} \otimes I_T) y 
+#'                + f(s_1,s_2,\tau_{t}) 
+#'                + X \beta 
+#'                + (W_{N} \otimes I_T) X \theta  
+#'                + \sum_{i = 1}^k g(z_i) 
+#'                + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
+#'                + \epsilon }
+#'    \item \emph{ps-sdem}: geoadditive semiparametric model
+#'      with spatial errors and spatial lags of 
+#'      the endogenous variable and of the regressors
+#'      \deqn{ y = f(s_1,s_2,\tau_{t}) 
+#'                 + X \beta 
+#'                 + (W_{N} \otimes I_T) X \theta  
+#'                 + \sum_{i = 1}^k g(z_i) 
+#'                 + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
+#'                 + u }
+#'      \deqn{ u = (\delta*W_{N} \otimes I_T) u 
+#'                  + \epsilon }
+#'    \item \emph{ps-sarar}: geoadditive semiparametric model 
+#'      with a spatial lag for: both dependent variable 
+#'      and errors
+#'      \deqn{ y = (\rho*W_{N} \otimes I_T) y 
+#'                + f(s_1,s_2,\tau_{t}) 
+#'                + X \beta 
+#'                + (W_{N} \otimes I_T) X \theta  
+#'                + \sum_{i = 1}^k g(z_i) 
+#'                + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
+#'                + u }
+#'      \deqn{ u = (\delta*W_{N} \otimes I_T) u 
+#'                  + \epsilon }
+#'    } 
+#' @section 2. Plot of the spatial and spatio-temporal trends:
+#' 
+#' @section 3. Impacts spillovers:
+#' 
+#' @section 4. Additional methods:
 #'
 #' @section Datasets:
-#'   INCLUDE DATASET OF UNEMPLOYMENT IN ITALY AND EXPLAIN...
-#'   \pkg{spsur} includes three different datasets: spc, NCOVR and spain.covid. These 
-#'   sets are used to 
+#'   \pkg{pspatreg} includes a spatio-temporal panel database including 
+#'   observations of unemployment,  economic variables and spatial coordinates
+#'   of 103 Italian provinces between 1996-2019 (yearly data). 
+#'   This database is provided as R data (Rmd format) and can be 
+#'   load using the command \code{data(unemp_it, package = "pspatreg")}.
+#'   The database also includes a \emph{W} spatial neighborhood matrix
+#'   of the Italian provinces (based on queen criterium). Furthermore, 
+#'   the shapefile is also included and can be used to plot spatial and 
+#'   spatio-temporal trends estimated for each province. A lot of examples 
+#'   are included in the help of the funcions (see, for example, 
+#'   \code{?pspatfit}).
+#'   For the spatial pure case (2d) the examples use the database Ames 
+#'   included in \pkg{AmesHousing}. 
+#'   See the help of \code{?AmesHousing::make_ames} for the variables included 
+#'   in this database. Examples of hedonic models including geoadditive 
+#'   spatial econometric regressions are included in the examples 
+#'   of \pkg{pspatreg} package. 
+#'   CONTINUAR AQUÍ... 
+#'   
 #'   illustrate the capabilities of different functions. Briefly, their 
 #'   main characteristics are the following \cr
 #'   \itemize{
@@ -172,50 +173,72 @@
 #'      \url{https://www.mitma.gob.es/ministerio/covid-19/evolucion-movilidad-big-data}
 #'    }
 #'
-#' @references
-#'   ### CHANGE THE REFERENCES...
-#'   \itemize{
-#'     \item Breusch T, Pagan A (1980). The Lagrange multiplier test
-#'       and its applications to model specification in econometrics.
-#'       \emph{Review of Economic Studies} 47: 239-254.
+#' @references 
+#'   \itemize{ 
+#'     \item Basile, R.; Durban, M.; Minguez, R.; Montero, J. M.; and 
+#'     Mur, J. (2014). Modeling regional economic dynamics: Spatial
+#'     dependence, spatial heterogeneity and nonlinearities. 
+#'     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
+#'     <doi: 10.1016/j.jedc.2014.06.011>
 #'
-#'      \item LeSage, J., and Pace, R. K. (2009). \emph{Introduction to
-#'        spatial econometrics}. Chapman and Hall/CRC.
+#'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
+#'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
+#'     
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+#'     \emph{Regression. Models, Methods and Applications}.
+#'      Springer.
+#'     
+#'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
+#'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
+#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
 #'
-#'      \item Lopez, F.A., Mur, J., and Angulo, A. (2014). Spatial model
-#'        selection strategies in a SUR framework. The case of regional
-#'        productivity in EU. \emph{Annals of Regional Science},
-#'        53(1), 197-220.
-#'        <doi:10.1007/s00168-014-0624-2>
+#'   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
+#'     two-dimensional smoothing with P-spline ANOVA mixed models 
+#'     and nested bases. \emph{Computational Statistics & Data Analysis}, 
+#'     (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
 #'
-#'      \item Lopez, F.A., Martinez-Ortiz, P.J., and Cegarra-Navarro, J.G.
-#'        (2017). Spatial spillovers in public expenditure on a municipal
-#'        level in Spain. \emph{Annals of Regional Science}, 58(1), 39-65.
-#'        <doi:10.1007/s00168-016-0780-7>
+#'   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
+#'     Spatial Econometrics}. CRC Press, Boca Raton.
 #'
-#'      \item Mur, J., Lopez, F., and Herrera, M. (2010). Testing for spatial
-#'        effects in seemingly unrelated regressions. \emph{Spatial Economic
-#'        Analysis}, 5(4), 399-440.
-#'        <doi:10.1080/17421772.2010.516443>
-#'   }
+#'   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+#'     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+#'     (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+#'
+#'   \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
+#'     with nonparametric spatial trends: A P-Spline approach. 
+#'     \emph{Estadistica Espanola}, (54:177), 89-111.
+#'
+#'   \item Rodriguez-Alvarez, M. X.; Kneib, T.; Durban, M.; Lee, D.J.
+#'     and Eilers, P. (2015). Fast smoothing parameter separation 
+#'     in multidimensional generalized P-splines: the SAP algorithm.
+#'     \emph{Statistics and Computing} 25 (5), 941-957. 
+#'     <doi: 10.1007/s11222-014-9464-2>
+#' }
 #'
 #' @author
 #'   \tabular{ll}{
 #'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#'     Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr
+#'     Maria Durban \tab \email{mdurban@@est-econ.uc3m.es} \cr
+#'     Gonzalo Espana-Heredia \tab \email{gehllanza@@gmail.com} \cr
 #'   }
 #'
+#' @importFrom AmesHousing make_ames
 #' @importFrom akima interp
 #' @importFrom dplyr left_join
 #' @importFrom fields image.plot
 #' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim
 #' @importFrom graphics image contour matplot title points
+#' @importFrom graphics par abline lines
+#' @importFrom grDevices heat.colors 
 #' @importFrom MASS ginv mvrnorm
 #' @importFrom Matrix bandSparse bdiag crossprod determinant  
 #' @importFrom Matrix diag Diagonal kronecker Matrix 
 #' @importFrom Matrix rowSums solve t tcrossprod 
-#' @importFrom methods as
+#' @importFrom methods as 
 #' @importFrom minqa bobyqa
 #' @importFrom numDeriv hessian
+#' @importFrom plm plm pdata.frame Within
 #' @importFrom sf st_as_sf st_drop_geometry st_coordinates 
 #' @importFrom sf st_geometry_type 
 #' @importFrom spatialreg get.ZeroPolicyOption create_WX   
@@ -224,7 +247,9 @@
 #' @importFrom spdep listw2mat mat2listw nb2listw    
 #' @importFrom spdep tri2nb graph2nb soi.graph is.symmetric.nb  
 #' @importFrom splines spline.des  
-#' @importFrom stats pchisq pnorm pt rnorm 
+#' @importFrom stats var sd loess predict vcov 
+#' @importFrom stats model.response as.formula .getXlevels
+#' @importFrom stats pchisq pnorm pt rnorm qnorm
 #' @importFrom stats coefficients fitted residuals printCoefmat
 #' @importFrom stats model.frame model.matrix terms
 #' @importFrom stats anova coef formula logLik AIC BIC
