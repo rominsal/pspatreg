@@ -7,7 +7,7 @@
 \method{summary}{pspatreg}(object, ...)
 }
 \arguments{
-\item{object}{\emph{pspatreg} object fitted using \code{\link{pspatreg}} function.}
+\item{object}{\emph{pspatreg} object fitted using \code{\link[pspatreg]{pspatfit}} function.}
 
 \item{...}{further arguments passed to or from other methods.}
 }

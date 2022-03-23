@@ -101,7 +101,10 @@ update_tau2d <- function (la, lg, G,
     Ginv_dnopar <- matrix(0, 
                           nrow = sum(np[2:length(np)]),
                           ncol = env$nvarnopar)
-    if (!is.null(env$taunopar_init)) {
+    if (!is.null(env$taunopar_init)) 
+        taunopar_init <- env$taunopar_init
+    else taunopar_init <- NULL    
+    if (!is.null(taunopar_init)) {
       taunopar <- taunopar_init  
     } else  taunopar <- rep(1, env$nvarnopar) 
     edfnopar <- rep(0, env$nvarnopar)
@@ -302,20 +305,23 @@ update_tau3d <- function (la, lg, G, dZtPZ_wide,
         } else taunopar_fixed <- env$taunopar_fixed
         Ginv_dnopar <- matrix(0, nrow = sum(np[2:length(np)]),
                                  ncol = env$nvarnopar)
-        if (!is.null(env$taunopar_init)) {
-          taunopar <- env$taunopar_init  
+        if (!is.null(env$taunopar_init)) 
+          taunopar_init <- env$taunopar_init
+        else taunopar_init <- NULL
+        if (!is.null(taunopar_init)) {
+          taunopar <- taunopar_init  
           } else taunopar <- rep(1, env$nvarnopar)
         #if (!taunopar_fixed) { taunopar <- rep(1,nvarnopar) } else {
         #    taunopar <- taunopar_init  }
         edfnopar <- rep(0, env$nvarnopar)
         for (k in 1:env$nvarnopar) {
-            if(!env$psanova){
-                Ginv_dnopar[(sum(np[2:(8+k-1)])+1):sum(np[2:(8+k)]), k] <-
-                    (1/la[length(la) - (env$nvarnopar+2) + k])* 
+            if (!env$psanova) {
+                Ginv_dnopar[(sum(np[2:(8 + k - 1)]) + 1):sum(np[2:(8 + k)]), k] <-
+                    (1/la[length(la) - (env$nvarnopar + 2) + k]) * 
                   env$dnoparlist[[k]]
             } else {
-                Ginv_dnopar[(sum(np[2:(20+k-1)])+1):sum(np[2:(20+k)]), k] <-
-                    (1/la[length(la)-(env$nvarnopar+2) + k])*
+                Ginv_dnopar[(sum(np[2:(20 + k - 1)]) + 1):sum(np[2:(20 + k)]), k] <-
+                    (1/la[length(la) - (env$nvarnopar + 2) + k]) *
                   env$dnoparlist[[k]]
             }
             edfnopar[k] <- sum(dZtPZ_wide*(Ginv_dnopar[,k]*G^2))

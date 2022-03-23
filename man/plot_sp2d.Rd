@@ -21,9 +21,11 @@ plot_sp2d(
 
 \item{data}{either sf or dataframe with the data.}
 
-\item{coordinates}{coordinates matrix if *data* is not an sf object.}
+\item{coordinates}{coordinates matrix if \code{data} is not an sf object.}
 
 \item{npoints}{number of points to use in the interpolation.}
+
+\item{cexpoints}{size of the points. Default = 0.25}
 
 \item{addcontour}{Logical value to add contour lines.}
 
@@ -42,11 +44,13 @@ DESCRIBE THE FUNCTION...
 \examples{
 
 library(pspatreg)
+library(sf)
 library(spdep)
+library(dbscan)
 
 ######## getting and preparing the data
-ames <- AmesHousing::make_ames()# Raw Ames Housing Data
-ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
+ames <- AmesHousing::make_ames() # Raw Ames Housing Data
+ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
 ames_sf$Latitude <- ames$Latitude
 ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)

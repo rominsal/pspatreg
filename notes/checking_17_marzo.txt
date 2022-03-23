@@ -1,0 +1,232 @@
+> devtools::check(pkg = ".", cran = TRUE, run_dont_test = TRUE, vignettes = FALSE, document = TRUE)
+i Updating pspatreg documentation
+i Loading pspatreg
+Writing NAMESPACE
+Writing NAMESPACE
+Writing fit_terms.Rd
+Writing plot_sp3d.Rd
+-- Building ----------------------------- pspatreg --
+Setting env vars:
+* CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
+* CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
+* CXX11FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX14FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX17FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX20FLAGS: -Wall -pedantic -fdiagnostics-color=always
+-----------------------------------------------------
+√  checking for file 'C:\Users\Roman.Minguez\OneDrive - Universidad de Castilla-La Mancha\packages\pspatreg/DESCRIPTION' (787ms)
+-  preparing 'pspatreg': (5.8s)
+√  checking DESCRIPTION meta-information ... 
+-  checking for LF line-endings in source and make files and shell scripts (1.6s)
+-  checking for empty or unneeded directories
+-  building 'pspatreg_1.0.tar.gz'
+   
+-- Checking ----------------------------- pspatreg --
+Setting env vars:
+* _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
+* _R_CHECK_CRAN_INCOMING_       : FALSE
+* _R_CHECK_FORCE_SUGGESTS_      : FALSE
+* NOT_CRAN                      : true
+-- R CMD check --------------------------------------
+-  using log directory 'C:/Users/Roman.Minguez/AppData/Local/Temp/RtmpQj0hSf/pspatreg.Rcheck' (651ms)
+-  using R version 4.1.2 (2021-11-01)
+-  using platform: x86_64-w64-mingw32 (64-bit)
+-  using session charset: ISO8859-1
+-  using options '--run-donttest --no-manual --ignore-vignettes --as-cran' (1.5s)
+√  checking for file 'pspatreg/DESCRIPTION'
+-  checking extension type ... Package
+-  this is package 'pspatreg' version '1.0'
+-  package encoding: UTF-8
+√  checking package namespace information ... 
+√  checking package dependencies (11s)
+√  checking if this is a source package ... 
+√  checking if there is a namespace
+√  checking for executable files (8.9s)
+√  checking for hidden files and directories ... 
+√  checking for portable file names ... 
+√  checking whether package 'pspatreg' can be installed (1m 1.9s)
+N  checking installed package size ... 
+     installed size is 14.3Mb
+     sub-directories of 1Mb or more:
+       extdata  13.8Mb
+√  checking package directory (1s)
+N  checking for future file timestamps ... 
+   unable to verify current time
+√  checking DESCRIPTION meta-information (736ms)
+√  checking top-level files ...
+√  checking for left-over files ...
+√  checking index information
+√  checking package subdirectories ... 
+√  checking R files for non-ASCII characters ... 
+√  checking R files for syntax errors ... 
+√  checking whether the package can be loaded (8.9s)
+√  checking whether the package can be loaded with stated dependencies (8.8s)
+√  checking whether the package can be unloaded cleanly (8.8s)
+√  checking whether the namespace can be loaded with stated dependencies (8.4s)
+√  checking whether the namespace can be unloaded cleanly (9s)
+√  checking loading without being on the library search path (9.1s)
+√  checking dependencies in R code (9.6s)
+√  checking S3 generic/method consistency (11.4s)
+√  checking replacement functions (9.2s)
+√  checking foreign function calls (9.8s)
+√  checking R code for possible problems (53.7s)
+N  checking Rd files (942ms)
+   prepare_Rd: pspatreg-package.Rd:21-23: Dropping empty section '1. Testing for spatial effects'
+   prepare_Rd: pspatreg-package.Rd:25-27: Dropping empty section '2. Estimation of the Spatial SUR models'
+   prepare_Rd: pspatreg-package.Rd:29-31: Dropping empty section '3. Diagnostic tests'
+   prepare_Rd: pspatreg-package.Rd:33-35: Dropping empty section '4. Marginal effects'
+   prepare_Rd: pspatreg-package.Rd:37-39: Dropping empty section '5. Additional functionalities'
+√  checking Rd metadata ... 
+N  checking Rd line widths (473ms)
+   Rd file 'pspatfit.Rd':
+     \examples lines wider than 100 characters:
+        ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
+   
+   These lines will be truncated in the PDF manual.
+√  checking Rd cross-references (441ms)
+√  checking for missing documentation entries (9.4s)
+W  checking for code/documentation mismatches (19s)
+   Data codoc mismatches from documentation object 'unemp_it':
+   Variables in data frame 'unemp_it'
+     Code: South agri area cons empgrowth ind lat ln_popdens long name
+           partrate popdens prov reg serv unrate year
+     Docs: South agri area cons empgrowth ind lat long partrate popdens
+           prov reg serv unrate year
+   
+√  checking Rd \usage sections (21.8s)
+√  checking Rd contents (480ms)
+√  checking for unstated dependencies in examples (877ms)
+√  checking contents of 'data' directory ... 
+√  checking data for non-ASCII characters (465ms)
+√  checking LazyData
+√  checking data for ASCII and uncompressed saves (466ms)
+-  checking files in 'vignettes' ... SKIPPED
+E  checking examples (2h 46m 25s)
+   Running examples in 'pspatreg-Ex.R' failed
+   The error most likely occurred in:
+   
+   > base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+   > ### Name: plot_sp2d
+   > ### Title: Plot and mapping spatial trends
+   > ### Aliases: plot_sp2d
+   > 
+   > ### ** Examples
+   > 
+   > 
+   > library(pspatreg)
+   > library(spdep)
+   Loading required package: sp
+   Loading required package: spData
+   To access larger datasets in this package, install the spDataLarge
+   package with: `install.packages('spDataLarge',
+   repos='https://nowosad.github.io/drat/', type='source')`
+   Loading required package: sf
+   Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+   > 
+   > ######## getting and preparing the data
+   > ames <- AmesHousing::make_ames()# Raw Ames Housing Data
+   > ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
+   > ames_sf$Longitude <- ames$Longitude
+   > ames_sf$Latitude <- ames$Latitude
+   > ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
+   > ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
+   > ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
+   > ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
+   > 
+   > ########### Constructing the spatial weights matrix
+   > ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
+   > coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
+   > ID <- row.names(as(ames_sf1, "sf"))
+   > col_tri_nb <- tri2nb(coord_sf1)
+   > soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+   +                             coord_sf1), 
+   +                    row.names = ID)
+   Error in soi.graph(col_tri_nb, coord_sf1) : dbscan required
+   Calls: graph2nb -> soi.graph
+   Execution halted
+√  checking for non-standard things in the check directory
+√  checking for detritus in the temp directory
+   
+   See
+     'C:/Users/Roman.Minguez/AppData/Local/Temp/RtmpQj0hSf/pspatreg.Rcheck/00check.log'
+   for details.
+   
+   
+-- R CMD check results ------------ pspatreg 1.0 ----
+Duration: 2h 51m 21.6s
+
+> checking examples ... ERROR
+  Running examples in 'pspatreg-Ex.R' failed
+  The error most likely occurred in:
+  
+  > base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+  > ### Name: plot_sp2d
+  > ### Title: Plot and mapping spatial trends
+  > ### Aliases: plot_sp2d
+  > 
+  > ### ** Examples
+  > 
+  > 
+  > library(pspatreg)
+  > library(spdep)
+  Loading required package: sp
+  Loading required package: spData
+  To access larger datasets in this package, install the spDataLarge
+  package with: `install.packages('spDataLarge',
+  repos='https://nowosad.github.io/drat/', type='source')`
+  Loading required package: sf
+  Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+  > 
+  > ######## getting and preparing the data
+  > ames <- AmesHousing::make_ames()# Raw Ames Housing Data
+  > ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
+  > ames_sf$Longitude <- ames$Longitude
+  > ames_sf$Latitude <- ames$Latitude
+  > ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
+  > ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
+  > ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
+  > ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
+  > 
+  > ########### Constructing the spatial weights matrix
+  > ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
+  > coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
+  > ID <- row.names(as(ames_sf1, "sf"))
+  > col_tri_nb <- tri2nb(coord_sf1)
+  > soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+  +                             coord_sf1), 
+  +                    row.names = ID)
+  Error in soi.graph(col_tri_nb, coord_sf1) : dbscan required
+  Calls: graph2nb -> soi.graph
+  Execution halted
+
+> checking for code/documentation mismatches ... WARNING
+  Data codoc mismatches from documentation object 'unemp_it':
+  Variables in data frame 'unemp_it'
+    Code: South agri area cons empgrowth ind lat ln_popdens long name
+          partrate popdens prov reg serv unrate year
+    Docs: South agri area cons empgrowth ind lat long partrate popdens
+          prov reg serv unrate year
+
+> checking installed package size ... NOTE
+    installed size is 14.3Mb
+    sub-directories of 1Mb or more:
+      extdata  13.8Mb
+
+> checking for future file timestamps ... NOTE
+  unable to verify current time
+
+> checking Rd files ... NOTE
+  prepare_Rd: pspatreg-package.Rd:21-23: Dropping empty section '1. Testing for spatial effects'
+  prepare_Rd: pspatreg-package.Rd:25-27: Dropping empty section '2. Estimation of the Spatial SUR models'
+  prepare_Rd: pspatreg-package.Rd:29-31: Dropping empty section '3. Diagnostic tests'
+  prepare_Rd: pspatreg-package.Rd:33-35: Dropping empty section '4. Marginal effects'
+  prepare_Rd: pspatreg-package.Rd:37-39: Dropping empty section '5. Additional functionalities'
+
+> checking Rd line widths ... NOTE
+  Rd file 'pspatfit.Rd':
+    \examples lines wider than 100 characters:
+       ###### Non-Parametric Total, Direct and Indirect impacts for spatial sar. First with smooth, second without
+  
+  These lines will be truncated in the PDF manual.
+
+1 error x | 1 warning x | 4 notes x

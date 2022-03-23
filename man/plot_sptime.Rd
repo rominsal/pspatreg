@@ -24,24 +24,17 @@ DESCRIBE THE FUNCTION...
 \examples{
 
 library(pspatreg)
-data("unemp_it_new_polyg_sf")
+library(spdep)
 data("unemp_it")
-unemp_it <- unemp_it_new_polyg_sf
-rm(unemp_it_new_polyg_sf) # Only to be consistent with the names...
-colnames(Wsp_it) <- rownames(Wsp_it)
 Wsp_it <- as.matrix(Wsp_it)
-Using spdep we transform the spatial weights matrix in a list of neighbours object:
- 
- lwsp_it <- spdep::mat2listw(Wsp_it, 
-                             row.names = rownames(Wsp_it))
-
-summary(lwsp_it)
+lwsp_it <- mat2listw(Wsp_it, 
+                     row.names = rownames(Wsp_it))
 
 ###### FORMULA OF THE MODEL
 form3d_psanova_restr <- unrate ~ partrate + agri + cons +
-pspl(serv, nknots = 15) + 
- pspl(empgrowth, nknots = 20) +
- pspt(long, lat, year, 
+   pspl(serv, nknots = 15) + 
+   pspl(empgrowth, nknots = 20) +
+   pspt(long, lat, year, 
       nknots = c(18,18,8),
       psanova = TRUE, 
       nest_sp1 = c(1, 2, 3), 
@@ -50,17 +43,19 @@ pspl(serv, nknots = 15) +
       f1t = FALSE, f2t = FALSE)
 
 ####### FIT the model
-sp3danovasarar1 <- pspatfit(form3d_psanova_restr, 
-data = unemp_it, 
-listw = lwsp_it, 
-method = "Chebyshev", 
-type = "sar",
-cor = "ar1") 
+sp3danovasar <- pspatfit(form3d_psanova_restr, 
+                         data = unemp_it, 
+                         listw = lwsp_it, 
+                         method = "Chebyshev", 
+                         type = "sar") 
+
+summary(sp3danovasar)
 
 ######## PLOT OF TEMPORAL TREND FOR EACH PROVINCE 
-plot_sptime(sp3danovasarar1, data = unemp_it, 
-time_var = "year", 
-reg_var = "prov")
+plot_sptime(sp3danovasar, 
+            data = unemp_it, 
+            time_var = "year", 
+            reg_var = "prov")
 
 }
 \author{

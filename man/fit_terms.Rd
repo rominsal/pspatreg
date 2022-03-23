@@ -106,7 +106,8 @@ summary(sptanova)
 ###### Create sf object of the spatial panels 
 ###### to do spatio-temporal plots of provinces
 library(sf)
-map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
+map_it <- st_read(dsn = pathmap)
 unemp_it_sf <- st_as_sf(dplyr::left_join(
                                 unemp_it, map_it,  
                         by = c("prov" = "COD_PRO")))

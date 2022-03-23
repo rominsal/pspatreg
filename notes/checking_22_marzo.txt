@@ -1,0 +1,210 @@
+> devtools::check(pkg = ".", cran = TRUE, run_dont_test = TRUE, vignettes = TRUE, document = TRUE)
+i Updating pspatreg documentation
+i Loading pspatreg
+Warning: [C:\Users\Roman.Minguez\OneDrive - Universidad de Castilla-La Mancha\packages\pspatreg\R\pspatfit.R:562] @examples mismatched braces or quotes
+Writing NAMESPACE
+Writing NAMESPACE
+-- Building ----------------------------- pspatreg --
+Setting env vars:
+* CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
+* CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
+* CXX11FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX14FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX17FLAGS: -Wall -pedantic -fdiagnostics-color=always
+* CXX20FLAGS: -Wall -pedantic -fdiagnostics-color=always
+-----------------------------------------------------
+√  checking for file 'C:\Users\Roman.Minguez\OneDrive - Universidad de Castilla-La Mancha\packages\pspatreg/DESCRIPTION' (457ms)
+-  preparing 'pspatreg': (1.8s)
+√  checking DESCRIPTION meta-information ... 
+-  installing the package to build vignettes
+√  creating vignettes (1m 50.5s)
+-  checking for LF line-endings in source and make files and shell scripts (818ms)
+-  checking for empty or unneeded directories
+-  building 'pspatreg_1.0.tar.gz'
+   
+-- Checking ----------------------------- pspatreg --
+Setting env vars:
+* _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
+* _R_CHECK_CRAN_INCOMING_       : FALSE
+* _R_CHECK_FORCE_SUGGESTS_      : FALSE
+* NOT_CRAN                      : true
+-- R CMD check --------------------------------------
+-  using log directory 'C:/Users/Roman.Minguez/AppData/Local/Temp/Rtmpkz0dK1/pspatreg.Rcheck' (361ms)
+-  using R version 4.1.2 (2021-11-01)
+-  using platform: x86_64-w64-mingw32 (64-bit)
+-  using session charset: ISO8859-1
+-  using options '--run-donttest --no-manual --as-cran' (753ms)
+√  checking for file 'pspatreg/DESCRIPTION' ...
+-  checking extension type ... Package
+-  this is package 'pspatreg' version '1.0'
+-  package encoding: UTF-8
+√  checking package namespace information ...
+√  checking package dependencies (24.9s)
+√  checking if this is a source package ... 
+√  checking if there is a namespace
+√  checking for executable files (2.1s)
+√  checking for hidden files and directories ... 
+√  checking for portable file names ... 
+√  checking whether package 'pspatreg' can be installed (45.2s)
+N  checking installed package size (553ms)
+     installed size is 14.5Mb
+     sub-directories of 1Mb or more:
+       extdata  13.8Mb
+√  checking package directory (725ms)
+√  checking for future file timestamps ... 
+√  checking 'build' directory ...
+√  checking DESCRIPTION meta-information (595ms)
+N  checking top-level files ...
+   Non-standard file/directory found at top level:
+     'checking_21_marzo.txt'
+√  checking for left-over files ... 
+√  checking index information (339ms)
+√  checking package subdirectories (365ms)
+√  checking R files for non-ASCII characters ... 
+√  checking R files for syntax errors ... 
+√  checking whether the package can be loaded (6.8s)
+√  checking whether the package can be loaded with stated dependencies (6.9s)
+√  checking whether the package can be unloaded cleanly (6.8s)
+√  checking whether the namespace can be loaded with stated dependencies (6.4s)
+√  checking whether the namespace can be unloaded cleanly (9.9s)
+√  checking loading without being on the library search path (8.6s)
+√  checking dependencies in R code (8.7s)
+√  checking S3 generic/method consistency (9.3s)
+√  checking replacement functions (7.9s)
+√  checking foreign function calls (9.1s)
+√  checking R code for possible problems (41.1s)
+N  checking Rd files (574ms)
+   prepare_Rd: pspatreg-package.Rd:21-23: Dropping empty section '1. Testing for spatial effects'
+   prepare_Rd: pspatreg-package.Rd:25-27: Dropping empty section '2. Estimation of the Spatial SUR models'
+   prepare_Rd: pspatreg-package.Rd:29-31: Dropping empty section '3. Diagnostic tests'
+   prepare_Rd: pspatreg-package.Rd:33-35: Dropping empty section '4. Marginal effects'
+   prepare_Rd: pspatreg-package.Rd:37-39: Dropping empty section '5. Additional functionalities'
+√  checking Rd metadata ... 
+√  checking Rd line widths ... 
+√  checking Rd cross-references (554ms)
+√  checking for missing documentation entries (6.3s)
+W  checking for code/documentation mismatches (18.2s)
+   Data codoc mismatches from documentation object 'unemp_it':
+   Variables in data frame 'unemp_it'
+     Code: South agri area cons empgrowth ind lat ln_popdens long name
+           partrate popdens prov reg serv unrate year
+     Docs: South agri area cons empgrowth ind lat long partrate popdens
+           prov reg serv unrate year
+   
+√  checking Rd \usage sections (23.8s)
+√  checking Rd contents (351ms)
+√  checking for unstated dependencies in examples (556ms)
+√  checking contents of 'data' directory ... 
+√  checking data for non-ASCII characters ... 
+√  checking LazyData
+√  checking data for ASCII and uncompressed saves (345ms)
+√  checking installed files from 'inst/doc' ... 
+√  checking files in 'vignettes' ... 
+√  checking examples (1h 9m 12.3s)
+   Examples with CPU (user + system) or elapsed time > 5s
+                       user system elapsed
+   plot_impactsnopar 878.67  32.67  912.84
+   impactsnopar      837.98  33.47  873.56
+   impactsparam      825.52  29.34  855.00
+   pspt              685.19  14.50  700.00
+   plot_sptime       249.95   8.16  258.35
+   plot_sp2d         223.14  16.66  240.03
+   fit_terms         176.28  12.75  189.27
+   plot_sp3d          66.28   2.01   68.41
+   plot_terms         34.20   6.67   40.94
+√  checking for unstated dependencies in vignettes (638ms)
+√  checking package vignettes in 'inst/doc' ... 
+W  checking re-building of vignette outputs (1m 1.9s)
+   Error(s) in re-building vignettes:
+   --- re-building 'A_pspatregPackage.Rmd' using rmarkdown
+   Could not fetch https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cwidetilde%7B%20f%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29%3Df_1%28s_%7B1i%7D%29%2Bf_2%28s_%7B2i%7D%29%2Bf_%7B%5Ctau%7D%28%5Ctau_t%29%2B%20%5C%5C%20f_%7B1%2C2%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%29%2Bf_%7B1%2C%5Ctau%7D%28s_%7B1i%7D%2C%5Ctau_t%29%2Bf_%7B2%2C%5Ctau%7D%2B%28s_%7B2i%7D%2C%5Ctau_t%29%2Bf_%7B1%2C2%2C%5Ctau%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29
+   HttpExceptionRequest Request {
+     host                 = "latex.codecogs.com"
+     port                 = 443
+     secure               = True
+     requestHeaders       = []
+     path                 = "/png.image"
+     queryString          = "?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cwidetilde%7B%20f%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29%3Df_1%28s_%7B1i%7D%29%2Bf_2%28s_%7B2i%7D%29%2Bf_%7B%5Ctau%7D%28%5Ctau_t%29%2B%20%5C%5C%20f_%7B1%2C2%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%29%2Bf_%7B1%2C%5Ctau%7D%28s_%7B1i%7D%2C%5Ctau_t%29%2Bf_%7B2%2C%5Ctau%7D%2B%28s_%7B2i%7D%2C%5Ctau_t%29%2Bf_%7B1%2C2%2C%5Ctau%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29"
+     method               = "GET"
+     proxy                = Nothing
+     rawBody              = False
+     redirectCount        = 10
+     responseTimeout      = ResponseTimeoutDefault
+     requestVersion       = HTTP/1.1
+   }
+    (InternalException (HostCannotConnect "latex.codecogs.com" [Network.Socket.connect: <socket: 1048>: failed (Connection refused (WSAECONNREFUSED))]))
+   Error: processing vignette 'A_pspatregPackage.Rmd' failed with diagnostics:
+   pandoc document conversion failed with error 61
+   --- failed re-building 'A_pspatregPackage.Rmd'
+   
+   SUMMARY: processing the following file failed:
+     'A_pspatregPackage.Rmd'
+   
+   Error: Vignette re-building failed.
+   Ejecución interrumpida
+   
+√  checking for non-standard things in the check directory
+√  checking for detritus in the temp directory
+   
+   See
+     'C:/Users/Roman.Minguez/AppData/Local/Temp/Rtmpkz0dK1/pspatreg.Rcheck/00check.log'
+   for details.
+   
+   
+-- R CMD check results ------------ pspatreg 1.0 ----
+Duration: 1h 14m 30.9s
+
+> checking for code/documentation mismatches ... WARNING
+  Data codoc mismatches from documentation object 'unemp_it':
+  Variables in data frame 'unemp_it'
+    Code: South agri area cons empgrowth ind lat ln_popdens long name
+          partrate popdens prov reg serv unrate year
+    Docs: South agri area cons empgrowth ind lat long partrate popdens
+          prov reg serv unrate year
+
+> checking re-building of vignette outputs ... WARNING
+  Error(s) in re-building vignettes:
+  --- re-building 'A_pspatregPackage.Rmd' using rmarkdown
+  Could not fetch https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cwidetilde%7B%20f%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29%3Df_1%28s_%7B1i%7D%29%2Bf_2%28s_%7B2i%7D%29%2Bf_%7B%5Ctau%7D%28%5Ctau_t%29%2B%20%5C%5C%20f_%7B1%2C2%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%29%2Bf_%7B1%2C%5Ctau%7D%28s_%7B1i%7D%2C%5Ctau_t%29%2Bf_%7B2%2C%5Ctau%7D%2B%28s_%7B2i%7D%2C%5Ctau_t%29%2Bf_%7B1%2C2%2C%5Ctau%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29
+  HttpExceptionRequest Request {
+    host                 = "latex.codecogs.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/png.image"
+    queryString          = "?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cwidetilde%7B%20f%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29%3Df_1%28s_%7B1i%7D%29%2Bf_2%28s_%7B2i%7D%29%2Bf_%7B%5Ctau%7D%28%5Ctau_t%29%2B%20%5C%5C%20f_%7B1%2C2%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%29%2Bf_%7B1%2C%5Ctau%7D%28s_%7B1i%7D%2C%5Ctau_t%29%2Bf_%7B2%2C%5Ctau%7D%2B%28s_%7B2i%7D%2C%5Ctau_t%29%2Bf_%7B1%2C2%2C%5Ctau%7D%28s_%7B1i%7D%2Cs_%7B2i%7D%2C%5Ctau_t%29"
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+  }
+   (InternalException (HostCannotConnect "latex.codecogs.com" [Network.Socket.connect: <socket: 1048>: failed (Connection refused (WSAECONNREFUSED))]))
+  Error: processing vignette 'A_pspatregPackage.Rmd' failed with diagnostics:
+  pandoc document conversion failed with error 61
+  --- failed re-building 'A_pspatregPackage.Rmd'
+  
+  SUMMARY: processing the following file failed:
+    'A_pspatregPackage.Rmd'
+  
+  Error: Vignette re-building failed.
+  Ejecución interrumpida
+
+> checking installed package size ... NOTE
+    installed size is 14.5Mb
+    sub-directories of 1Mb or more:
+      extdata  13.8Mb
+
+> checking top-level files ... NOTE
+  Non-standard file/directory found at top level:
+    'checking_21_marzo.txt'
+
+> checking Rd files ... NOTE
+  prepare_Rd: pspatreg-package.Rd:21-23: Dropping empty section '1. Testing for spatial effects'
+  prepare_Rd: pspatreg-package.Rd:25-27: Dropping empty section '2. Estimation of the Spatial SUR models'
+  prepare_Rd: pspatreg-package.Rd:29-31: Dropping empty section '3. Diagnostic tests'
+  prepare_Rd: pspatreg-package.Rd:33-35: Dropping empty section '4. Marginal effects'
+  prepare_Rd: pspatreg-package.Rd:37-39: Dropping empty section '5. Additional functionalities'
+
+0 errors √ | 2 warnings x | 3 notes x

@@ -7,12 +7,9 @@
 #' @param data sf object. 
 #' @param time_var name of the temporal variable in data.
 #' @param time_index vector of time points to plot. 
-#' @param coordinates coordinates matrix if *data* is not an sf object.
-#' @param npoints number of points to use in the interpolation.
-#' @param addcontour Logical value to add contour lines.
-#' @param addpoints Logical value to add spatial points to the graphics.
 #' @param addmain Add f1_main and f2_main plots in psanova case.
 #' @param addint Add f12_int in psanova case.
+#' 
 #' @return plots and maps of the spatial trends                                  
 #' @author Roman Minguez \email{roman.minguez@@uclm.es}
 #' @examples
@@ -23,7 +20,8 @@
 #' lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
 #' ###### Create sf object of the spatial panels 
 #' ###### to do spatio-temporal plots of Italian provinces
-#' map_it <- st_read(dsn = "data/Prov2001_WGS84.shp")
+#' pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
+#' map_it <- st_read(dsn = pathmap)
 #' unemp_it_sf <- st_as_sf(dplyr::left_join(
 #'                                 unemp_it, map_it,  
 #'                         by = c("prov" = "COD_PRO")))

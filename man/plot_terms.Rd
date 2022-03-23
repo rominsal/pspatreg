@@ -23,7 +23,15 @@ plot_terms(
 term. Default 0.95.}
 
 \item{listw}{used to compute spatial lags for Durbin specifications. 
-Default *NULL*}
+Default =  \code{NULL}}
+
+\item{dynamic}{Logical value to set a dynamic model.
+Dynamic models include a temporal lag of the dependent
+variable in the right-hand side of the equation.
+Default = \code{FALSE}.}
+
+\item{nt}{Number of temporal periods. It is needed
+for dynamic models.}
 }
 \value{
 list with the plots of the terms for each non-parametric 

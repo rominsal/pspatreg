@@ -15,7 +15,7 @@
 #'        with a first-order autorregressive in the noise.
 #'  }
 #'
-#' @param object \emph{pspatreg} object fitted using \code{\link{pspatreg}} function.
+#' @param object \emph{pspatreg} object fitted using \code{\link[pspatreg]{pspatfit}} function.
 #' @param ... further arguments passed to or from other methods.
 #'
 #' @return An object of class \emph{summary.pspatreg}
