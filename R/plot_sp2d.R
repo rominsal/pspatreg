@@ -221,31 +221,51 @@ plot_sp2d <- function(object, data,
       }
      }
   } else { # NO_POINT
+    data$sp2dtrend <- sp2dfitl$fitted_terms[, "spttrend"]
+    data$sp2dtrend <- data$sp2dtrend - 
+                        mean(data$sp2dtrend)
+    df <- data[ ,"sp2dtrend"]
+    min_i <- min(df$sp2dtrend)
+    max_i <- max(df$sp2dtrend)
     if (!(object$psanova)) {
-      data$sp2dtrend <- sp2dfitl$fitted_terms
-      df <- data[, c("sp2dtrend")]
-      plot(df, main = "Spatial Trend")
-    } else {
-      data$sp2dtrend <- sp2dfitl$fitted_terms[, "spttrend"]
-      df <- data[, c("sp2dtrend")]
-      plot(df, main = "Spatial Trend")
+      plot(df, main = "Spatial Trend (centered)")
+    } else { # object$psanova == TRUE
+      data$f1_main <- sp2dfitl$fitted_terms[, "f1_main"]
+      data$f2_main <- sp2dfitl$fitted_terms[, "f2_main"]
+      data$f12_int <- sp2dfitl$fitted_terms[, "f12_int"]
+      data$intercept <- sp2dfitl$fitted_terms[, "Intercept"]
+      # Recompute min_i and max_i
+      if (addmain) {
+        min_i <- min(c(min_i, data$f1_main, 
+                       data$f2_main))
+        max_i <- max(c(max_i, data$f1_main, 
+                       data$f2_main))
+      } 
+      if (addint) {
+        min_i <- min(c(min_i, data$f12_int))
+        max_i <- max(c(max_i, data$f12_int))
+      }
+      range_i <- c(min_i - 0.01, max_i + 0.01)
+      breaks_i <- seq(min_i - 0.01, max_i + 0.01, 
+                      by = diff(range(range_i))/5)
+      plot(df, breaks = breaks_i,
+           main = "Spatial Trend (centered)")
       if (addmain) {
         readline(prompt="Press [enter] to continue")
-        data$f1_main <- sp2dfitl$fitted_terms[, "f1_main"]
         df <- data[, c("f1_main")]
-        plot(df, main = "Spat. Trend: f1_main")
+        plot(df, breaks = breaks_i ,
+             main = "Spat. Trend: f1_main")
         readline(prompt="Press [enter] to continue")
-        data$f2_main <- sp2dfitl$fitted_terms[, "f2_main"]
         df <- data[, c("f2_main")]
-        plot(df, main = "Spat. Trend: f2_main")
+        plot(df, breaks = breaks_i ,
+             main = "Spat. Trend: f2_main")
       }
       if (addint) {
         readline(prompt="Press [enter] to continue")
-        data$f12_int <- sp2dfitl$fitted_terms[, "f12_int"] 
         df <- data[, c("f12_int")]
-        plot(df, main = "Spat. Trend: f12_int")
+        plot(df, breaks = breaks_i ,
+             main = "Spat. Trend: f12_int")
       }
-      df$intercept <- sp2dfitl$fitted_terms[, "Intercept"]
     }
   }
 }

@@ -570,12 +570,14 @@
 #' ###################### unemployment for 103 Italian provinces in 1996-2019.
 #' 
 #' ##########################
-#' ### GAM model with library pspatreg vs library mgcv
 #' library(pspatreg)
-#' data(unemp_it)
-#' unemp_it_short <- unemp_it[unemp_it$year >= 2015,]
-#' lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
-#' 
+#' ## load spatial panel and Wsp_it
+#' ## 103 Italian provinces. Period 1996-2019
+#' data(unemp_it, package = "pspatreg")
+#' ## Wsp_it is a matrix. Create a neighboord list 
+#' lwsp_it <- spdep::mat2listw(Wsp_it)
+#' ## short sample for spatial pure case (2d)
+#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
 #' ######################  GAM pure with pspatreg
 #' form1 <- unrate ~ partrate + agri + cons +
 #'                  pspl(serv, nknots = 15) +
@@ -587,33 +589,36 @@
 #' list_varnopar <- c("serv", "empgrowth")
 #' terms_nopar <- fit_terms(gampure, list_varnopar)
 #' ######################  Plot non-parametric terms
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(terms_nopar, unemp_it_short)
 #' 
 #' 
 #' #####################  GAM + SAR Model
-#' ### Same as gampure but we include neighbours matrix and type = "sar"
-#' ### Control argument trace = TRUE to show intermediate results during 
-#' ### the estimation process
 #' gamsar <- pspatfit(form1, data = unemp_it_short, 
-#'                type = "sar", listw = lwsp_it)
+#'                    type = "sar", listw = lwsp_it)
 #' summary(gamsar)
-#' ### Compare gamsar with gam model
+#' ### Test nested models
 #' anova(gampure, gamsar)
 #' 
 #' ######### Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = TRUE)
-#' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, 
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
+#' imp_nparvar <- impactsnopar(gamsar, 
+#'                             listw = lwsp_it, 
 #'                             viewplot = TRUE)
 #' 
 #' ############ Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
 #' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
 #' plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
 #' 
 #' ###################### Parametric Total, Direct and Indirect impacts
 #' imp_parvar <- impactspar(gamsar, listw = lwsp_it)
 #' summary(imp_parvar)
-#'
 #'
 #' ###############################################
 #' ### Spatial semiparametric model without spatial lag
@@ -622,59 +627,71 @@
 #' form2 <- unrate ~ partrate + agri + cons +
 #'                 pspl(serv, nknots = 15) + 
 #'                 pspl(empgrowth, nknots = 20) +
-#'                 pspt(long, lat, nknots = c(20,20), 
+#'                 pspt(long, lat, nknots = c(20, 20), 
 #'                      psanova = FALSE)
-
 #' geosp <- pspatfit(form2, data = unemp_it_short)                        
 #' summary(geosp)
+#' ## Plot of spatial trend fitted
+#' ### Create sf object to make the plot 
+#' library(sf)
+#' unemp_it_sf_short <- st_as_sf(dplyr::left_join(
+#'                               unemp_it_short, 
+#'                               map_it,  
+#'                         by = c("prov" = "COD_PRO")))
+#' plot_sp2d(geosp, data = unemp_it_sf_short)
 #' 
 #' 
 #' ###############################################
 #' ### Spatial semiparametric model with spatial lag
-#' ### Type = "sar" for spatial lag
-#' ### method = "Chebyshev" to show it also works. method = "eigen" will work
-#' ### but not recommended for large samples
-#' ### SAR
-#' geospsar <- pspatfit(form2, data = unemp_it_short, 
-#'                  listw = lwsp_it, 
-#'                  method = "Chebyshev", 
-#'                  type = "sar")
-#' summary(geospsar)                  
-#'  
-#' ### SEM
-#' geospsem <- pspatfit(form2, data = unemp_it_short, 
-#'                  listw = lwsp_it, 
-#'                  method = "Chebyshev", 
-#'                  type = "sem")
+#' ### Type = "sar" for spatial lag of the dependent variable
+#' geospsar <- pspatfit(form2, 
+#'                      data = unemp_it_short, 
+#'                      listw = lwsp_it, 
+#'                      type = "sar")
+#' summary(geospsar)
+#' ## Plot of spatial trend fitted
+#' plot_sp2d(geospsar, data = unemp_it_sf_short)
+#' 
+#' ### Type = "sem" for spatial lag of the noise
+#' geospsem <- pspatfit(form2, 
+#'                      data = unemp_it_short, 
+#'                      listw = lwsp_it, 
+#'                      type = "sem")
 #' summary(geospsem)                  
-#' 
-#' 
 #' 
 #' #####################################
 #' #### Fitted Values and Residuals
-#' plot(geospsar$fitted.values, unemp_it_short$unrate, 
-#'      xlab = 'fitted values', ylab = "unrate",
-#'      type = "p", cex.lab = 1.3, cex.main = 1.3,
-#'      main = "Spatial semiparametric model with spatial lag",
-#'      sub = "Spatial trend fixed for period 2019")
+#' plot(geospsar$fitted.values, 
+#'      unemp_it_short$unrate, 
+#'      xlab = 'fitted values', 
+#'      ylab = "unrate",
+#'      type = "p", cex.lab = 1.3, 
+#'      cex.main = 1.3,
+#'      main = "Fitted Values geospsar model")
 #'      
 #' plot(geospsar$fitted.values, geospsar$residuals, 
 #'      xlab = 'fitted values', ylab = "residuals",
 #'      type = "p", cex.lab = 1.3, cex.main=1.3,
-#'      main = "Spatial semiparametric model with spatial lag",
-#'      sub = "Spatial trend fixed for period 2019")
-#'
-#'              
+#'      main = "Residuals geospsar model")
 #'  
 #' #### Non-Parametric Total, Direct and Indirect impacts 
 #' #### for spatial sar. First with smooth, second without smoothing
-#' imp_nparvar_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = TRUE)
-#' imp_nparvar_no_smooth <- impactsnopar(geospsar, listw = lwsp_it, viewplot = TRUE, smooth = FALSE)
-#' 
-#' 
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
+#' imp_nparvar_smooth <- impactsnopar(geospsar, 
+#'                                    listw = lwsp_it, 
+#'                                    viewplot = TRUE, 
+#'                                    smooth = TRUE)
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
+#' imp_nparvar_no_smooth <- impactsnopar(geospsar, 
+#'                                       listw = lwsp_it, 
+#'                                       viewplot = TRUE, 
+#'                                       smooth = FALSE)
 #' ###### Parametric Total, Direct and Indirect impacts
 #' list_varpar <- c("partrate","agri","cons")
-#' imp_parvar <- impactspar(geospsar, listw = lwsp_it)
+#' imp_parvar <- impactspar(geospsar, 
+#'                          listw = lwsp_it)
 #' summary(imp_parvar)
 #' 
 #' 
@@ -683,46 +700,31 @@
 #' ### Apart from defining type = "sdm" we have to include a
 #' ### formula in parameter Durbin for the Durbin part
 #' 
-#' ### lwsp_it is a list of neighbours as used un spdep and spatialreg packages
-#' ### In this package you can either input a neighbours matrix or list
-#' ### We do thi to show that both work
-#' ' 
 #' durbinform <- ~ partrate + agri + pspl(serv, nknots = 13) 
-#' 
 #' gamsdm <- pspatfit(form1, 
-#'          data = unemp_it_short,
-#'          listw = lwsp_it, 
-#'          method = "eigen",
-#'          type = "sdm",
-#'          Durbin = durbinform)
-#' 
+#'                    data = unemp_it_short,
+#'                    listw = lwsp_it,
+#'                    type = "sdm",
+#'                    Durbin = durbinform)
 #' summary(gamsdm)
-#' 
 #' 
 #' ############################################
 #' ### Spatial Durbin Error Model with GAM
 #' 
-#' 
 #' gamsdem <- pspatfit(form1, 
 #'                     data = unemp_it_short,
-#'                     listw = lwsp_it, 
-#'                     method = "eigen",
-#'                     type = "sdem",
+#'                     listw = lwsp_it,                     type = "sdem",
 #'                     Durbin = durbinform)
 #' 
 #' summary(gamsdem)
 #' 
 #' ########################################
 #' ### SLX model with GAM
-#' ### The same as the sdem model but type = "slx"
-#' 
 #' gamslx <- pspatfit(form1, 
 #'                    data = unemp_it_short,
-#'                    listw = lwsp_it, 
-#'                    method = "eigen",
+#'                    listw = lwsp_it,
 #'                    type = "slx",
 #'                    Durbin = durbinform)
-#' 
 #' summary(gamslx)
 #' 
 #'
@@ -742,15 +744,21 @@
 #'                        nest_sp1 = c(1, 2), 
 #'                        nest_sp2 = c(1, 2))
 #'                        
-#' ##### Spatial trend fixed for period 1996-2019.
-#' ##### In plot_sp2d() function, if data is not an .sf object, 
-#' ##### you must indicate the spatial coordinates variables
 #' geospanova <- pspatfit(form3, data = unemp_it_short)
 #' summary(geospanova)
 #' ### Plot spatial trend and interaction (ANOVA)
-#' 
-#' plot_sp2d(geospanova, data = unemp_it_short, addmain = TRUE, 
-#' addint = TRUE, coordinates = unemp_it_short[, c("long", "lat")])
+#' plot_sp2d(geospanova, 
+#'          data = unemp_it_sf_short, 
+#'          addmain = TRUE, 
+#'          addint = TRUE)
+#'          
+#' ## In plot_sp2d() function, if data is not an sf object, 
+#' ## you must indicate the spatial coordinates variables
+#' plot_sp2d(geospanova, 
+#'          data = unemp_it_short, 
+#'          addmain = TRUE, 
+#'          addint = TRUE, 
+#'          coordinates = unemp_it_short[, c("long", "lat")])
 #'
 #' ################################
 #' ### Spatial semiparametric ANOVA model with spatial lag
@@ -768,36 +776,47 @@
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
 #'  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
 #'  form4 <- unrate ~ partrate + agri + cons +
-#'                    pspl(serv, nknots = 15) + pspl(empgrowth, nknots = 20) +
-#'                    pspt(long, lat, year, nknots = c(18,18,12),
-#'                    psanova = TRUE, nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
-#'                    nest_time = c(1,2,2))
+#'                    pspl(serv, nknots = 15) + 
+#'                    pspl(empgrowth, nknots = 20) +
+#'                    pspt(long, lat, year, nknots = c(18, 18, 12),
+#'                    psanova = TRUE, 
+#'                    nest_sp1 = c(1, 2, 3), 
+#'                    nest_sp2 = c(1, 2, 3),
+#'                    nest_time = c(1, 2, 2))
 #'  sptanova <- pspatfit(form4, data = unemp_it,
-#'                   control = list(tol = 1e-2))
+#'                   control = list(tol = 1e-1))
 #'  summary(sptanova)
 #'  
-#'  ####### Plot just spatial trend, 2d, (ANOVA)
-#'  plot_sp2d(sptanova, data = unemp_it, addmain = TRUE, 
-#'  addint = TRUE, coordinates = unemp_it[, c("long", "lat")])
-#' 
-#'  ####### Plot spatio-temporal trend, 3d, (ANOVA)
-##' ###### Create sf object of the spatial panels 
-#'  ###### to do spatio-temporal plots of Italian provinces
+#' ### Create sf object to make the plot 
+#' ### of spatio-temporal trends
 #' library(sf)
-#' pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
-#' map_it <- st_read(dsn = pathmap)
 #' unemp_it_sf <- st_as_sf(dplyr::left_join(
-#'                                 unemp_it, map_it,  
+#'                               unemp_it, 
+#'                               map_it,  
 #'                         by = c("prov" = "COD_PRO")))
+#' ###### Plot spatio-temporal trends for different years
 #' plot_sp3d(sptanova, data = unemp_it_sf, 
-#' time_var = "year", 
-#' time_index = c(1996, 2005, 2019),
-#' addmain = TRUE, addint = FALSE)
-#'
-#'
+#'           time_var = "year", 
+#'           time_index = c(1996, 2005, 2019),
+#'           addmain = FALSE, addint = FALSE)
+#' ###### Plot of spatio-temporal trend, main effects 
+#' ######      and interaction effect for a year
+#' plot_sp3d(sptanova, data = unemp_it_sf, 
+#'           time_var = "year", 
+#'           time_index = c(2019),
+#'           addmain = TRUE, addint = TRUE)
+#'           
+#' ###### Plot of temporal trends for each province
+#' plot_sptime(sptanova, 
+#'             data = unemp_it, 
+#'             time_var = "year", 
+#'             reg_var = "prov")
+#' 
 #'  ### Spatio-temporal semiparametric ANOVA model with spatial lag
-#'  sptanova_sar <- pspatfit(form4, data = unemp_it, listw = lwsp_it, type = "sar",
-#'                       control = list(tol = 1e-1))
+#'  sptanova_sar <- pspatfit(form4, data = unemp_it,
+#'                           listw = lwsp_it, 
+#'                           type = "sar",
+#'                           control = list(tol = 1e-1))
 #'  summary(sptanova_sar)
 #'  
 #'  
@@ -805,14 +824,16 @@
 #'  ### Spatio-temporal semiparametric ANOVA model with spatial lag
 #'  ### and temporal autorregresive noise
 #'  sptanova_sar_ar1 <- pspatfit(form4, data = unemp_it, 
-#'                               listw = lwsp_it, type = "sar",
+#'                               listw = lwsp_it, 
+#'                               type = "sar",
 #'                               cor = "ar1", 
 #'                               control = list(tol = 1e-1))
 #'  summary(sptanova_sar_ar1)
 #'  ###### Non-Parametric Total, Direct and Indirect Impacts
 #'  list_varnopar <- c("serv", "empgrowth")
+#'  #adjust plot margins
+#'  par(mar = c(1, 1, 1, 1))
 #'  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
-
 #'  ###### Parametric Total, Direct and Indirect Effects
 #'  list_varpar <- c("partrate","agri","cons")
 #'  imp_parvar <- impactspar(sptanova_sar_ar1, listw = lwsp_it)
@@ -826,15 +847,18 @@
 #'  ### Interaction term f2t restricted to 0
 #'   form5 <- unrate ~ partrate + agri + cons +
 #'                   pspl(serv, nknots=15) + pspl(empgrowth, nknots=20) +
-#'                   pspt(long, lat, year, nknots = c(18,18,6), psanova = TRUE,
-#'                   nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
-#'                   nest_time = c(1,2,2), f2t_int = FALSE)
+#'                   pspt(long, lat, year, nknots = c(18, 18, 6), 
+#'                   psanova = TRUE,
+#'                   nest_sp1 = c(1, 2, 3), 
+#'                   nest_sp2 = c(1, 2, 3),
+#'                   nest_time = c(1, 2, 2), 
+#'                   f2t_int = FALSE)
 #'  sptanova2 <- pspatfit(form5, 
 #'                        data = unemp_it,
 #'                        control = list(tol = 1e-1))
 #'  summary(sptanova2)
 #'  
-#' ######################  demeaning
+#' ######################  Demeaning (Within Estimators)
 #' formpar <- unrate ~ partrate + agri + cons
 #' param <- pspatfit(formpar, data = unemp_it, listw = lwsp_it)
 #' param_dem <- pspatfit(formpar, data = unemp_it, 
@@ -874,9 +898,10 @@
 #'                       effect = "time",
 #'                       model = "within")
 #' summary(param_plm_time)
+#' ##### Demeaning with nonparametric covariates
 #' formgam <- unrate ~ partrate + agri + cons +
-#' pspl(serv, nknots = 15) + 
-#' pspl(empgrowth, nknots = 20)
+#'                     pspl(serv, nknots = 15) + 
+#'                     pspl(empgrowth, nknots = 20)
 #' gam_dem <- pspatfit(formula = formgam,
 #'                       data = unemp_it,
 #'                       demean = TRUE,
@@ -886,9 +911,16 @@
 #' gam <- pspatfit(formula = formgam,
 #'                  data = unemp_it)
 #' summary(gam)
-#' # Plot of terms for GAM demeaned
+#' # Plot of terms for GAM (without and with demeaning)
+#' fit_gam <- fit_terms(gam, c("serv", "empgrowth"))
+#' #adjust plot margins
+#' par(mar = c(1, 1, 1, 1))
+#' plot_terms(fit_gam, unemp_it)
 #' fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
+#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(fit_gam_dem, unemp_it)
+#' 
+#' ## Demeaning with type = "sar" model
 #' gamsar_dem <- pspatfit(formula = formgam,
 #'                       data = unemp_it,
 #'                       type = "sar", 
@@ -896,10 +928,7 @@
 #'                       demean = TRUE,
 #'                       index = c("prov", "year"))
 #' summary(gamsar_dem)   
-#' summary(gam_dem)      
-#' gam <- pspatfit(formula = formgam,
-#'                  data = unemp_it)
-#' summary(gam)                  
+#'                
 #' @export
 pspatfit <- function(formula, data, na.action,
                      listw = NULL, 

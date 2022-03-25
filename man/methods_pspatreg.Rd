@@ -54,13 +54,13 @@ and \code{plot} functions.}
 Default: max(3L, getOption("digits") - 3L).}
 }
 \description{
-The \code{anova()} function provides tables of fitted 
- spsur models including information criteria (AIC and BIC), 
- log-likelihood and degrees of freedom of each fitted model. The 
- argument \code{lrtest} allows to perform LR tests between nested models.
- The \code{print()} function is used to print short tables including the 
- values of beta and spatial coefficients as well as p-values of significance test for each 
- coefficient. This can be used as an alternative to 
+The \code{\link{anova}} function provides tables of fitted 
+  \code{pspatreg} models including information criteria (AIC and BIC), 
+  log-likelihood and degrees of freedom of each fitted model. The 
+  argument \code{\link{lrtest}} allows to perform LR tests between nested models.
+  The \code{\link{print}} function is used to print short tables including the 
+  values of beta and spatial coefficients as well as p-values of significance test for each 
+  coefficient. This can be used as an alternative to 
  \code{\link{summary.pspatreg}} when a brief output is needed. 
  The rest of methods works in the usual way.
 }
@@ -70,6 +70,9 @@ The \code{anova()} function provides tables of fitted
 }
 \author{
 \tabular{ll}{
-  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+    Roman Minguez \tab \email{roman.minguez@uclm.es} \cr
+    Roberto Basile \tab \email{roberto.basile@univaq.it} \cr
+    Maria Durban \tab \email{mdurban@est-econ.uc3m.es} \cr
+    Gonzalo Espana-Heredia \tab \email{gehllanza@gmail.com} \cr
   }
 }

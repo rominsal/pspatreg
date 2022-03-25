@@ -129,7 +129,6 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
     } else var <- as.matrix(data[, c(name_var)])
     colnames(var) <- name_var
     ord <- order(var)
-    par(mar = c(1, 1, 1, 1))
     par(mfrow = c(2, 1))
     plot(var[ord], fit_var[ord], 
          type = "l",
