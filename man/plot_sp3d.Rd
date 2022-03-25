@@ -31,10 +31,6 @@ library(pspatreg)
 library(sf)
 data("unemp_it")
 lwsp_it <- spdep::mat2listw(Wsp_it, row.names = rownames(Wsp_it))
-###### Create sf object of the spatial panels 
-###### to do spatio-temporal plots of Italian provinces
-pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
-map_it <- st_read(dsn = pathmap)
 unemp_it_sf <- st_as_sf(dplyr::left_join(
                                 unemp_it, map_it,  
                         by = c("prov" = "COD_PRO")))
@@ -55,12 +51,12 @@ sp3danova <- pspatfit(form3d_psanova_restr,
                          data = unemp_it_sf)
 summary(sp3danova)                          
 
-###### PLOT spatio-temporal trends for different years
+###### Plot spatio-temporal trends for different years
 plot_sp3d(sp3danova, data = unemp_it_sf, 
           time_var = "year", 
           time_index = c(1996, 2005, 2019),
           addmain = FALSE, addint = FALSE)
-###### PLOT spatio-temporal trend, main effects 
+###### Plot of spatio-temporal trend, main effects 
 ######      and interaction effect for a year
 plot_sp3d(sp3danova, data = unemp_it_sf, 
           time_var = "year", 
