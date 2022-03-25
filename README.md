@@ -21,3 +21,7 @@ There are specific functions to compute:
 - Plots of the spatial or spatio-temporal trends (including main and interaction terms for ANOVA specifications).
 - Usual methods for summary, anova, print, cov, residuals, ...
 
+## Vignettes
+To view the vignettes online, click on the following links:
+- Vignette A (Introduction to the use of the package and the mathematical theory behind the models): https://gehll.github.io/pspatregpages/A_pspatregPackage.html
+- Vignette B (Includes several examples on how to use the packages, its main functions and plot the results.): https://gehll.github.io/pspatregpages/B_Examples_pspatreg_CS_data.html

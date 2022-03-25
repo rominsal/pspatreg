@@ -2,10 +2,9 @@
 title: "An introduction to pspatreg"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
 date: "`r Sys.Date()`"
-output:
-  github_document:
-            toc: true
-            toc_depth: 2
+output: 
+  html_document:
+    number_sections: true
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{An introduction to pspatreg}
@@ -169,4 +168,3 @@ The function `impactspar()` computes direct, indirect and total impacts for cont
 The function `impactsnopar()` computes direct, indirect and total impacts functions for continuous non-parametric covariates, while the function `plot_impactsnopar()` is used to plot these impacts functions. It is worth noticing that total, direct and indirect effects are never smooth over the domain of the variable $x_\delta$ due to the presence of the spatial multiplier matrix in the algorithm for their computation. Indeed, a wiggly profile of direct, indirect and total effects would appear even if the model were linear. Therefore, in the spirit of the semiparametric approach, we included the possibility of applying a spline smoother to obtain smooth curves (using the argument `smooth=TRUE` in the function `plot_impactsnopar()`).  
 
 # References {.unnumbered}
-
