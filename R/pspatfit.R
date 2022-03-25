@@ -32,11 +32,11 @@
 #'   must be ordered choosing time as fast index and spatial coordinates
 #'   as low indexes. See \code{head(unemp_it)} as an example.
 #' @param na.action	A function (default \code{options("na.action")}),
-#'  can also be \code{na.omit} or \code{na.exclude} with consequences 
+#'  can also be `na.omit` or `na.exclude` with consequences 
 #'   for residuals and fitted values. It may be necessary to set 
-#'   \code{zero.policy} to \code{TRUE} because this subsetting may 
+#'   `zero.policy` to `TRUE` because this subsetting may 
 #'   create no-neighbour observations.    
-#' @param listw Default = \code{NULL} This will create a model with no spatial dependency.
+#' @param listw Default = `NULL` This will create a model with no spatial dependency.
 #'   To include spatial dependency, \code{listw} should be a spatial neighbours list object 
 #'   created for example by \code{\link[spdep]{nb2listw}} from \pkg{spdep}
 #'   package; if \code{\link[spdep]{nb2listw}} not given, set to 
@@ -64,16 +64,16 @@
 #'   values, and the latter two attempt to ameliorate some features 
 #'   of "SE_classic".
 #' @param interval Search interval for autoregressive parameter.
-#'   Default = \code{NULL}.
+#'   Default = `NULL`.
 #' @param trs Similar to the corresponding parameter of 
 #'   \code{\link[spatialreg]{lagsarlm}} function in \pkg{spatialreg} package.
-#'   Default \code{NULL}, if given, a vector of powered spatial weights 
+#'   Default `NULL`, if given, a vector of powered spatial weights 
 #'   matrix traces output by \code{\link[spdep]{trW}}.
 #' @param zero.policy Similar to the corresponding parameter of 
 #'   \code{\link[spatialreg]{lagsarlm}} function in \pkg{spatialreg} package. 
-#'   If \code{TRUE} assign zero to the lagged value of zones without 
-#'   neighbours, if \code{FALSE} assign \code{NA} - causing 
-#'   \code{pspatfit()} to terminate with an error. Default = \code{NULL}. 
+#'   If `TRUE` assign zero to the lagged value of zones without 
+#'   neighbours, if `FALSE` assign `NA` - causing 
+#'   \code{pspatfit()} to terminate with an error. Default = `NULL`. 
 #' @param type Type of spatial model specification following 
 #'   the usual spatial econometric terminology. 
 #'   Default = \code{"sim"} this creates
@@ -88,7 +88,7 @@
 #'   \pkg{spsur} or \pkg{spatialreg} packages.
 #'   There are examples on how to create these models 
 #'   in \emph{Examples} section.
-#' @param Durbin Default = \code{NULL}. 
+#' @param Durbin Default = `NULL`. 
 #'   If model is of \code{type = "sdm"}, \code{"sdem"} or 
 #'   \code{"slx"} then this argument should be a formula
 #'    of the subset of explanatory variables to be 
@@ -98,7 +98,7 @@
 #' @param cor Type of temporal correlation for temporal data. Possible values 
 #'   are \code{"none"} (default) or \code{"ar1"}.
 #' @param demean Logical value to include a demeaning 
-#'   for panel data. Default = \code{FALSE}. 
+#'   for panel data. Default = `FALSE`. 
 #'   The demeaning is done previously to the estimation for
 #'   both parametric and nonparametric terms. It is not possible
 #'   to set \code{demean = TRUE} when spatio-temporal trends
@@ -114,7 +114,7 @@
 #' @param dynamic Logical value to set a dynamic model.
 #'   Dynamic models include a temporal lag of the dependent
 #'   variable in the right-hand side of the equation.
-#'   Default = \code{FALSE}. 
+#'   Default = `FALSE`. 
 #' @param control List of extra control arguments. See 
 #'   \emph{Control Arguments} section below.
 #'
@@ -186,7 +186,7 @@
 #'   non-parametric variable we will use a \code{pspl(.)} term for each nonparametric variable.
 #'   
 #'   On the other hand, \code{pspt(.)} is used for spatial smoothing 
-#'   (when temporal coordinate is \code{NULL})  or 
+#'   (when temporal coordinate is `NULL`)  or 
 #'   spatio-temporal smoothing (when a variable is provided for
 #'   the temporal coordinate). 
 #'   The default for the temporal coordinate is \code{time = NULL}, 
@@ -269,9 +269,9 @@
 #'   Eventually, any effect function can be excluded of the ps-anova
 #'   spatio-temporal trend. To exclude main effects, the arguments  
 #'   \code{f1_main}, \code{f2_main} or \code{ft_main} have to be set to
-#'   \code{FALSE} (default=\code{TRUE}).
+#'   `FALSE` (default=`TRUE`).
 #'   We can also exclude the second- and third-order
-#'   effects functions setting to \code{FALSE} the arguments \code{f12_int}, \code{f1t_int}, 
+#'   effects functions setting to `FALSE` the arguments \code{f12_int}, \code{f1t_int}, 
 #'   \code{f2t_int} or \code{f12t_int} in \code{pspl(.)}.
 #'   } }
 #'
@@ -348,7 +348,7 @@
 #'     computation and inference can be obtained from the help 
 #'     of \code{\link{impactsnopar}}. 
 #'     The argument \code{viewplot} of \code{impactsnopar} 
-#'     have to be set as \code{TRUE} to plot the spatial impacts 
+#'     have to be set as `TRUE` to plot the spatial impacts 
 #'     functions. Another way to get the same plots is using 
 #'     \code{plot_impactsnopar} function with the output 
 #'     of \code{impactsnopar}. 
@@ -449,7 +449,7 @@
 #'     to the frequentist case. The other option is \code{"bayesian"}.
 #'     See Fahrmeir et al, pp. 375 for details of computations. \cr   
 #'   \code{vary_init} \tab Initial value of the noise variance in the model.
-#'     Default = \code{NULL}. If \code{NULL} the initial variance
+#'     Default = `NULL`. If `NULL` the initial variance
 #'     is the sample variance of the dependent variable. \cr
 #'   \code{trace} \tab A logical value set to \emph{TRUE} to show 
 #'     intermediate results during the estimation process. 
@@ -466,10 +466,10 @@
 #'     Default 0. \cr
 #'   \code{Imult} \tab default 2; used for preparing the Cholesky 
 #'       decompositions for updating in the Jacobian function \cr
-#'   \code{super} \tab  if \code{NULL} (default), set to \code{FALSE} to use 
+#'   \code{super} \tab  if `NULL` (default), set to `FALSE` to use 
 #'       a simplicial decomposition for the sparse Cholesky decomposition and 
-#'       method "Matrix_J", set to as.logical(NA) for method "Matrix", if 
-#'       \code{TRUE}, use a supernodal decomposition \cr
+#'       method "Matrix_J", set to `as.logical(NA)` for method "Matrix", if 
+#'       `TRUE`, use a supernodal decomposition \cr
 #'     \code{cheb_q} \tab default 5; highest power of the approximating 
 #'       polynomial for the Chebyshev approximation \cr
 #'     \code{MC_p} \tab default 16; number of random variates \cr
@@ -480,21 +480,21 @@
 #'       decomposition in "spam_update" \cr
 #'     \code{type} \tab default "MC", used with method "moments"; alternatives 
 #'       "mult" and "moments", for use if trs is missing \cr 
-#'     \code{correct} \tab default \code{TRUE}, used with method "moments" to 
+#'     \code{correct} \tab default `TRUE`, used with method "moments" to 
 #'       compute the Smirnov/Anselin correction term \cr
-#'     \code{trunc} \tab default \code{TRUE}, used with method "moments" to 
+#'     \code{trunc} \tab default `TRUE`, used with method "moments" to 
 #'       truncate the Smirnov/Anselin correction term \cr
 #'     \code{SE_method} \tab default "LU", may be "MC" \cr
 #'     \code{nrho} \tab default 200, as in SE toolbox; the size of the first 
 #'       stage lndet grid; it may be reduced to for example 40 \cr
 #'     \code{interpn} \tab default 2000, as in SE toolbox; the size of the 
 #'       second stage lndet grid \cr
-#'     \code{SElndet} \tab default \code{NULL}, may be used to pass a 
+#'     \code{SElndet} \tab default `NULL`, may be used to pass a 
 #'       pre-computed SE toolbox style matrix of coefficients and their lndet 
 #'       values to the "SE_classic" and "SE_whichMin" methods \cr
-#'     \code{LU_order} \tab default \code{FALSE}; used in "LU_prepermutate", 
+#'     \code{LU_order} \tab default `FALSE`; used in "LU_prepermutate", 
 #'       note warnings given for lu method \cr
-#'     \code{pre_eig} \tab default \code{NULL}; may be used to pass a 
+#'     \code{pre_eig} \tab default `NULL`; may be used to pass a 
 #'       pre-computed vector of eigenvalues \cr
 #'  } 
 #' 

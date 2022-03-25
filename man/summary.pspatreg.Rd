@@ -39,5 +39,10 @@ This method summarizes both spatial (2-dimension) and
 }
 }
 \author{
-Roman Minguez \email{roman.minguez@uclm.es}
+\tabular{ll}{ 
+  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
+  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+  \email{gehllanza@gmail.com} \cr 
+ }
 }

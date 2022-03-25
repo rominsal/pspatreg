@@ -28,7 +28,7 @@ for details). Default c(0.1, 0.1, 0.2).}
 \item{dynamic}{Logical value to set a dynamic model.
 Dynamic models include a temporal lag of the dependent
 variable in the right-hand side of the equation.
-Default = \code{FALSE}.}
+Default = `FALSE`.}
 
 \item{nt}{Number of temporal periods. It is needed
 for dynamic models.}
@@ -135,7 +135,12 @@ par(mar = c(1, 1, 1, 1))
 }
 }
 \author{
-Roman Minguez \email{roman.minguez@uclm.es}
+\tabular{ll}{ 
+  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
+  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+  \email{gehllanza@gmail.com} \cr 
+ }
 }
 \concept{Direct, Indirect and Total Impacts.}
 \keyword{Direct}

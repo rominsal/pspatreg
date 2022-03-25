@@ -13,7 +13,8 @@ fit_terms(object, variables)
 
 \item{variables}{vector including names of non-parametric covariates. 
 To fit the terms of non-parametric spatial (2d) or spatio-temporal 
-(3d) trend this argument must be set equal to \emph{spttrend}. See \code{examples}.}
+(3d) trend this argument must be set equal to `spttrend`. 
+See \code{examples} in this function.}
 }
 \value{
 A list including:
@@ -145,5 +146,10 @@ plot_sp3d(sptanova, data = unemp_it_sf,
 }
 }
 \author{
-Roman Minguez \email{roman.minguez@uclm.es}
+\tabular{ll}{ 
+  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
+  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+  \email{gehllanza@gmail.com} \cr 
+ }
 }
