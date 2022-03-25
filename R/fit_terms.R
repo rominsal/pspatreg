@@ -19,7 +19,8 @@
 #' @param object object fitted using \code{\link{pspatfit}} function. 
 #' @param variables vector including names of non-parametric covariates. 
 #'   To fit the terms of non-parametric spatial (2d) or spatio-temporal 
-#'   (3d) trend this argument must be set equal to \emph{spttrend}. See \code{examples}.
+#'   (3d) trend this argument must be set equal to `spttrend`. 
+#'   See \code{examples} in this function.
 #'   
 #' @return A list including:
 #'   \tabular{ll}{
@@ -39,8 +40,13 @@
 #'  to make plots of both non-parametric trends and smooth functions of 
 #'  covariates. See \emph{examples} below. 
 #'  
-#' @author Roman Minguez \email{roman.minguez@@uclm.es} 
-#'
+#' @author 
+#' \tabular{ll}{ 
+#'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
+#'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+#'   \email{gehllanza@@gmail.com} \cr 
+#'  }
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal 

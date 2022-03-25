@@ -23,12 +23,12 @@ plot_terms(
 term. Default 0.95.}
 
 \item{listw}{used to compute spatial lags for Durbin specifications. 
-Default =  \code{NULL}}
+Default =  `NULL`}
 
 \item{dynamic}{Logical value to set a dynamic model.
 Dynamic models include a temporal lag of the dependent
 variable in the right-hand side of the equation.
-Default = \code{FALSE}.}
+Default = `FALSE`.}
 
 \item{nt}{Number of temporal periods. It is needed
 for dynamic models.}
@@ -80,5 +80,10 @@ plot_terms(terms_nopar, unemp_it)
 }
 }
 \author{
-Roman Minguez \email{roman.minguez@uclm.es}
+\tabular{ll}{ 
+  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
+  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+  \email{gehllanza@gmail.com} \cr 
+ }
 }

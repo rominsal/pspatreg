@@ -22,15 +22,20 @@
 #' @param dynamic Logical value to set a dynamic model.
 #'   Dynamic models include a temporal lag of the dependent
 #'   variable in the right-hand side of the equation.
-#'   Default = \code{FALSE}.
+#'   Default = `FALSE`.
 #' @param nt  Number of temporal periods. It is needed
 #'   for dynamic models.  
 #'
 #' @return plot of the direct, indirect and total impacts  function for each non-parametric
 #'   covariate included in the object returned from \code{\link{impactsnopar}}.
 #'                                 
-#' @author Roman Minguez \email{roman.minguez@@uclm.es}
-#'
+#' @author 
+#' \tabular{ll}{ 
+#'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
+#'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+#'   \email{gehllanza@@gmail.com} \cr 
+#'  }
 #' @family Direct, Indirect and Total Impacts.
 #' 
 #' @seealso

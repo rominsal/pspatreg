@@ -20,8 +20,14 @@
 #'
 #' @return An object of class \emph{summary.pspatreg}
 #'
-#' @author Roman Minguez \email{roman.minguez@@uclm.es}
-#'
+#' @author 
+#' \tabular{ll}{ 
+#'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
+#'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+#'   \email{gehllanza@@gmail.com} \cr 
+#'  }
+#'  
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN

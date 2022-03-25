@@ -33,19 +33,19 @@
 \method{print}{pspatreg}(x, digits = max(3L, getOption("digits") - 3L), ...)
 }
 \arguments{
-\item{object}{a \code{pspatreg} object created by 
+\item{object}{a `pspatreg` object created by 
 \code{\link{pspatfit}}.}
 
 \item{...}{further arguments passed to or from other methods.}
 
 \item{lrtest}{logical value to compute likelihood ratio
-test for nested models in `anova` method. Default = \code{TRUE}}
+test for nested models in `anova` method. Default = `TRUE`}
 
 \item{REML}{logical value to get restricted log-likelihood 
-instead of the usual log-likelihood. Default = \code{FALSE}}
+instead of the usual log-likelihood. Default = `FALSE`}
 
 \item{bayesian}{logical value to get bayesian or frequentist
-covariance matrix for parametric terms. Default = \code{FALSE}}
+covariance matrix for parametric terms. Default = `FALSE`}
 
 \item{x}{similar to \code{object} argument for \code{print()} 
 and \code{plot} functions.}
@@ -57,7 +57,7 @@ Default: max(3L, getOption("digits") - 3L).}
 The \code{\link{anova}} function provides tables of fitted 
   \code{pspatreg} models including information criteria (AIC and BIC), 
   log-likelihood and degrees of freedom of each fitted model. The 
-  argument \code{\link{lrtest}} allows to perform LR tests between nested models.
+  argument `lrtest` allows to perform LR tests between nested models.
   The \code{\link{print}} function is used to print short tables including the 
   values of beta and spatial coefficients as well as p-values of significance test for each 
   coefficient. This can be used as an alternative to 

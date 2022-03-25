@@ -8,8 +8,14 @@
 #' @param time_var name of the temporal variable in data. 
 #' @param reg_var name of the regional variable in data.
 #' @return time series plots of the temporal trend for each region                                  
-#' @author Roman Minguez \email{roman.minguez@@uclm.es}
-#' @examples
+#' @author 
+#' \tabular{ll}{ 
+#'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
+#'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+#'   \email{gehllanza@@gmail.com} \cr 
+#'  }
+#'  @examples
 #' 
 #' library(pspatreg)
 #' library(spdep)

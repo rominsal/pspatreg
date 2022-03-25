@@ -80,11 +80,11 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #' @param sp2 Name of the second spatial coordinate.
 #' @param time Name of the temporal coordinate. It must be 
 #'   specified only for spatio-temporal trends when using panel data. 
-#'   Default = \code{NULL}.
+#'   Default = `NULL`.
 #' @param ntime Number of temporal periods in panel data.
 #' @param scale Logical value to scale the spatial and temporal 
 #'   coordinates before the estimation of semiparametric model. 
-#'   Default = \code{TRUE}   
+#'   Default = `TRUE`   
 #' @param xl_sp1 Minimum of the interval for the first spatial coordinate.
 #'   Default = min(sp1) - 0.01.    
 #' @param xr_sp1 Maximum of the interval for the first spatial coordinate.
@@ -112,8 +112,8 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'   penalty matrix. If \code{decom = 2} the fixed part is given by
 #'   \eqn{X = [1|x|...|x^(pord-1)] }. Default = 2.
 #' @param psanova Logical value to choose an ANOVA decomposition
-#'   of the spatial or spatio-temporal trend. Default = \code{FALSE}.
-#'   If \code{TRUE}, you must specify the divisors for
+#'   of the spatial or spatio-temporal trend. Default = `FALSE`.
+#'   If `TRUE`, you must specify the divisors for
 #'   main, and interaction effects. More in \code{Examples}.
 #' @param nest_sp1 Vector including the divisor of the knots for main 
 #'   and interaction effects for the first spatial coordinate. It
@@ -131,23 +131,23 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'   Default = 1 (no nested bases). The values must be divisors and the resulting
 #'   value of the division should not be smaller than 4.
 #' @param f1_main Logical value to include main effect for the first spatial
-#'   coordinate in ANOVA models. Default = \code{TRUE}.         
+#'   coordinate in ANOVA models. Default = `TRUE`.         
 #' @param f2_main Logical value to include main effect for the second spatial
-#'   coordinate in ANOVA models. Default = \code{TRUE}. 
+#'   coordinate in ANOVA models. Default = `TRUE`. 
 #' @param ft_main Logical value to include main effect for the temporal
-#'   coordinate in ANOVA models. Default = \code{TRUE}. 
+#'   coordinate in ANOVA models. Default = `TRUE`. 
 #' @param f12_int Logical value to include second-order interaction effect 
 #'   between first and second spatial coordinates in ANOVA models. 
-#'   Default = \code{TRUE}. 
+#'   Default = `TRUE`. 
 #' @param f1t_int Logical value to include second-order interaction effect 
 #'   between first spatial and temporal coordinates in ANOVA 
-#'   models. Default = \code{TRUE}. 
+#'   models. Default = `TRUE`. 
 #' @param f2t_int Logical value to include second-order interaction effect 
 #'   between second spatial and temporal coordinates in ANOVA 
-#'   models. Default = \code{TRUE}. 
+#'   models. Default = `TRUE`. 
 #' @param f12t_int Logical value to include third-order interaction effect 
 #'   between first and second spatial coordinates and temporal 
-#'   coordinates in ANOVA models. Default = \code{TRUE}. 
+#'   coordinates in ANOVA models. Default = `TRUE`. 
 #'                              
 #' @return A list object.
 #'   \tabular{ll}{

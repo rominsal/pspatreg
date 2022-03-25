@@ -80,7 +80,7 @@
 #'   Once estimated
 #'   the geoadditive semiparametric model, some functions of \pkg{pspatreg} are
 #'   suited to make plots of the spatial or spatio-temporal trends. These
-#'   functions, named \code{\link{plotsp2d}} and \code{\link{plotsp3d}}, can deal
+#'   functions, named \code{\link{plot_sp2d}} and \code{\link{plot_sp3d}}, can deal
 #'   either with \emph{sf} objects or dataframe objects including spatial coordinates
 #'   (see the examples of the functions). 
 #'   The function \code{\link{plot_sptime}} allows
@@ -130,7 +130,7 @@
 #'   \item \code{\link{residuals}} extractor function of the residuals.
 #'   \item \code{\link{vcov}} extractor function of the covariance matrix
 #'   of the estimated parameters. The argument \code{bayesian} 
-#'   (default = \code{FALSE}) allows to choose between sandwhich 
+#'   (default = `FALSE`) allows to choose between sandwhich 
 #'   (frequentist) or bayesian method to compute the variances and 
 #'   covariances. See Fahrmeir et al. (2013) for details.
 #'   }
@@ -202,10 +202,13 @@
 #'   generalized P-splines: the SAP algorithm. \emph{Statistics and Computing}
 #'   25 (5), 941-957. <doi: 10.1007/s11222-014-9464-2> }
 #'
-#' @author \tabular{ll}{ Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
+#' @author 
+#' \tabular{ll}{ 
+#'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
 #'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
 #'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
-#'   \email{gehllanza@@gmail.com} \cr }
+#'   \email{gehllanza@@gmail.com} \cr 
+#'  }
 #'
 #' @importFrom AmesHousing make_ames
 #' @importFrom akima interp

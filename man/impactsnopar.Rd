@@ -23,9 +23,9 @@ It can also be a spatial weighting matrix of order (NxN) instead of a listw neig
 \item{conflevel}{numerical value for the confidence interval of the
 impact functions. Default 0.95.}
 
-\item{viewplot}{Default \code{TRUE} to plot impacts. If FALSE use \code{\link{plot_impactsnopar}} to plot impacts}
+\item{viewplot}{Default `TRUE` to plot impacts. If FALSE use \code{\link{plot_impactsnopar}} to plot impacts}
 
-\item{smooth}{Default \code{TRUE}. Whether to smooth fitted impacts or not.}
+\item{smooth}{Default `TRUE`. Whether to smooth fitted impacts or not.}
 
 \item{span}{span for the kernel of the smoothing (see \code{\link{loess}} 
 for details). Default c(0.1, 0.1, 0.2).}
@@ -142,7 +142,12 @@ par(mar = c(1, 1, 1, 1))
 }
 }
 \author{
-Roman Minguez \email{roman.minguez@uclm.es}
+\tabular{ll}{ 
+  Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
+  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
+  \email{gehllanza@gmail.com} \cr 
+ }#'
 }
 \concept{Direct, Indirect and Total impects.}
 \keyword{Direct}
