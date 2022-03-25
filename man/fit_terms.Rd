@@ -51,13 +51,14 @@ The \code{fit_terms} function compute both:
 ###################### in 103 Italian provinces during the period 1996-2014.
 library(pspatreg)
 data(unemp_it)
-
+unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
 ######################  No Spatial Trend: PSAR including a spatial 
 ######################  lag of the dependent variable
 form1 <- unrate ~ partrate + agri + cons +
                  pspl(serv, nknots = 15) +
                  pspl(empgrowth, nknots = 20) 
-gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
+gamsar <- pspatfit(form1, data = unemp_it_short, 
+                   type = "sar", listw = Wsp_it)
 summary(gamsar)
 
 ######################  Fit non-parametric terms 
@@ -77,47 +78,52 @@ plot_terms(terms_nopar, unemp_it)
 # Spatial (2d) semiparametric ANOVA model without spatial lag
 # Interaction term f12 with nested basis
 form3 <- unrate ~ partrate + agri + cons +
-                  pspl(serv,nknots = 15) + pspl(empgrowth, nknots = 20) +
-                  pspt(long, lat, nknots = c(20,20), psanova = TRUE,
-                  nest_sp1 = c(1,2), nest_sp2 = c(1,2))
+                  pspl(serv,nknots = 15) + 
+                  pspl(empgrowth, nknots = 20) +
+                  pspt(long, lat, nknots = c(20, 20), psanova = TRUE,
+                  nest_sp1 = c(1, 2), 
+                  nest_sp2 = c(1, 2))
 # Spatial trend fixed for period 1996-2019
-geospanova <- pspatfit(form3, data = unemp_it)
+geospanova <- pspatfit(form3, data = unemp_it_short)
 summary(geospanova)
 ### Plot spatial trend and interaction (ANOVA)
-
-plot_sp2d(geospanova, data = unemp_it, addmain = TRUE, 
-addint = TRUE, coordinates = unemp_it[, c("long", "lat")])
-
+### Create sf object to make the plot 
+library(sf)
+unemp_it_sf_short <- st_as_sf(dplyr::left_join(
+                              unemp_it_short, 
+                              map_it,  
+                        by = c("prov" = "COD_PRO")))
+plot_sp2d(geospanova, 
+          data = unemp_it_sf_short, 
+          addmain = TRUE, 
+          addint = TRUE)
 ###############################################
 # Spatio-temporal (3d) semiparametric ANOVA model without spatial lag
 # Interaction terms f12,f1t,f2t and f12t with nested basis
 # Remark: It is necessary to include ntime as argument
 # Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
 form4 <- unrate ~ partrate + agri + cons +
-                  pspl(serv, nknots = 15) + pspl(empgrowth, nknots = 20) +
-                  pspt(long, lat, year, nknots = c(18,18,8), psanova = TRUE,
-                  nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
-                  nest_time = c(1,2,2), ntime = 19)
+                  pspl(serv, nknots = 15) + 
+                  pspl(empgrowth, nknots = 20) +
+                  pspt(long, lat, year, nknots = c(18, 18, 8), 
+                       psanova = TRUE,
+                  nest_sp1 = c(1, 2, 3), 
+                  nest_sp2 = c(1, 2, 3),
+                  nest_time = c(1, 2, 2))
 sptanova <- pspatfit(form4, data = unemp_it, 
-                     control = list(tol = 1e-2))
+                     control = list(tol = 1e-1))
 summary(sptanova)
 
-####### Plot spatio-temporal trend, 3d, (ANOVA)
-###### Create sf object of the spatial panels 
-###### to do spatio-temporal plots of provinces
+####### Plot spatio-temporal trends
 library(sf)
-pathmap <- system.file("extdata", "Prov2001_WGS84.shp", package = "pspatreg")
-map_it <- st_read(dsn = pathmap)
 unemp_it_sf <- st_as_sf(dplyr::left_join(
                                 unemp_it, map_it,  
                         by = c("prov" = "COD_PRO")))
 
-######## preparing the data
-
 plot_sp3d(sptanova, data = unemp_it_sf, 
-time_var = "year", 
-time_index = c(1996, 2005, 2019),
-addmain = TRUE, addint = FALSE)
+          time_var = "year", 
+          time_index = c(1996, 2019),
+          addmain = TRUE, addint = FALSE)
  
 }
 \references{

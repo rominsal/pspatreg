@@ -60,12 +60,16 @@ Wsp <- Wsp_it
 form1 <- unrate ~ partrate + agri + cons +
                  pspl(serv, nknots = 15) +
                  pspl(empgrowth, nknots = 20) 
- gamsar <- pspatfit(form1, data = unemp_it, type = "sar", listw = Wsp_it)
+ gamsar <- pspatfit(form1, data = unemp_it, 
+                    type = "sar", listw = Wsp_it)
  summary(gamsar)
  ###### Non-Parametric Total, Direct and Indirect impacts
+#adjust plot margins
+par(mar = c(1, 1, 1, 1))
  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)  
  ##### This returns the same result but using plot_impactsnopar()
  imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = FALSE)
+ par(mar = c(1, 1, 1, 1))
  plot_impactsnopar(imp_nparvar, data = unemp_it, 
                    smooth = TRUE, dynamic = FALSE,
                    nt = 24)
@@ -84,9 +88,11 @@ geospanova_sar <- pspatfit(form2, data=unemp_it,
                            type = "sar", 
                            control = list(tol = 1e-1))
 summary(geospanova_sar)
- ###### Non-Parametric Total, Direct and Indirect impacts
- imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = FALSE)
- plot_impactsnopar(imp_nparvar2, data = unemp_it, smooth = TRUE)
+###### Non-Parametric Total, Direct and Indirect impacts
+imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = FALSE)
+#adjust plot margins
+par(mar = c(1, 1, 1, 1))
+plot_impactsnopar(imp_nparvar2, data = unemp_it, smooth = TRUE)
  
 ######################   PSAR-ANOVA with spatio-temporal trend and 
 ######################   temporal autorregresive noise
@@ -97,15 +103,17 @@ summary(geospanova_sar)
                    psanova = TRUE,
                    nest_sp1 = c(1, 2, 3), 
                    nest_sp2 = c(1, 2, 3),
-                   nest_time = c(1, 2, 2), ntime = 19)
+                   nest_time = c(1, 2, 2))
 sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, 
-                             listw = Wsp_it, type = "sar", 
+                             listw = Wsp_it, 
+                             type = "sar", 
                              cor = "ar1",
                              control = list(tol = 1e-1))
 summary(sptanova_sar_ar1)
  ###### Non-Parametric Total, Direct and Indirect impacts
+#adjust plot margins
+par(mar = c(1, 1, 1, 1))
  imp_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
- plot_impactsnopar(imp_nparvar3, data = unemp_it, smooth = TRUE)
 
 }
 \references{

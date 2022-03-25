@@ -155,13 +155,17 @@ Some functionalities that have been included in \pkg{pspatreg}
   using the command \code{data(unemp_it, package = "pspatreg")}. 
   The database also includes a \emph{W} spatial neighborhood matrix 
   of the Italian provinces (computed using queen criterium). 
-  Furthermore, the shapefile is also included as external data and
-  can be used to plot spatial and spatio-temporal trends estimated for each
-  province. Some examples estimating spatio-temporal models are included 
-  in the help of the main function of \pkg{pspatreg} package 
-  (see, for example, \code{?pspatfit}). 
+  Furthermore, a map of Italian provinces is also included as an sf object. 
+  This map can be used to plot spatial and spatio-temporal trends estimated 
+  for each province. Some examples of spatial and spatio-temporal 
+  fitted trends are included in the help of the main function of 
+  \pkg{pspatreg} package (see especially \code{?pspatfit}). 
   See Minguez, Basile and Durban (2020) for additional details about 
-  this database. \cr
+  this database. 
+  \cr
+  source: Italian National Institute of Statistics (ISTAT)
+        \url{https://www.istat.it/}
+  \cr \cr       
   
   For the spatial pure case, the examples included use the 
   household database \code{ames} included in \pkg{AmesHousing} package. 
