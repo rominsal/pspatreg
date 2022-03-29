@@ -30,15 +30,14 @@ We start our demo with an application of **`pspatreg`** to the analysis of cross
 
 The dataset is a spatial point dataset. It contains  cross-sectional information on 2,930 properties in Ames, Iowa. The raw dataset (`ames`) has been transformed in a spatial point dataset of class `sf` as follows:
 ```{r}
-library(AmesHousing)# The Ames housing data
-library(tidymodels)
-library(tune)
 library(spdep)
+library(sf)
 library(ggplot2)
 library(dplyr)
-
-ames <- make_ames()# Raw Ames Housing Data
-ames_sf <- sf::st_as_sf(ames, coords = c("Longitude", "Latitude"))
+library(dbscan)
+ames <- AmesHousing::make_ames()# Raw Ames Housing Data
+ames_sf <- st_as_sf(ames, 
+                    coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
 ames_sf$Latitude <- ames$Latitude
 
@@ -81,9 +80,6 @@ In particular, we have used a graph-based neighbors list (a Delauney triangulati
 ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude)==FALSE,]
 coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
 # Delauney triangulation neighbours (symmetric)
-library(tripack)
-library(rgeos)
-library(dbscan)
 ID <- row.names(as(ames_sf1, "sf"))
 col.tri.nb <- tri2nb(coord_sf1)
 soi_nb <- graph2nb(soi.graph(col.tri.nb,coord_sf1), row.names=ID)
@@ -107,7 +103,6 @@ durbinformlin <- ~ lnLot_Area+lnTotal_Bsmt_SF+
   lnGr_Liv_Area+Garage_Cars+Fireplaces
 
 # Semiparametric model without spatial trend
-
 formgam <- lnSale_Price ~ Fireplaces + Garage_Cars +
   pspl(lnLot_Area, nknots = 20) + 
   pspl(lnTotal_Bsmt_SF, nknots = 20) +
