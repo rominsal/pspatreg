@@ -49,80 +49,71 @@ Plot direct, indirect and total impacts functions for
 }
 \examples{
 ################################################
- ###################### Examples using a panel data of rate of
- ###################### unemployment for 103 Italian provinces in period 1996-2014.
+###################### Examples using a panel data of rate of
+###################### unemployment for 103 Italian provinces in period 1996-2014.
 library(pspatreg)
 data(unemp_it)
-Wsp <- Wsp_it
-
-######################  No Spatial Trend: PSAR including a spatial 
-######################  lag of the dependent variable
+## Wsp_it is a matrix. Create a neighboord list 
+lwsp_it <- spdep::mat2listw(Wsp_it)
+## short sample for spatial pure case (2d)
+unemp_it_short <- unemp_it[unemp_it$year == 2019, ]  
+########  No Spatial Trend: PSAR including a spatial 
+########  lag of the dependent variable
 form1 <- unrate ~ partrate + agri + cons +
-                 pspl(serv, nknots = 15) +
-                 pspl(empgrowth, nknots = 20) 
- gamsar <- pspatfit(form1, data = unemp_it, 
-                    type = "sar", listw = Wsp_it)
- summary(gamsar)
- ###### Non-Parametric Total, Direct and Indirect impacts
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
- imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = TRUE)  
- ##### This returns the same result but using plot_impactsnopar()
- imp_nparvar <- impactsnopar(gamsar, listw = Wsp_it, viewplot = FALSE)
- par(mar = c(1, 1, 1, 1))
- plot_impactsnopar(imp_nparvar, data = unemp_it, 
-                   smooth = TRUE, dynamic = FALSE,
-                   nt = 24)
- 
-######################   PSAR-ANOVA with spatial trend
-form2 <- unrate ~ partrate + agri + cons +
-                  pspl(serv, nknots = 15) + 
-                  pspl(empgrowth, nknots = 20) +
-                  pspt(long, lat, nknots = c(20, 20), 
-                  psanova = TRUE,
-                  nest_sp1 = c(1, 2), 
-                  nest_sp2 = c(1,2))
-##### Spatial trend fixed for period 1996-2014
-geospanova_sar <- pspatfit(form2, data=unemp_it, 
-                           listw = Wsp_it, 
-                           type = "sar", 
-                           control = list(tol = 1e-1))
-summary(geospanova_sar)
+                  pspl(serv, nknots = 15) +
+                  pspl(empgrowth, nknots = 20) 
+gamsar <- pspatfit(form1, data = unemp_it_short, 
+                   type = "sar", 
+                   listw = lwsp_it)
+summary(gamsar)
 ###### Non-Parametric Total, Direct and Indirect impacts
-imp_nparvar2 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = FALSE)
-#adjust plot margins
+## adjust plot margins
 par(mar = c(1, 1, 1, 1))
-plot_impactsnopar(imp_nparvar2, data = unemp_it, smooth = TRUE)
- 
+imp_nparvar <- impactsnopar(gamsar, 
+                            listw = lwsp_it, 
+                            viewplot = TRUE)  
+##### This returns the same result but using plot_impactsnopar()
+imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, 
+                            viewplot = FALSE)
+par(mar = c(1, 1, 1, 1))
+plot_impactsnopar(imp_nparvar, data = unemp_it_short, 
+                   smooth = TRUE, 
+                   dynamic = FALSE,
+                   nt = 24)
+\donttest{
 ######################   PSAR-ANOVA with spatio-temporal trend and 
 ######################   temporal autorregresive noise
- form3 <- unrate ~ partrate + agri + cons +
+form2 <- unrate ~ partrate + agri + cons +
                    pspl(serv, nknots = 15) + 
                    pspl(empgrowth, nknots = 20) +
-                   pspt(long, lat, year, nknots = c(18, 18, 8), 
-                   psanova = TRUE,
-                   nest_sp1 = c(1, 2, 3), 
-                   nest_sp2 = c(1, 2, 3),
-                   nest_time = c(1, 2, 2))
-sptanova_sar_ar1 <- pspatfit(form3, data = unemp_it, 
-                             listw = Wsp_it, 
+                   pspt(long, lat, year, 
+                        nknots = c(18, 18, 8), 
+                        psanova = TRUE,
+                        nest_sp1 = c(1, 2, 3), 
+                        nest_sp2 = c(1, 2, 3),
+                        nest_time = c(1, 2, 2))
+sptanova_sar_ar1 <- pspatfit(form2, data = unemp_it, 
+                             listw = lwsp_it, 
                              type = "sar", 
                              cor = "ar1",
                              control = list(tol = 1e-1))
 summary(sptanova_sar_ar1)
- ###### Non-Parametric Total, Direct and Indirect impacts
-#adjust plot margins
+###### Non-Parametric Total, Direct and Indirect impacts
+## adjust plot margins
 par(mar = c(1, 1, 1, 1))
- imp_nparvar3 <- impactsnopar(geospanova_sar, listw = Wsp_it, viewplot = TRUE)
+imp_nparvar3 <- impactsnopar(sptanova_sar_ar1, 
+                             listw = lwsp_it, 
+                             viewplot = TRUE)
+}                    
 
 }
 \references{
 \itemize{ 
-  \item Basile, R., Durbán, M., Mínguez, R., Montero, J.
-        M., and Mur, J. (2014). Modeling regional economic 
-        dynamics: Spatial dependence, spatial heterogeneity and 
-        nonlinearities. \emph{Journal of Economic Dynamics and 
-        Control}, (48), 229-245.                  
+    \item Basile, R.; Durban, M.; Minguez, R.; Montero, J. M.; and 
+    Mur, J. (2014). Modeling regional economic dynamics: Spatial
+    dependence, spatial heterogeneity and nonlinearities. 
+    \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
+    <doi: 10.1016/j.jedc.2014.06.011>               
  }
 }
 \seealso{

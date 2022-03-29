@@ -154,20 +154,24 @@ This function allows the inclusion of a spatial or
 }
 \examples{
 library(pspatreg)
-data(unemp_it); Wsp <- Wsp_it
-
- ######################  GAM pure with spatial non-parametric term
- ### Spatial semiparametric model without spatial lag
+data(unemp_it)
+## Wsp_it is a matrix. Create a neighboord list 
+lwsp_it <- spdep::mat2listw(Wsp_it)
+## short sample for spatial pure case (2d)
+unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+#########  GAM pure with spatial non-parametric term
+### Spatial semiparametric model without spatial lag
  
- form2 <- unrate ~ partrate + agri + cons +
-                pspl(serv,nknots=15) + pspl(empgrowth,nknots=20) +
-                pspt(long,lat,nknots=c(20,20),psanova=FALSE)
- ### Spatial trend fixed for 2014
- unemp_it_2d <- unemp_it[unemp_it$year==2014,]
- geosp1 <- pspatfit(form2,data=unemp_it_2d)
+ form1 <- unrate ~ partrate + agri + cons +
+                pspl(serv, nknots = 15) + 
+                pspl(empgrowth, nknots = 20) +
+                pspt(long, lat, nknots = c(20, 20))
+ \donttest{
+ ### Spatial trend fixed for 2019
+ geosp1 <- pspatfit(form1, data = unemp_it_short)
  summary(geosp1)
- ### Spatial trend fixed for period 1996- 2014
- geosp2 <- pspatfit(form2, data=unemp_it)
+ ### Spatial trend fixed for period 1996- 2019
+ geosp2 <- pspatfit(form1, data = unemp_it)
  summary(geosp2)
 
 
@@ -177,45 +181,55 @@ data(unemp_it); Wsp <- Wsp_it
  ### Remark: It is necessary to include ntime as argument
  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
  
- form4 <- unrate ~ partrate + agri + cons +
-                   pspl(serv, nknots = 15) + pspl(empgrowth, nknots = 20) +
-                   pspt(long, lat, year, nknots = c(18,18,8), 
-                   psanova = TRUE, nest_sp1 = c(1,2,2), nest_sp2 = c(1,2,2),
-                   nest_time = c(1,2,2), ntime = 19)
- sptanova <- pspatfit(form4,data = unemp_it,
-                  control = list(tol = 1e-2))
+ form2 <- unrate ~ partrate + agri + cons +
+                   pspl(serv, nknots = 15) + 
+                   pspl(empgrowth, nknots = 20) +
+                   pspt(long, lat, year, 
+                        nknots = c(18, 18, 8), 
+                        psanova = TRUE, 
+                        nest_sp1 = c(1, 2, 2), 
+                        nest_sp2 = c(1, 2, 2),
+                        nest_time = c(1, 2, 2))
+ sptanova <- pspatfit(form2, data = unemp_it,
+                      control = list(tol = 1e-2))
  summary(sptanova)
  
 
  ################################################  
  ### Interaction terms f1t not included in ANOVA decomposition
  
- form5 <- unrate ~ partrate + agri + cons +
-                   pspl(serv, nknots=15) + pspl(empgrowth, nknots=20) +
-                   pspt(long, lat, year, nknots = c(18,18,8),
-                   psanova = TRUE, nest_sp1 = c(1,2,3), nest_sp2 = c(1,2,3),
-                   nest_time = c(1,2,2), ntime = 19, f1t_int = FALSE)
- sptanova2 <- pspatfit(form5, data = unemp_it,
-                  control = list(tol = 1e-2))
+ form3 <- unrate ~ partrate + agri + cons +
+                   pspl(serv, nknots = 15) + 
+                   pspl(empgrowth, nknots=20) +
+                   pspt(long, lat, year, 
+                        nknots = c(18, 18, 8),
+                        psanova = TRUE, 
+                        nest_sp1 = c(1, 2, 3), 
+                        nest_sp2 = c(1, 2, 3),
+                        nest_time = c(1, 2, 2), 
+                        f1t_int = FALSE)
+ sptanova2 <- pspatfit(form3, data = unemp_it,
+                       control = list(tol = 1e-1))
  summary(sptanova2)
+ }
 }
 \references{
 \itemize{ 
   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
 
-  \item Lee, D. and Durbán, M. (2011). P-Spline ANOVA Type Interaction 
+  \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-    (11), 49-69.
+    (11), 49-69. <doi: 10.1177/1471082X1001100104>
 
   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
     two-dimensional smoothing with P-spline ANOVA mixed models 
     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-    (61), 22-37.
+    (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
 
-  \item Mínguez, R.; Basile, R. and Durbán, M. (2018). An Alternative 
-    Semiparametric Model for Spatial Panel Data. Under evaluation in 
-    \emph{Statistical Methods and Applications}.
+  \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+    Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+    (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
 }
 }
 \seealso{

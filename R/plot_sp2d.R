@@ -23,12 +23,45 @@
 #'  }
 #'  
 #'@examples
-#' library(pspatreg)
+#' library(pspatreg, package = "pspatreg")
+#' ##### EXAMPLE 2D WITH UNEMPLOYMENT IN ITALIAN PROVINCES
+#' ## 103 Italian provinces. Period 1996-2019
+#' data(unemp_it, package = "pspatreg")
+#' ## Wsp_it is a matrix. Create a neighboord list 
+#' lwsp_it <- spdep::mat2listw(Wsp_it)
+#' ## short sample for spatial pure case (2d)
+#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+#' ## Spatial trend with anova decomposition
+#' formit2d_anova <- unrate ~ partrate + agri + cons +
+#'                            pspl(serv, nknots = 15) + 
+#'                            pspl(empgrowth, nknots = 20) +
+#'                            pspt(long, lat, nknots = c(20, 20), 
+#'                            psanova = TRUE)
+#' geospit2d_anova <- pspatfit(formit2d_anova, 
+#'                             data = unemp_it_short)
+#' summary(geospit2d_anova)                             
+#' ### Create sf object to make the plot 
 #' library(sf)
+#' unemp_it_sf_short <- st_as_sf(dplyr::left_join(
+#'                               unemp_it_short, 
+#'                               map_it,  
+#'                         by = c("prov" = "COD_PRO")))
+#' plot_sp2d(geospit2d_anova, data = unemp_it_sf_short, 
+#'           addmain = TRUE, addint = TRUE)
+#' \donttest{
+#' ## Spatial trend without anova decomposition
+#' formit2d <- unrate ~ partrate + agri + cons +
+#'                      pspl(serv, nknots = 15) + 
+#'                      pspl(empgrowth, nknots = 20) +
+#'                      pspt(long, lat, nknots = c(20, 20))
+#' geospit2d <- pspatfit(formit2d, 
+#'                       data = unemp_it_short)
+#' summary(geospit2d_anova) 
+#' plot_sp2d(geospit2d, data = unemp_it_sf_short)
+#' ######## EXAMPLE 2D WITH AMES DATA 
+#' ######## getting and preparing the data
 #' library(spdep)
 #' library(dbscan)
-#' 
-#' ######## getting and preparing the data
 #' ames <- AmesHousing::make_ames() # Raw Ames Housing Data
 #' ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 #' ames_sf$Longitude <- ames$Longitude
@@ -40,22 +73,23 @@
 #' 
 #' ########### Constructing the spatial weights matrix
 #' ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
-#' coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
+#' coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 #' ID <- row.names(as(ames_sf1, "sf"))
 #' col_tri_nb <- tri2nb(coord_sf1)
 #' soi_nb <- graph2nb(soi.graph(col_tri_nb, 
 #'                             coord_sf1), 
 #'                    row.names = ID)
-#' lw_ames <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
+#' lw_ames <- nb2listw(soi_nb, style = "W", 
+#'                     zero.policy = FALSE)
 #' 
-#' 
-#' ######## formula of the model
+#' ######## formula of the model IN AMES
 #' form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
-#'  pspl(lnLot_Area, nknots = 20) + 
-#'  pspl(lnTotal_Bsmt_SF, nknots = 20) +
-#'  pspl(lnGr_Liv_Area, nknots = 20) +
-#'  pspt(Longitude, Latitude, nknots = c(10, 10), 
-#'       psanova = FALSE)
+#'           pspl(lnLot_Area, nknots = 20) + 
+#'           pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'           pspl(lnGr_Liv_Area, nknots = 20) +
+#'           pspt(Longitude, Latitude, 
+#'                nknots = c(10, 10), 
+#'                psanova = FALSE)
 #' 
 #' ######## fit the model
 #' sp2dsar <- pspatfit(form2d, data = ames_sf1, 
@@ -85,7 +119,7 @@
 #' ###### PLOT ANOVA DESCOMPOSITION MODEL
 #' plot_sp2d(sp2danovasar, data = ames_sf1, 
 #'           addmain = TRUE, addint = TRUE)
-#' 
+#' }           
 #' @export
 plot_sp2d <- function(object, data, 
                       coordinates = NULL,

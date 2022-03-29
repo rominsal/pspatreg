@@ -86,7 +86,7 @@ Some functionalities that have been included in \pkg{pspatreg}
   the geoadditive semiparametric model, some functions of \pkg{pspatreg} are
   suited to make plots of the spatial or spatio-temporal trends. These
   functions, named \code{\link{plot_sp2d}} and \code{\link{plot_sp3d}}, can deal
-  either with \emph{sf} objects or dataframe objects including spatial coordinates
+  either with `sf` objects or `dataframe` objects including spatial coordinates
   (see the examples of the functions). 
   The function \code{\link{plot_sptime}} allows
   to examine temporal trends for each spatial unit. Eventually, it is also
@@ -121,10 +121,9 @@ Some functionalities that have been included in \pkg{pspatreg}
   are: 
   \itemize{ 
   \item \code{\link{anova}}: provides tables of fitted
-  \code{pspatreg} models including information criteria (AIC and BIC),
+  `pspatreg` models including information criteria (AIC and BIC),
   log-likelihood and degrees of freedom of each fitted model.
-  \item \code{\link{lrtest}} allows to perform LR tests between nested 
-  models.
+  Also allows to perform LR tests between nested  models.
   \item \code{\link{print}} method is used to print short tables 
   including the values of beta and spatial coefficients 
   as well as p-values of significance test for each 
