@@ -214,6 +214,7 @@
 #' @importFrom dplyr left_join
 #' @importFrom fields image.plot
 #' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim
+#' @importFrom ggplot2 geom_histogram
 #' @importFrom graphics image contour matplot title points
 #' @importFrom graphics par abline lines
 #' @importFrom grDevices heat.colors
