@@ -578,7 +578,7 @@
 #' lwsp_it <- spdep::mat2listw(Wsp_it)
 #' ## short sample for spatial pure case (2d)
 #' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-#' ######################  GAM pure with pspatreg
+#' ####  GAM pure with pspatreg
 #' form1 <- unrate ~ partrate + agri + cons +
 #'                  pspl(serv, nknots = 15) +
 #'                  pspl(empgrowth, nknots = 20)
@@ -600,7 +600,7 @@
 #' summary(gamsar)
 #' ### Test nested models
 #' anova(gampure, gamsar)
-#' 
+#' \donttest{
 #' ######### Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = TRUE)
 #' #adjust plot margins
@@ -659,21 +659,6 @@
 #'                      type = "sem")
 #' summary(geospsem)                  
 #' 
-#' #####################################
-#' #### Fitted Values and Residuals
-#' plot(geospsar$fitted.values, 
-#'      unemp_it_short$unrate, 
-#'      xlab = 'fitted values', 
-#'      ylab = "unrate",
-#'      type = "p", cex.lab = 1.3, 
-#'      cex.main = 1.3,
-#'      main = "Fitted Values geospsar model")
-#'      
-#' plot(geospsar$fitted.values, geospsar$residuals, 
-#'      xlab = 'fitted values', ylab = "residuals",
-#'      type = "p", cex.lab = 1.3, cex.main=1.3,
-#'      main = "Residuals geospsar model")
-#'  
 #' #### Non-Parametric Total, Direct and Indirect impacts 
 #' #### for spatial sar. First with smooth, second without smoothing
 #' #adjust plot margins
@@ -739,7 +724,7 @@
 #' form3 <- unrate ~ partrate + agri + cons +
 #'                   pspl(serv, nknots = 15) + 
 #'                   pspl(empgrowth, nknots = 20) +
-#'                   pspt(long, lat, nknots = c(20,20), 
+#'                   pspt(long, lat, nknots = c(20, 20), 
 #'                        psanova = TRUE,
 #'                        nest_sp1 = c(1, 2), 
 #'                        nest_sp2 = c(1, 2))
@@ -778,11 +763,12 @@
 #'  form4 <- unrate ~ partrate + agri + cons +
 #'                    pspl(serv, nknots = 15) + 
 #'                    pspl(empgrowth, nknots = 20) +
-#'                    pspt(long, lat, year, nknots = c(18, 18, 12),
-#'                    psanova = TRUE, 
-#'                    nest_sp1 = c(1, 2, 3), 
-#'                    nest_sp2 = c(1, 2, 3),
-#'                    nest_time = c(1, 2, 2))
+#'                    pspt(long, lat, year, 
+#'                         nknots = c(18, 18, 12),
+#'                         psanova = TRUE, 
+#'                         nest_sp1 = c(1, 2, 3), 
+#'                         nest_sp2 = c(1, 2, 3),
+#'                         nest_time = c(1, 2, 2))
 #'  sptanova <- pspatfit(form4, data = unemp_it,
 #'                   control = list(tol = 1e-1))
 #'  summary(sptanova)
@@ -847,12 +833,13 @@
 #'  ### Interaction term f2t restricted to 0
 #'   form5 <- unrate ~ partrate + agri + cons +
 #'                   pspl(serv, nknots=15) + pspl(empgrowth, nknots=20) +
-#'                   pspt(long, lat, year, nknots = c(18, 18, 6), 
-#'                   psanova = TRUE,
-#'                   nest_sp1 = c(1, 2, 3), 
-#'                   nest_sp2 = c(1, 2, 3),
-#'                   nest_time = c(1, 2, 2), 
-#'                   f2t_int = FALSE)
+#'                   pspt(long, lat, year, 
+#'                        nknots = c(18, 18, 6), 
+#'                        psanova = TRUE,
+#'                        nest_sp1 = c(1, 2, 3), 
+#'                        nest_sp2 = c(1, 2, 3),
+#'                        nest_time = c(1, 2, 2), 
+#'                        f2t_int = FALSE)
 #'  sptanova2 <- pspatfit(form5, 
 #'                        data = unemp_it,
 #'                        control = list(tol = 1e-1))
@@ -927,7 +914,8 @@
 #'                       listw = lwsp_it,
 #'                       demean = TRUE,
 #'                       index = c("prov", "year"))
-#' summary(gamsar_dem)   
+#' summary(gamsar_dem)
+#' }
 #'                
 #' @export
 pspatfit <- function(formula, data, na.action,

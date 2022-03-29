@@ -55,7 +55,7 @@ Default: max(3L, getOption("digits") - 3L).}
 }
 \description{
 The \code{\link{anova}} function provides tables of fitted 
-  \code{pspatreg} models including information criteria (AIC and BIC), 
+  `pspatreg` models including information criteria (AIC and BIC), 
   log-likelihood and degrees of freedom of each fitted model. The 
   argument `lrtest` allows to perform LR tests between nested models.
   The \code{\link{print}} function is used to print short tables including the 
@@ -65,8 +65,55 @@ The \code{\link{anova}} function provides tables of fitted
  The rest of methods works in the usual way.
 }
 \examples{
-## INCLUDE SOME EXAMPLES OF ANOVA AND PERHAPS ANOTHER 
-## ADDITIONAL METHODS
+library(pspatreg)
+## load spatial panel and Wsp_it
+## 103 Italian provinces. Period 1996-2019
+data(unemp_it, package = "pspatreg")
+## Wsp_it is a matrix. Create a neighboord list 
+lwsp_it <- spdep::mat2listw(Wsp_it)
+## short sample for spatial pure case (2d)
+unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+####  GAM pure with pspatreg
+form1 <- unrate ~ partrate + agri + cons +
+                 pspl(serv, nknots = 15) +
+                 pspl(empgrowth, nknots = 20)
+gampure <- pspatfit(form1, data = unemp_it_short)
+summary(gampure)
+
+#####################  GAM + SAR Model
+gamsar <- pspatfit(form1, data = unemp_it_short, 
+                   type = "sar", listw = lwsp_it)
+summary(gamsar)
+### Test nested models
+anova(gampure, gamsar)
+### anova without testing
+anova(gampure, gamsar, lrtest = FALSE)
+## logLikelihood 
+logLik(gamsar)
+## Restricted logLikelihood
+logLik(gamsar, REML = TRUE)
+## Parametric and spatial coefficients
+print(gamsar)
+coef(gamsar)
+## Frequentist (sandwich) covariance matrix 
+## (parametric terms)
+vcov(gamsar)      
+## Bayesian covariance matrix (parametric terms)
+vcov(gamsar, bayesian = TRUE)
+#####################################
+#### Fitted Values and Residuals
+plot(gamsar$fitted.values, 
+     unemp_it_short$unrate, 
+     xlab = 'fitted values', 
+     ylab = "unrate",
+     type = "p", cex.lab = 1.3, 
+     cex.main = 1.3,
+     main = "Fitted Values gamsar model")      
+plot(gamsar$fitted.values, gamsar$residuals, 
+     xlab = 'fitted values', ylab = "residuals",
+     type = "p", cex.lab = 1.3, cex.main=1.3,
+     main = "Residuals geospsar model")
+     
 }
 \author{
 \tabular{ll}{

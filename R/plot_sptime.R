@@ -15,41 +15,38 @@
 #'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
 #'   \email{gehllanza@@gmail.com} \cr 
 #'  }
-#'  @examples
-#' 
+#'  
+#' @examples
 #' library(pspatreg)
-#' library(spdep)
-#' data("unemp_it")
-#' Wsp_it <- as.matrix(Wsp_it)
-#' lwsp_it <- mat2listw(Wsp_it, 
-#'                      row.names = rownames(Wsp_it))
+#' data(unemp_it, package = "pspatreg")
+#' lwsp_it <- spdep::mat2listw(Wsp_it)
 #' 
 #' ###### FORMULA OF THE MODEL
-#' form3d_psanova_restr <- unrate ~ partrate + agri + cons +
-#'    pspl(serv, nknots = 15) + 
-#'    pspl(empgrowth, nknots = 20) +
-#'    pspt(long, lat, year, 
-#'       nknots = c(18,18,8),
-#'       psanova = TRUE, 
-#'       nest_sp1 = c(1, 2, 3), 
-#'       nest_sp2 = c(1, 2, 3),
-#'       nest_time = c(1, 2, 2),
-#'       f1t = FALSE, f2t = FALSE)
+#' form3d_psanova <- unrate ~ partrate + agri + cons +
+#'                   pspl(serv, nknots = 15) + 
+#'                   pspl(empgrowth, nknots = 20) +
+#'                   pspt(long, lat, year, 
+#'                        nknots = c(18, 18, 8),
+#'                        psanova = TRUE, 
+#'                        nest_sp1 = c(1, 2, 3), 
+#'                        nest_sp2 = c(1, 2, 3),
+#'                        nest_time = c(1, 2, 2))
 #' 
+#' \donttest{
 #' ####### FIT the model
-#' sp3danovasar <- pspatfit(form3d_psanova_restr, 
-#'                          data = unemp_it, 
-#'                          listw = lwsp_it, 
-#'                          method = "Chebyshev", 
-#'                          type = "sar") 
+#' sp3danova <- pspatfit(form3d_psanova, 
+#'                       data = unemp_it, 
+#'                       listw = lwsp_it, 
+#'                       method = "Chebyshev") 
 #' 
-#' summary(sp3danovasar)
+#' summary(sp3danova)
 #' 
-#' ######## PLOT OF TEMPORAL TREND FOR EACH PROVINCE 
-#' plot_sptime(sp3danovasar, 
+#' ######## Plot of temporal trend for each province 
+#' plot_sptime(sp3danova, 
 #'             data = unemp_it, 
 #'             time_var = "year", 
 #'             reg_var = "prov")
+#' }
 #' 
 #' @export
 plot_sptime <- function(object, data, time_var, reg_var) {

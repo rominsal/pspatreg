@@ -51,87 +51,35 @@ The \code{fit_terms} function compute both:
 ###################### Examples using a panel data of rate of unemployment 
 ###################### in 103 Italian provinces during the period 1996-2014.
 library(pspatreg)
-data(unemp_it)
+data(unemp_it, package = "pspatreg")
+lwsp_it <- spdep::mat2listw(Wsp_it)
 unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-######################  No Spatial Trend: PSAR including a spatial 
-######################  lag of the dependent variable
+#######  No Spatial Trend: PSAR including a spatial 
+#######  lag of the dependent variable
 form1 <- unrate ~ partrate + agri + cons +
-                 pspl(serv, nknots = 15) +
-                 pspl(empgrowth, nknots = 20) 
+                  pspl(serv, nknots = 15) +
+                  pspl(empgrowth, nknots = 20) 
 gamsar <- pspatfit(form1, data = unemp_it_short, 
-                   type = "sar", listw = Wsp_it)
+                   type = "sar", listw = lwsp_it)
 summary(gamsar)
 
-######################  Fit non-parametric terms 
-######################  (spatial trend must be name "spttrend")
+######  Fit non-parametric terms 
+######  (spatial trend must be name "spttrend")
 list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(gamsar, list_varnopar)
 
 ######################  Plot non-parametric terms
 #adjust plot margins
 par(mar = c(1, 1, 1, 1))
-plot_terms(terms_nopar, unemp_it)
-  
-###############################################
-############### Examples of terms corresponding to spatial (2d) or 
-###############       spatio-temporal (3d) trends
-#################################################  
-# Spatial (2d) semiparametric ANOVA model without spatial lag
-# Interaction term f12 with nested basis
-form3 <- unrate ~ partrate + agri + cons +
-                  pspl(serv,nknots = 15) + 
-                  pspl(empgrowth, nknots = 20) +
-                  pspt(long, lat, nknots = c(20, 20), psanova = TRUE,
-                  nest_sp1 = c(1, 2), 
-                  nest_sp2 = c(1, 2))
-# Spatial trend fixed for period 1996-2019
-geospanova <- pspatfit(form3, data = unemp_it_short)
-summary(geospanova)
-### Plot spatial trend and interaction (ANOVA)
-### Create sf object to make the plot 
-library(sf)
-unemp_it_sf_short <- st_as_sf(dplyr::left_join(
-                              unemp_it_short, 
-                              map_it,  
-                        by = c("prov" = "COD_PRO")))
-plot_sp2d(geospanova, 
-          data = unemp_it_sf_short, 
-          addmain = TRUE, 
-          addint = TRUE)
-###############################################
-# Spatio-temporal (3d) semiparametric ANOVA model without spatial lag
-# Interaction terms f12,f1t,f2t and f12t with nested basis
-# Remark: It is necessary to include ntime as argument
-# Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
-form4 <- unrate ~ partrate + agri + cons +
-                  pspl(serv, nknots = 15) + 
-                  pspl(empgrowth, nknots = 20) +
-                  pspt(long, lat, year, nknots = c(18, 18, 8), 
-                       psanova = TRUE,
-                  nest_sp1 = c(1, 2, 3), 
-                  nest_sp2 = c(1, 2, 3),
-                  nest_time = c(1, 2, 2))
-sptanova <- pspatfit(form4, data = unemp_it, 
-                     control = list(tol = 1e-1))
-summary(sptanova)
-
-####### Plot spatio-temporal trends
-library(sf)
-unemp_it_sf <- st_as_sf(dplyr::left_join(
-                                unemp_it, map_it,  
-                        by = c("prov" = "COD_PRO")))
-
-plot_sp3d(sptanova, data = unemp_it_sf, 
-          time_var = "year", 
-          time_index = c(1996, 2019),
-          addmain = TRUE, addint = FALSE)
+plot_terms(terms_nopar, unemp_it_short)
  
 }
 \references{
 \itemize{ 
- \item Lee, D. and Durbán, M. (2011). P-Spline ANOVA Type Interaction 
-        Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-        (11), 49-69.
+  \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
+    Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
+    (11), 49-69. <doi: 10.1177/1471082X1001100104>
+
         
   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.

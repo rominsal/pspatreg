@@ -4,3 +4,5 @@
 ^README\.Rmd$
 ^README\.md$
 ^.*\.ini$
+^doc$
+^Meta$
