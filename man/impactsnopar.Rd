@@ -213,8 +213,3 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
   \email{gehllanza@gmail.com} \cr 
  }
 }
-\keyword{Direct}
-\keyword{Indirect}
-\keyword{covariates.}
-\keyword{impacts,}
-\keyword{non-parametric}
