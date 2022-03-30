@@ -169,6 +169,13 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #' @references \itemize{ 
 #'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
 #'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
+#'     
+#'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+#'   The Joys of P-Splines}. Cambridge University Press.
+#'     
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+#'     \emph{Regression. Models, Methods and Applications}.
+#'      Springer.     
 #'
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
@@ -183,6 +190,9 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
 #'     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
 #'     (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+#'     
+#'   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
+#'   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
 #' }
 
 #' @examples

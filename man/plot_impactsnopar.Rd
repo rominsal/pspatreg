@@ -124,6 +124,9 @@ imp_nparvar3 <- impactsnopar(sptanova_sar_ar1,
                                 continuous covariates.
   \item \code{\link{plot_terms}} plot the terms of non-parametric covariates.
 }
+
+Other Direct, Indirect and Total Impacts.: 
+\code{\link{impactspar}()}
 }
 \author{
 \tabular{ll}{ 

@@ -903,6 +903,9 @@ summary(gamsar_dem)
   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
     
+  \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+  The Joys of P-Splines}. Cambridge University Press.
+    
   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
     \emph{Regression. Models, Methods and Applications}.
      Springer.
@@ -932,6 +935,9 @@ summary(gamsar_dem)
     in multidimensional generalized P-splines: the SAP algorithm.
     \emph{Statistics and Computing} 25 (5), 941-957. 
     <doi: 10.1007/s11222-014-9464-2>
+    
+  \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
+  An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
 }
 }
 \seealso{

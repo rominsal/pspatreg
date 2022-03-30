@@ -3,7 +3,8 @@
 \name{impactsnopar}
 \alias{impactsnopar}
 \title{Compute direct, indirect and total impacts functions 
-  for continous non-parametric covariates in semiparametric spatial regression models.}
+  for continous non-parametric covariates in semiparametric spatial 
+  regression models.}
 \usage{
 impactsnopar(
   obj,
@@ -28,33 +29,88 @@ impact functions. Default 0.95.}
 \item{smooth}{Default `TRUE`. Whether to smooth fitted impacts or not.}
 
 \item{span}{span for the kernel of the smoothing (see \code{\link{loess}} 
-for details). Default c(0.1, 0.1, 0.2).}
+for details). Default c(0.1, 0.1, 0.2)}
 }
 \value{
 A list including
   \tabular{ll}{
-    \emph{impnopar_tot} \tab Matrix including total impects in columns. \cr
-    \emph{impnopar_dir} \tab Matrix including direct impects in columns. \cr
-    \emph{impnopar_ind} \tab Matrix including indirect impects in columns. \cr
-    \emph{impnopar_tot_up} \tab Matrix including upper bounds of total impects in columns. \cr
-    \emph{impnopar_dir_up} \tab Matrix including upper bounds of direct impects in columns. \cr
-    \emph{impnopar_ind_up} \tab Matrix including upper bounds of indirect impects in columns. \cr
-    \emph{impnopar_tot_low} \tab Matrix including lower bounds of total impects in columns. \cr
-    \emph{impnopar_dir_low} \tab Matrix including lower bounds of direct impects in columns. \cr
-    \emph{impnopar_ind_low} \tab Matrix including lower bounds of indirect impects in columns. \cr
+    \emph{impnopar_tot} \tab Matrix including total impacts in columns. \cr
+    \emph{impnopar_dir} \tab Matrix including direct impacts in columns. \cr
+    \emph{impnopar_ind} \tab Matrix including indirect 
+                             impacts in columns. \cr
+    \emph{impnopar_tot_up} \tab Matrix including upper bounds of 
+                                total impacts in columns. \cr
+    \emph{impnopar_dir_up} \tab Matrix including upper bounds of 
+                                direct impacts in columns. \cr
+    \emph{impnopar_ind_up} \tab Matrix including upper bounds of 
+                                indirect impacts in columns. \cr
+    \emph{impnopar_tot_low} \tab Matrix including lower bounds of 
+                                 total impacts in columns. \cr
+    \emph{impnopar_dir_low} \tab Matrix including lower bounds of 
+                                 direct impacts in columns. \cr
+    \emph{impnopar_ind_low} \tab Matrix including lower bounds of 
+                                 indirect impacts in columns. \cr
  }
 }
 \description{
-Compute and plot direct, indirect and total impect functions for 
-  non-parametric covariates included in a semiparametric spatial
-  or spatio-temporal SAR model. This model must include a spatial
-  lag of the dependent variable (SAR) to have indirect impacts 
-  different from 0, otherwise, total and direct function impacts 
-  are the same.
+Compute and plot direct, indirect and total impect functions 
+  for non-parametric covariates included in a semiparametric spatial
+  or spatio-temporal econometric model. This model must include a 
+  spatial lag of the dependent variable and/or non-parametric covariates, 
+  to have indirect impacts different from 0, otherwise, total and direct 
+  function impacts are the same.
 }
 \details{
-DESCRIBE ALGORITHM TO COMPUTE impECT FUNCTIONS AND THE 
-         SMOOTHING TO PLOT
+To compute the impact functions of the non-parametric covariates, first 
+  it is used the function 
+  \code{\link{fit_terms}} to get fitted values of the terms and 
+  standard errors of the fitted values for each non-parametric covariate. 
+  Then, the intervals for the fitted term are computed as \cr
+  
+  \emph{ fitted_values plus/minus quantile*standard errors } \cr
+  
+  where \emph{quantile} is the corresponding quantile of the N(0,1) 
+  distribution. The total impact function is computed as: \cr
+  
+  \code{solve(kronecker((I_N - rho*W_N), It), fitted_values) } \cr
+  
+  where \emph{(I_N - rho*W_N)} matrix is the spatial lag matrix and 
+  \emph{It} is an identity matrix of order equals to the temporal periods 
+  (\emph{t}). Obviously, \emph{t = 1} for pure spatial econometric models. 
+  The upper and lower bounds of the total impact functions are computed 
+  using the previous formula but using 
+  \emph{fitted_values plus/minus quantile*standard errors} instead
+  of \emph{fitted_values}. \cr
+  
+  The direct impacts function is computed using the formula: \cr
+  
+  \code{diag(solve(kronecker((I_N - rho*W_N), It),
+                              diag(fitted_values))} \cr
+                              
+  that is, the fitted values are put in the main diagonal of 
+  a diagonal matrix and, afterwards, the spatial lag is applied over 
+  this diagonal matrix. Finally, the main diagonal of the resulting
+  matrix is considered the direct impact function. 
+  The upper and lower bounds of the direct impact functions are computed 
+  using the previous formula but using 
+  \emph{fitted_values plus/minus quantile*standard errors} instead
+  of \emph{fitted_values}. \cr
+  
+  Eventually, the indirect impacts function are computed as the 
+  difference between both total and direct impact functions, that is: \cr
+  
+   \emph{indirect impact function = total impacts function -
+                                    direct impacts function} \cr
+                                    
+ In this way we can get both, the indirect impact functions and upper and
+ lower bounds of the indirect impact functions. \cr
+ 
+ It is important to remark that, usually, the indirect impact functions 
+ are very wiggly. To get ride of this problem, the argument \code{smooth} 
+ (default = `TRUE`) allows to smooth the impacts function using the 
+ \code{\link[stats]{loess}} 
+ function available in \pkg{stats}. This is very convenient when the 
+ indirect impacts function is plotted.
 }
 \examples{
 ################################################
@@ -111,19 +167,30 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
 
 }
 \references{
-\itemize{ 
-  \item Basile, R., Durban, M., Minguez, R., Montero, J.
-        M., and Mur, J. (2014). Modeling regional economic 
-        dynamics: Spatial dependence, spatial heterogeneity and 
-        nonlinearities. \emph{Journal of Economic Dynamics and 
-        Control}, (48), 229-245.
+\itemize{
+    \item Basile, R.; Durban, M.; Minguez, R.; Montero, J. M.; and 
+    Mur, J. (2014). Modeling regional economic dynamics: Spatial
+    dependence, spatial heterogeneity and nonlinearities. 
+    \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
+    <doi: 10.1016/j.jedc.2014.06.011>
+        
+ \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+       The Joys of P-Splines}. Cambridge University Press.
+    
+ \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+       \emph{Regression. Models, Methods and Applications}.
+       Springer.         
         
   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
         Spatial Econometrics}. CRC Press, Boca Raton.
         
-  \item Minguez, R.; Basile, R. and Durban, M. (2018). An Alternative Semiparametric Model
-        for Spatial Panel Data. Under evaluation in \emph{Statistical
-        Methods and Applications}.
+  \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+    Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+    (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+
+  \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
+    with nonparametric spatial trends: A P-Spline approach. 
+    \emph{Estadistica Espanola}, (54:177), 89-111.
  }
 }
 \seealso{
@@ -134,7 +201,7 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
     (or impacts) for parametric continuous covariates.
   \item \code{\link{fit_terms}} compute terms for smooth functions for non-parametric
     continuous covariates and for non-parametric trends.
-  \item \code{\link{plot_impactsnopar}} plot the non-parametric impects functions
+  \item \code{\link{plot_impactsnopar}} plot the non-parametric impacts functions
     allowing for previous smoothing.
 }
 }
@@ -144,12 +211,11 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
   Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
   \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
   \email{gehllanza@gmail.com} \cr 
- }#'
+ }
 }
-\concept{Direct, Indirect and Total impects.}
+\concept{Direct, Indirect and Total impacts.}
 \keyword{Direct}
 \keyword{Indirect}
-\keyword{SAR,}
 \keyword{covariates.}
-\keyword{impects,}
+\keyword{impacts,}
 \keyword{non-parametric}
