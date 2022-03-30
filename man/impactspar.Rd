@@ -100,7 +100,8 @@ unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
 ########  lag of the dependent variable
 form1 <- unrate ~ partrate + agri + cons +
                  pspl(serv, nknots = 15) +
-                 pspl(empgrowth, nknots = 20) 
+                 pspl(empgrowth, nknots = 20)
+### example with type = "sar"                   
 gamsar <- pspatfit(form1, 
                    data = unemp_it_short, 
                    type = "sar", 
@@ -109,10 +110,14 @@ summary(gamsar)
 ###### Parametric Total, Direct and Indirect Effects
 imp_parvar <- impactspar(gamsar, listw = lwsp_it)
 summary(imp_parvar)
-gamsar <- pspatfit(form1, 
+
+### example with type = "slx"                   
+
+gamslx <- pspatfit(form1, 
                    data = unemp_it_short, 
-                   type = "sar", 
+                   type = "slx", 
                    listw = lwsp_it)
+                   
 summary(gamslx)
 ###### Parametric Total, Direct and Indirect Effects
 imp_parvarslx <- impactspar(gamslx, listw = lwsp_it)
