@@ -53,6 +53,7 @@
 #'                            pspl(empgrowth, nknots = 20) +
 #'                            pspt(long, lat, nknots = c(20, 20), 
 #'                            psanova = TRUE)
+#' \donttest{
 #' geospit2d_anova <- pspatfit(formit2d_anova, 
 #'                             data = unemp_it_short)
 #' summary(geospit2d_anova)                             
@@ -64,7 +65,6 @@
 #'                         by = c("prov" = "COD_PRO")))
 #' plot_sp2d(geospit2d_anova, data = unemp_it_sf_short, 
 #'           addmain = TRUE, addint = TRUE)
-#' \donttest{
 #' ## Spatial trend without anova decomposition
 #' formit2d <- unrate ~ partrate + agri + cons +
 #'                      pspl(serv, nknots = 15) + 
