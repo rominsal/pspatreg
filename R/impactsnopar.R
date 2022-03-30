@@ -196,8 +196,6 @@
 #'                              viewplot = TRUE)
 #'  }                            
 #'
-#' @keywords Indirect impacts, Direct impacts, non-parametric covariates.
-#'
 #' @export
 impactsnopar <- function(obj, listw = NULL, conflevel = 0.95, 
                          viewplot = TRUE, smooth = TRUE, 

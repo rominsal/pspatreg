@@ -150,8 +150,6 @@
 #' summary(imp_parvar2)
 #' }
 #'
-#' @keywords Indirect effects, Direct impacts, parametric covariates.
-#'
 #' @export
 impactspar <- function(obj, ..., tr = NULL, 
                        R = 1000, listw = NULL, 

@@ -133,8 +133,3 @@ imp_nparvar3 <- impactsnopar(sptanova_sar_ar1,
   Gonzalo Espana-Heredia \tab \email{gehllanza@gmail.com} \cr 
  }
 }
-\keyword{Direct}
-\keyword{Indirect}
-\keyword{covariates.}
-\keyword{impacts,}
-\keyword{non-parametric}

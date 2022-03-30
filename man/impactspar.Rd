@@ -168,9 +168,3 @@ summary(imp_parvar2)
           models.
 }
 }
-\keyword{Direct}
-\keyword{Indirect}
-\keyword{covariates.}
-\keyword{effects,}
-\keyword{impacts,}
-\keyword{parametric}
