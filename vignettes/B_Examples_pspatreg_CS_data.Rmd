@@ -60,13 +60,13 @@ Due to the skewed distribution of the dependent variable **`Sale_Price`**, we us
 ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
 ```
 
-<img src="figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+<img src="unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
 
 ```r
 ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = log(Sale_Price)))
 ```
 
-<img src="figure/unnamed-chunk-2-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+<img src="unnamed-chunk-2-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
 
 ```r
 ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
@@ -222,14 +222,14 @@ fits <- fitted(linsar)
 plot(fits, ames_sf1$lnSale_Price)
 ```
 
-<img src="figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
 
 ```r
 resids <- residuals(linsar)
 plot(fits, resids)
 ```
 
-<img src="figure/unnamed-chunk-7-2.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="unnamed-chunk-7-2.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
 
 Extract log-likelihood and restricted log-likelihood:
 
@@ -1316,7 +1316,7 @@ sp2danovasarimpnopar <- impactsnopar(sp2danovasar, listw = listW, viewplot = FAL
 plot_impactsnopar(sp2danovasarimpnopar, data = ames_sf1, smooth = TRUE)
 ```
 
-<img src="figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" /><img src="figure/unnamed-chunk-31-2.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" /><img src="figure/unnamed-chunk-31-3.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" />
+<img src="unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" /><img src="unnamed-chunk-31-2.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" /><img src="unnamed-chunk-31-3.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" />
 
 Parametric direct, indirect and total impacts:
 
@@ -1354,7 +1354,7 @@ Now, we show how to plot spatial trends using spatial coordinates. Notice, that 
 plot_sp2d(sp2dsar, data = ames_sf1)
 ```
 
-<img src="figure/plot2dpoints_noanova_ames-1.png" title="plot of chunk plot2dpoints_noanova_ames" alt="plot of chunk plot2dpoints_noanova_ames" style="display: block; margin: auto;" />
+<img src="plot2dpoints_noanova_ames-1.png" title="plot of chunk plot2dpoints_noanova_ames" alt="plot of chunk plot2dpoints_noanova_ames" style="display: block; margin: auto;" />
 
 For the model with the ANOVA decomposition, we plot either the 2d spatial trend or its decomposition in main effects and interaction effect:
 
@@ -1364,7 +1364,7 @@ plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE,
           addint = TRUE)
 ```
 
-<img src="figure/plot2dpoints_anova_ames-1.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="figure/plot2dpoints_anova_ames-2.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="figure/plot2dpoints_anova_ames-3.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="figure/plot2dpoints_anova_ames-4.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" />
+<img src="plot2dpoints_anova_ames-1.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-2.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-3.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-4.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" />
 
 Finally, we estimate a semiparametric Spatial Durbin Model with spatial trend, selecting the spatial lag covariates. The results, however, are in favor of the SAR model with spatial trend. 
 
