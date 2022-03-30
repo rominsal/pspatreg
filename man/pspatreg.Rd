@@ -176,42 +176,51 @@ Some functionalities that have been included in \pkg{pspatreg}
 
 \references{
 \itemize{ 
-  \item Basile, R.; Durban, M.; Minguez, R.; Montero, J.
-  M.; and Mur, J. (2014). Modeling regional economic dynamics: Spatial
-  dependence, spatial heterogeneity and nonlinearities. \emph{Journal of
-  Economic Dynamics and Control}, (48), 229-245. <doi:
-  10.1016/j.jedc.2014.06.011>
+    \item Basile, R.; Durban, M.; Minguez, R.; Montero, J. M.; and 
+    Mur, J. (2014). Modeling regional economic dynamics: Spatial
+    dependence, spatial heterogeneity and nonlinearities. 
+    \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
+    <doi: 10.1016/j.jedc.2014.06.011>
 
-  \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with B-Splines and
-  Penalties. \emph{Statistical Science}, (11), 89-121.
-
-  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013).
-  \emph{Regression. Models, Methods and Applications}. Springer.
-
-  \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction Models
-  for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, (11), 49-69.
-  <doi: 10.1177/1471082X1001100104>
+  \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
+    B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
+    
+  \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+  The Joys of P-Splines}. Cambridge University Press.
+    
+  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+    \emph{Regression. Models, Methods and Applications}.
+     Springer.
+    
+  \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
+    Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
+    (11), 49-69. <doi: 10.1177/1471082X1001100104>
 
   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
-  two-dimensional smoothing with P-spline ANOVA mixed models and nested
-  bases. \emph{Computational Statistics & Data Analysis}, (61), 22-37. <doi:
-  10.1016/j.csda.2012.11.013>
+    two-dimensional smoothing with P-spline ANOVA mixed models 
+    and nested bases. \emph{Computational Statistics & Data Analysis}, 
+    (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
 
-  \item LeSage, J. and Pace, K. (2009). \emph{Introduction to Spatial
-  Econometrics}. CRC Press, Boca Raton.
+  \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
+    Spatial Econometrics}. CRC Press, Boca Raton.
 
-  \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative
-  Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and
-  Applications}, (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+  \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+    Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+    (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
 
-  \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models with
-  nonparametric spatial trends: A P-Spline approach. \emph{Estadistica
-  Espanola}, (54:177), 89-111.
+  \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
+    with nonparametric spatial trends: A P-Spline approach. 
+    \emph{Estadistica Espanola}, (54:177), 89-111.
 
-  \item Rodriguez-Alvarez, M. X.; Kneib, T.; Durban, M.; Lee, D.J. and
-  Eilers, P. (2015). Fast smoothing parameter separation in multidimensional
-  generalized P-splines: the SAP algorithm. \emph{Statistics and Computing}
-  25 (5), 941-957. <doi: 10.1007/s11222-014-9464-2> }
+  \item Rodriguez-Alvarez, M. X.; Kneib, T.; Durban, M.; Lee, D.J.
+    and Eilers, P. (2015). Fast smoothing parameter separation 
+    in multidimensional generalized P-splines: the SAP algorithm.
+    \emph{Statistics and Computing} 25 (5), 941-957. 
+    <doi: 10.1007/s11222-014-9464-2>
+    
+  \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
+  An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
+}
 }
 \author{
 \tabular{ll}{ 

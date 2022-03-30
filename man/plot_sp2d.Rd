@@ -140,6 +140,23 @@ plot_sp2d(sp2danovasar, data = ames_sf1,
           addmain = TRUE, addint = TRUE)
 }           
 }
+\references{
+\itemize{ 
+  \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
+    Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
+    (11), 49-69. <doi: 10.1177/1471082X1001100104>
+    
+  \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+  The Joys of P-Splines}. Cambridge University Press.
+    
+  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
+    \emph{Regression. Models, Methods and Applications}.
+     Springer.
+        
+  \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
+  An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
+ }
+}
 \author{
 \tabular{ll}{ 
   Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr

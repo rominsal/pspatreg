@@ -23,19 +23,39 @@ impactspar(obj, ..., tr = NULL, R = 1000, listw = NULL, tol = 1e-06, Q = NULL)
 \item{Q}{default NULL, else an integer number of cumulative power series impacts to calculate if \code{tr} is given}
 }
 \value{
-An object of class \emph{eff.par.pspat}. Can be printed
-        with \code{summary}.
+An object of class \emph{impactspar.pspatreg}. Can be printed
+  with \code{summary}.
         
-        The object returned is a list with 3 matrices including
-        the results of simulated effects:
-         \tabular{ll}{
-           \emph{tot_eff} \tab Matrix including simulated total effects 
-                               for each variable in rows. \cr
-           \emph{dir_eff} \tab Matrix including simulated direct effects 
-                               for each variable in rows. \cr
-           \emph{ind_eff} \tab Matrix including simulated indirect effects 
-                               for each variable in rows. \cr
-         }
+ If \code{type = "sar", "sdm", "sarar"}, the object returned is a list 
+ with 4 objects including the type of model and three matrices including the simulated
+ total, direct and indirect impacts:         
+ \tabular{ll}{
+   \emph{type} \tab Type of spatial econometric model. \cr
+   \emph{mimpactstot} \tab Matrix including simulated total impacts 
+                           for each variable in rows. \cr
+   \emph{mimpactsdir} \tab Matrix including simulated direct impacts 
+                           for each variable in rows. \cr
+   \emph{mimpactsind} \tab Matrix including simulated indirect impacts 
+                           for each variable in rows. \cr
+   }
+   If \code{type = "slx", "sdem"} the object returned is a list 
+   with 5 objects including the type of model and four matrices including 
+   the computed total, direct and indirect impacts, the standard errors,
+   the z-values and p-values of each type of impact:
+ \tabular{ll}{
+   \emph{type} \tab Type of spatial econometric model. \cr
+   \emph{mimpact} \tab Matrix including computed total, direct and indirect
+                       impacts for each variable in rows. \cr
+   \emph{semimpact} \tab Matrix including standard errors of total, direct 
+                         and indirect impacts for each variable 
+                         in rows. \cr
+   \emph{zvalmimpact} \tab Matrix including z-values of total, direct 
+                         and indirect impacts for each variable 
+                         in rows. \cr
+   \emph{pvalmimpact} \tab Matrix including p-values of total, direct 
+                         and indirect impacts for each variable 
+                         in rows. \cr
+   }
 }
 \description{
 Compute direct, indirect and total 
@@ -43,7 +63,28 @@ Compute direct, indirect and total
   or spatio-temporal model.
 }
 \details{
-DESCRIBE ALGORITHM TO SIMULATE PARAMETRIC EFFECTS
+This function is similar to the 
+  \code{\link[spatialreg]{impacts}} method used in \pkg{spatialreg}.
+   package. The function
+  \code{\link{impactspar}} obtains the three type of impacts (total, direct
+  and indirect) together with a measure of statistical 
+  significance, according to the randomization approach described in 
+  LeSage and Pace (2009). Briefly, they suggest to obtain a 
+  sequence of \emph{nsim} random matrices using a multivariate normal 
+  distribution N(0; \emph{Sigma}), being \emph{Sigma} the estimated 
+  covariance matrix of the fitted \emph{beta} for parametric covariates
+  and spatial parameters of the model. 
+  These random matrices, combined with the values of the fitted 
+  \emph{beta} for parametric covariates and the estimated 
+  values of the spatial parameters, are used to obtain simulated values. 
+  The function \code{\link{impactspar}} obtains the standard 
+  deviations using the \emph{nsim} simulated impacts in the randomization 
+  procedure, which are used to test the significance of the estimated 
+  impacts for the original data.
+  Finally, if the spatial model is type = "slx" or "sdem", then there is no
+  need to simulate to make inference of the impacts. The standard errors of the 
+  impacts are computed directly using the \emph{Sigma} matrix of the estimated
+  covariances of \emph{beta} and spatial parameters.
 }
 \examples{
 ################################################
@@ -68,6 +109,14 @@ summary(gamsar)
 ###### Parametric Total, Direct and Indirect Effects
 imp_parvar <- impactspar(gamsar, listw = lwsp_it)
 summary(imp_parvar)
+gamsar <- pspatfit(form1, 
+                   data = unemp_it_short, 
+                   type = "sar", 
+                   listw = lwsp_it)
+summary(gamslx)
+###### Parametric Total, Direct and Indirect Effects
+imp_parvarslx <- impactspar(gamslx, listw = lwsp_it)
+summary(imp_parvarslx) 
 \donttest{
 ######################   PSAR-ANOVA with spatio-temporal trend and 
 ######################   temporal autorregresive noise
@@ -103,17 +152,21 @@ summary(imp_parvar2)
 \seealso{
 \itemize{
   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal 
-          semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
-  \item \code{\link{impactsnopar}} compute total, direct and indirect effect
+          semiparametric ps-sar, ps-sem, ps-sarar, ps-slx or 
+          ps-durbin regression models.
+  \item \code{\link{impactsnopar}} compute total, direct and indirect impact
           functions for non-parametric continuous covariates.
-  \item \code{\link{fit_terms}} compute smooth functions for non-parametric
-          continuous covariates.
+  \item \code{\link{fit_terms}} compute smooth term functions for 
+    non-parametric continuous covariates.
   \item \code{\link[spdep]{impacts}} similar function in \pkg{spdep} 
           package to compute impacts in spatial parametric econometric 
-          models.                              
+          models.
 }
+
+Other Direct, Indirect and Total Impacts.: 
+\code{\link{plot_impactsnopar}()}
 }
-\concept{Direct, Indirect and Total Effects.}
+\concept{Direct, Indirect and Total Impacts.}
 \keyword{Direct}
 \keyword{Indirect}
 \keyword{covariates.}
