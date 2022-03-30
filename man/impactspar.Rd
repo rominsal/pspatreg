@@ -167,13 +167,10 @@ summary(imp_parvar2)
           package to compute impacts in spatial parametric econometric 
           models.
 }
-
-Other Direct, Indirect and Total Impacts.: 
-\code{\link{plot_impactsnopar}()}
 }
-\concept{Direct, Indirect and Total Impacts.}
 \keyword{Direct}
 \keyword{Indirect}
 \keyword{covariates.}
 \keyword{effects,}
+\keyword{impacts,}
 \keyword{parametric}
