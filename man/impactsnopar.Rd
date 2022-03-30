@@ -213,7 +213,6 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
   \email{gehllanza@gmail.com} \cr 
  }
 }
-\concept{Direct, Indirect and Total impacts.}
 \keyword{Direct}
 \keyword{Indirect}
 \keyword{covariates.}

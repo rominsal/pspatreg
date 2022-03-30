@@ -18,9 +18,9 @@ Description: Estimation and inference of spatial and spatiotemporal
     semiparametric models including spatial or spatiotemporal non-parametric 
     trends, parametric and non-parametric covariates and, possibly, a spatial 
     lag for the dependent variable and temporal correlation in the noise.
-    The spatio-temporal trend can be decomposed in ANOVA way including main and 
+    The spatiotemporal trend can be decomposed in ANOVA way including main and 
     interaction functional terms. Use of SAP algorithm to estimate the spatial 
-    or spatio-temporal trend and non-parametric covariates. 
+    or spatiotemporal trend and non-parametric covariates. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

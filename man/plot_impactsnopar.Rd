@@ -124,23 +124,17 @@ imp_nparvar3 <- impactsnopar(sptanova_sar_ar1,
                                 continuous covariates.
   \item \code{\link{plot_terms}} plot the terms of non-parametric covariates.
 }
-
-Other Direct, Indirect and Total Impacts.: 
-\code{\link{impactspar}()}
 }
 \author{
 \tabular{ll}{ 
   Roman Minguez  \tab \email{roman.minguez@uclm.es} \cr
-  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr Maria Durban \tab
-  \email{mdurban@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
-  \email{gehllanza@gmail.com} \cr 
+  Roberto Basile \tab \email{roberto.basile@univaq.it} \cr 
+  Maria Durban \tab \email{mdurban@est-econ.uc3m.es} \cr 
+  Gonzalo Espana-Heredia \tab \email{gehllanza@gmail.com} \cr 
  }
 }
-\concept{Direct, Indirect and Total Impacts.}
 \keyword{Direct}
 \keyword{Indirect}
-\keyword{SAR,}
 \keyword{covariates.}
-\keyword{effects,}
 \keyword{impacts,}
 \keyword{non-parametric}
