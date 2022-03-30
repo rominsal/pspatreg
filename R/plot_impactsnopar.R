@@ -32,11 +32,10 @@
 #' @author 
 #' \tabular{ll}{ 
 #'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
-#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr Maria Durban \tab
-#'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
-#'   \email{gehllanza@@gmail.com} \cr 
+#'   Roberto Basile \tab \email{roberto.basile@@univaq.it} \cr 
+#'   Maria Durban \tab \email{mdurban@@est-econ.uc3m.es} \cr 
+#'   Gonzalo Espana-Heredia \tab \email{gehllanza@@gmail.com} \cr 
 #'  }
-#' @family Direct, Indirect and Total Impacts.
 #' 
 #' @seealso
 #' \itemize{
@@ -114,7 +113,7 @@
 #'                              viewplot = TRUE)
 #' }                    
 #'
-#' @keywords Indirect impacts, Direct effects, SAR, non-parametric covariates.
+#' @keywords Indirect impacts, Direct impacts, non-parametric covariates.
 #'
 #' @export
 plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE, 

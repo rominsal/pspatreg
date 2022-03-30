@@ -219,7 +219,7 @@
 #'  }
 #'
 #' @importFrom AmesHousing make_ames
-#' @importFrom akima interp
+#' @importFrom interp interp
 #' @importFrom dplyr left_join
 #' @importFrom fields image.plot
 #' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim

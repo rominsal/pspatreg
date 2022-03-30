@@ -70,8 +70,6 @@
 #'                          in rows. \cr
 #'    }
 #'     
-#' @family Direct, Indirect and Total Impacts.
-#' 
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal 
@@ -152,7 +150,7 @@
 #' summary(imp_parvar2)
 #' }
 #'
-#' @keywords Indirect effects, Direct effects, parametric covariates.
+#' @keywords Indirect effects, Direct impacts, parametric covariates.
 #'
 #' @export
 impactspar <- function(obj, ..., tr = NULL, 

@@ -102,7 +102,6 @@
 #'   \email{mdurban@@est-econ.uc3m.es} \cr Gonzalo Espana-Heredia \tab
 #'   \email{gehllanza@@gmail.com} \cr 
 #'  }
-#' @family Direct, Indirect and Total impacts.
 #' 
 #' @seealso
 #' \itemize{
