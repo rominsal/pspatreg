@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot_terms.R
 \name{plot_terms}
 \alias{plot_terms}
-\title{Plot terms of non-parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN 
-  regression models.}
+\title{Plot terms of the non-parametric covariates in the
+  semiparametric regression models.}
 \usage{
 plot_terms(
   fitterms,

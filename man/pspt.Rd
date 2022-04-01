@@ -2,8 +2,8 @@
 % Please edit documentation in R/pspl_functions.R
 \name{pspt}
 \alias{pspt}
-\title{Non-parametric term spatio-temporal trend in 
-  semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.}
+\title{Non-parametric term spatio-temporal trend in the
+  semiparametric spatial or spatio-temporal models.}
 \usage{
 pspt(
   sp1,
@@ -147,9 +147,9 @@ A list object.
 }
 \description{
 This function allows the inclusion of a spatial or
-  spatio-temporal trend in the formula of 
-  semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. 
-  This term is modelled using p-splines and can be decomposed in ANOVA
+  spatio-temporal trend in the formula of the
+  semiparametric spatial or spatio-temporal models. 
+  This term is modelled using P-splines and can be decomposed in ANOVA
   functional way including main and interaction effects.
 }
 \examples{

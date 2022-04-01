@@ -30,8 +30,8 @@
 #'  
 #' @seealso
 #' \itemize{
-#'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN
-#'   regression models.
+#'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric 
+#'     regression models.
 #'   \item \code{\link{print.summary.pspatreg}} print objects of class \emph{summary.pspatreg}
 #' }
 #'

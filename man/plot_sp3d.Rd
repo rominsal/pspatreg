@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_sp3d.R
 \name{plot_sp3d}
 \alias{plot_sp3d}
-\title{Plot and mapping spatio-temporal trends}
+\title{Plot and mapping spatio-temporal trends.}
 \usage{
 plot_sp3d(object, data, time_var, time_index, addmain = TRUE, addint = TRUE)
 }
@@ -23,7 +23,8 @@ plot_sp3d(object, data, time_var, time_index, addmain = TRUE, addint = TRUE)
 plots and maps of the spatial trends
 }
 \description{
-DESCRIBE THE FUNCTION...
+Make plots and maps of the spatio-temporal trends 
+  in 3d of the objects fitted with \code{\link{pspatfit}} function.
 }
 \examples{
 

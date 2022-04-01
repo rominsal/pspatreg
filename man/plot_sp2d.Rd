@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_sp2d.R
 \name{plot_sp2d}
 \alias{plot_sp2d}
-\title{Plot and mapping spatial trends}
+\title{Plot and mapping spatial trends.}
 \usage{
 plot_sp2d(
   object,
@@ -39,7 +39,8 @@ plot_sp2d(
 plots and maps of the spatial trends
 }
 \description{
-DESCRIBE THE FUNCTION...
+Make plots and maps of the spatial trends 
+  in 2d of the objects fitted with \code{\link{pspatfit}} function.
 }
 \examples{
 library(pspatreg, package = "pspatreg")

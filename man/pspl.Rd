@@ -3,7 +3,7 @@
 \name{pspl}
 \alias{pspl}
 \title{Non-parametric terms for continuous covariates in 
-  semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.}
+  semiparametric spatial or spatio-temporal regression models.}
 \usage{
 pspl(
   x,
@@ -47,11 +47,11 @@ penalty matrix. If \code{decom = 2} the fixed part is given by
 }
 \description{
 This function allows the inclusion of non-parametric
-  continuous covariates in the formula of semiparametric PS-SAR, 
-  PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. Each non-parametric 
+  continuous covariates in the formula of semiparametric spatial 
+  or spatio-temporal regression models. Each non-parametric 
   covariate must be included with its own \code{pspl} term in a
  formula. See \code{Examples} to understand how to do this. Each 
- non-parametric term is modelled using p-splines.
+ non-parametric term is modelled using P-splines.
 }
 \examples{
 library(pspatreg)

@@ -53,12 +53,14 @@ A list including
  }
 }
 \description{
-Compute and plot direct, indirect and total impect functions 
+Compute and plot direct, indirect and total impact functions 
   for non-parametric covariates included in a semiparametric spatial
   or spatio-temporal econometric model. This model must include a 
   spatial lag of the dependent variable and/or non-parametric covariates, 
   to have indirect impacts different from 0, otherwise, total and direct 
-  function impacts are the same.
+  function impacts are the same. The models can be of type \emph{ps-sar}, 
+  \emph{ps-sarar}, \emph{ps-sdm}, \emph{ps-sdem} or
+  \emph{ps-slx}.
 }
 \details{
 To compute the impact functions of the non-parametric covariates, first 
@@ -195,10 +197,10 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
 }
 \seealso{
 \itemize{
-  \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric PS-SAR
+  \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric 
     regression models.
-  \item \code{\link{impactspar}} compute and simulate total, direct and indirect impect
-    (or impacts) for parametric continuous covariates.
+  \item \code{\link{impactspar}} compute and simulate total, direct and indirect impacts
+    for parametric continuous covariates.
   \item \code{\link{fit_terms}} compute terms for smooth functions for non-parametric
     continuous covariates and for non-parametric trends.
   \item \code{\link{plot_impactsnopar}} plot the non-parametric impacts functions

@@ -1,8 +1,11 @@
 #' @name plot_sptime 
 #' @rdname plot_sptime 
 #'
-#' @title Plot of time trend for PS-ANOVA models in 3d. 
-#' @description DESCRIBE THE FUNCTION...
+#' @title Plot of time trends for spatio-temporal models in 3d.
+#'  
+#' @description Make plots of the temporal trends for each region
+#'    fitted with \code{\link{pspatfit}} function.
+#'    
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data either sf or dataframe with the data. 
 #' @param time_var name of the temporal variable in data. 

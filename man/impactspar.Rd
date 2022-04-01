@@ -60,7 +60,9 @@ An object of class \emph{impactspar.pspatreg}. Can be printed
 \description{
 Compute direct, indirect and total 
   impacts for parametric covariates included in a semiparametric spatial
-  or spatio-temporal model.
+  or spatio-temporal model. The models can be of type \emph{ps-sar}, 
+  \emph{ps-sarar}, \emph{ps-sdm}, \emph{ps-sdem} or
+  \emph{ps-slx}.
 }
 \details{
 This function is similar to the 

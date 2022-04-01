@@ -1,8 +1,11 @@
 #' @name plot_sp3d 
 #' @rdname plot_sp3d
 #'
-#' @title Plot and mapping spatio-temporal trends        
-#' @description DESCRIBE THE FUNCTION...
+#' @title Plot and mapping spatio-temporal trends.
+#'         
+#' @description Make plots and maps of the spatio-temporal trends 
+#'   in 3d of the objects fitted with \code{\link{pspatfit}} function.
+#'   
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data sf object. 
 #' @param time_var name of the temporal variable in data.

@@ -1,8 +1,8 @@
 #' @name plot_terms
 #' @rdname plot_terms
 #'
-#' @title Plot terms of non-parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN 
-#'   regression models.
+#' @title Plot terms of the non-parametric covariates in the
+#'   semiparametric regression models.
 #'        
 #' @description For each non-parametric covariate the plot of the term
 #'   includes confidence intervals and the decomposition in fixed and 

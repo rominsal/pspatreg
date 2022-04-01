@@ -22,8 +22,7 @@
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{impactspar}} Compute direct, indirect and total
-#'     effects (or impacts)
-#'     for continous parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+#'     impacts for continous parametric covariates.
 #'   \item \code{\link{print.summary.impactspar.pspatreg}} print objects of
 #'     class \emph{summary.pspatreg}
 #' }

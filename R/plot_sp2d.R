@@ -1,8 +1,11 @@
 #' @name plot_sp2d 
 #' @rdname plot_sp2d 
 #'
-#' @title Plot and mapping spatial trends        
-#' @description  DESCRIBE THE FUNCTION...
+#' @title Plot and mapping spatial trends.   
+#'      
+#' @description  Make plots and maps of the spatial trends 
+#'   in 2d of the objects fitted with \code{\link{pspatfit}} function.
+#'   
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data either sf or dataframe with the data. 
 #' @param coordinates coordinates matrix if \code{data} is not an sf object.

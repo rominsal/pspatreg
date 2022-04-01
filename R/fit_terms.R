@@ -1,9 +1,8 @@
 #' @name fit_terms
 #' @rdname fit_terms
 #'
-#' @title Compute terms for non-parametric spatial (2d) or 
-#'   spatio-temporal (3d) trends and for smooth functions of continous 
-#'   non-parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+#' @title Compute terms of the non-parametric covariates in the
+#'   semiparametric regression models.
 #'        
 #' @description The \code{fit_terms} function compute both:
 #' \itemize{
@@ -50,7 +49,9 @@
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal 
-#'     semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+#'     semiparametric regression models. The model can be of type \emph{ps-sim},
+#'     \emph{ps-sar}, \emph{ps-slx}, \emph{ps-sem}, \emph{ps-sdm} or 
+#'     \emph{ps-sarar}.
 #'   \item \code{\link{plot_terms}} plot smooth functions of non-parametric
 #'     covariates.
 #' }

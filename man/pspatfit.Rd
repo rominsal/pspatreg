@@ -27,7 +27,7 @@ pspatfit(
 \arguments{
 \item{formula}{A formula similar to GAM specification including
 parametric and non-parametric terms. Parametric covariates
-are included in the usual way and non-parametric p-spline smooth terms are
+are included in the usual way and non-parametric P-spline smooth terms are
 specified using \code{pspl(.)} and \code{pspt(.)} for the non-parametric 
 covariates and spatial   or spatio-temporal trend, respectively.
 More details in \emph{Details} and \emph{Examples}.}
@@ -231,7 +231,7 @@ Estimate geoadditive spatial or spatio-temporal
   The estimation method can be restricted maximum likelihood (REML)
   or maximum likelihood (ML).
 }
-\section{Details}{
+\section{details}{
  
 Function to estimate the model:
   \deqn{ y = (\rho*W_{N} \otimes I_T) y 
@@ -241,7 +241,7 @@ Function to estimate the model:
     + \sum_{i = 1}^k g(z_i) 
     + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
     + \epsilon }
-  where:
+ where:
   \itemize{
     \item \eqn{f(s_1,s_2,\tau_t)} is a smooth spatio-temporal trend
     of the spatial coordinates \eqn{s1,s_2} and of the temporal
@@ -257,7 +257,6 @@ Function to estimate the model:
       are uncorrelated or it follows an AR(1) temporal autoregressive 
       structure for serially correlated errors.
   }
-
 \describe{
   \item{Including non-parametric terms}{
   The non-parametric terms are included in \code{formula} using
@@ -285,7 +284,6 @@ Function to estimate the model:
   temporal coordinate, that is, in the previous example would be 
   specified as \code{pspt(long,lat)}.
   }
-  
   \item{How to use \code{pspl()} and \code{pspt()}}{   
   Note that both in \code{pspl(.)} and \code{pspt(.)}, we have 
   to include the number of knots, named \code{nknots}, 
@@ -310,7 +308,6 @@ Function to estimate the model:
   indicating the basis for each spatial coordinate. 
   For spatio-temporal smoothing, it will be a length 3 vector.
   }
-  
   \item{ANOVA descomposition}{
   In many situations the  spatio-temporal trend, given by 
   \eqn{f(s_1,s_2,\tau_t)}, can be very complex and the use of a 
@@ -387,21 +384,19 @@ Function to estimate the model:
   We can also exclude the second- and third-order
   effects functions setting to `FALSE` the arguments \code{f12_int}, \code{f1t_int}, 
   \code{f2t_int} or \code{f12t_int} in \code{pspl(.)}.
-  } }
-
-  All the terms included in the model are jointly fitted using Separation of Anisotropic 
+  }
+ }
+ All the terms included in the model are jointly fitted using Separation of Anisotropic 
   Penalties (SAP) algorithm (see \emph{Rodriguez-Alvarez et al., (2015)}) 
   which allows to the mixed model reparameterization of the model. 
   For type of models \code{"sar", "sem", "sdm", "sdem", "sarar"}  or 
   \code{cor = "ar1"}, the parameters \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} 
   are numerically estimated using 
-  \code{\link[minqa]{bobyqa}} function implemented in pakage \pkg{minqa}.
+  \code{\link[minqa]{bobyqa}} function implemented in package \pkg{minqa}.
   In these cases, an iterative process between SAP and numerical 
   optimization of \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} is applied until
   convergence. See details in \emph{Minguez et al.}, (2018).
-  
- \describe{
-  
+ \describe{   
  \item{Plotting non-parametric terms}{
    To plot the non-linear functions corresponding to 
    non-parametric terms we need to compute the fitted values,
@@ -423,7 +418,6 @@ Function to estimate the model:
   corresponds to the dataframe used to fitted the model 
   although a different database can be used to plot the 
   non-parametric terms.}
- 
  \item{Spatial impacts}{
    For the spatial models given by  \code{type = "sar"}, 
    \code{"sdm"}, \code{"sdem"}, \code{"sarar"} 
@@ -433,7 +427,7 @@ Function to estimate the model:
    parametric and non-parametric covariates when computing spatial 
    impacts.}
    \itemize{
-     \item {spatial impacts for parametric covariates}{
+     \item spatial impacts for parametric covariates \cr
       In this case, the spatial impacts are computed in the 
       usual way using simulation. See LeSage and Page (2009) 
       for computational details. The function \code{impactspar()}
@@ -453,9 +447,7 @@ Function to estimate the model:
       
       \code{imp_parvar <- impactspar(MODEL, listw = W)} \cr
       \code{summary(imp_parvar)}
-      \cr
-  }
-  \item {spatial impacts for non-parametric covariates}{
+  \item spatial impacts for non-parametric covariates \cr
     In this case direct, indirect and total 
     \emph{spatial impacts functions} are 
     obtained using \code{impactsnopar}. The details of 
@@ -471,8 +463,7 @@ Function to estimate the model:
     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = TRUE)} \cr
     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = FALSE)} \cr
     \code{plot_impactsnopar(imp_nparvar, data = DATA)} \cr
-  }
- } 
+ }
 }
 }
 

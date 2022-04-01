@@ -2,14 +2,14 @@
 #' @rdname pspl
 #'
 #' @title Non-parametric terms for continuous covariates in 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.
+#'   semiparametric spatial or spatio-temporal regression models.
 #'
 #' @description This function allows the inclusion of non-parametric
-#'   continuous covariates in the formula of semiparametric PS-SAR, 
-#'   PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. Each non-parametric 
+#'   continuous covariates in the formula of semiparametric spatial 
+#'   or spatio-temporal regression models. Each non-parametric 
 #'   covariate must be included with its own \code{pspl} term in a
 #'  formula. See \code{Examples} to understand how to do this. Each 
-#'  non-parametric term is modelled using p-splines. 
+#'  non-parametric term is modelled using P-splines. 
 #'   
 #' @param x Name of the covariate.
 #' @param xl Minimum of the interval for the continuous covariate.
@@ -67,13 +67,13 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #' @name pspt
 #' @rdname pspt
 #'
-#' @title Non-parametric term spatio-temporal trend in 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.
+#' @title Non-parametric term spatio-temporal trend in the
+#'   semiparametric spatial or spatio-temporal models.
 #'
 #' @description This function allows the inclusion of a spatial or
-#'   spatio-temporal trend in the formula of 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. 
-#'   This term is modelled using p-splines and can be decomposed in ANOVA
+#'   spatio-temporal trend in the formula of the
+#'   semiparametric spatial or spatio-temporal models. 
+#'   This term is modelled using P-splines and can be decomposed in ANOVA
 #'   functional way including main and interaction effects.
 #'    
 #' @param sp1 Name of the first spatial coordinate. 

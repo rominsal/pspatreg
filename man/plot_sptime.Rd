@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_sptime.R
 \name{plot_sptime}
 \alias{plot_sptime}
-\title{Plot of time trend for PS-ANOVA models in 3d.}
+\title{Plot of time trends for spatio-temporal models in 3d.}
 \usage{
 plot_sptime(object, data, time_var, reg_var)
 }
@@ -19,7 +19,8 @@ plot_sptime(object, data, time_var, reg_var)
 time series plots of the temporal trend for each region
 }
 \description{
-DESCRIBE THE FUNCTION...
+Make plots of the temporal trends for each region
+   fitted with \code{\link{pspatfit}} function.
 }
 \examples{
 library(pspatreg)
