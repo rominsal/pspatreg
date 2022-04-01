@@ -88,7 +88,7 @@
 #' ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
 #' 
 #' ########### Constructing the spatial weights matrix
-#' ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
+#' ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
 #' coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 #' ID <- row.names(as(ames_sf1, "sf"))
 #' col_tri_nb <- tri2nb(coord_sf1)
@@ -119,11 +119,12 @@
 #' 
 #' ###### MODEL WITH ANOVA DESCOMPOSITION
 #'  form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
-#'   pspl(lnLot_Area, nknots = 20) + 
-#'   pspl(lnTotal_Bsmt_SF, nknots = 20) +
-#'   pspl(lnGr_Liv_Area, nknots = 20) +
-#'   pspt(Longitude, Latitude, nknots = c(10, 10), 
-#'        psanova = TRUE)
+#'                    pspl(lnLot_Area, nknots = 20) + 
+#'                    pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'                    pspl(lnGr_Liv_Area, nknots = 20) +
+#'                    pspt(Longitude, Latitude, 
+#'                         nknots = c(10, 10), 
+#'                         psanova = TRUE)
 #'       
 #' sp2danovasar <- pspatfit(form2d_psanova, 
 #'                         data = ames_sf1, 
@@ -170,7 +171,7 @@ plot_sp2d <- function(object, data,
   if (dynamic) {
     idxyear1 <- seq(from = 1, to = nfull, by = nt)
     data <- data[-idxyear1, ]
-  }  
+  }
   sp2dfitl <- fit_terms(object, "spttrend") # list object
   geom_data <- st_geometry_type(data)
   if(sum(geom_data == "POINT") == length(geom_data))
@@ -200,44 +201,40 @@ plot_sp2d <- function(object, data,
     range_i <- c(min_i - 0.01, max_i + 0.01)
     breaks_i <- seq(min_i - 0.01, max_i + 0.01, 
                     by = diff(range(range_i))/15)
-    
     if (!(object$psanova)) {
-      X <- seq(min(sp1), max(sp1), length = npoints)
-      Y <- seq(min(sp2), max(sp2), length = npoints)
-      dfintp <- interp(sp1, sp2, sp2dtrend,
-                              xo = X, yo = Y,
-                              linear = FALSE,
-                              duplicate = "median",
-                              extrap = FALSE)
-      fields::image.plot(X, Y, dfintp$z, 
-                         breaks = breaks_i,
-                         col = heat.colors(
-                             n = (length(breaks_i)-1)))
+      dfsptrend2d <- data.frame(sp1 = sp1, sp2 = sp2, 
+                              sp2dtrend = sp2dtrend)
+      interp_trend2d <- mba.surf(dfsptrend2d, 
+                                 no.X = npoints,
+                                 no.Y = npoints,
+                                 extend = TRUE)$xyz
+      fields::image.plot(interp_trend2d,
+                        breaks = breaks_i,
+                        col = heat.colors(
+                        n = (length(breaks_i)-1)))
       if (addcontour)
-        contour(X, Y, dfintp$z, add = TRUE)
+        graphics::contour(interp_trend2d, add = TRUE)
       if (addpoints)
         points(sp1, sp2, cex = cexpoints)
       title(main = "Spatial Trend (centered)")
     } else { # psanova case
-      X <- seq(min(sp1), max(sp1), length = npoints)
-      Y <- seq(min(sp2), max(sp2), length = npoints)
       df <- data.frame(sp1 = sp1, sp2 = sp2,
                        sp2dtrend = sp2dtrend,
                        f1_main = f1_main,
                        f2_main = f2_main,
                        f12_int = f12_int,
                        intercept = intercept)
-      dfintp <- interp(sp1, sp2, sp2dtrend,
-                              xo = X, yo = Y,
-                              linear = FALSE,
-                              duplicate = "median",
-                              extrap = FALSE)
-      fields::image.plot(X, Y, dfintp$z,
-                         breaks = breaks_i,
-                         col = heat.colors(
-                           n = (length(breaks_i)-1)))
+      dfsptrend2d <- df[, c("sp1", "sp2", "sp2dtrend")]
+      interp_trend2d <- mba.surf(dfsptrend2d, 
+                                 no.X = npoints,
+                                 no.Y = npoints,
+                                 extend = TRUE)$xyz      
+      fields::image.plot(interp_trend2d,
+                        breaks = breaks_i,
+                        col = heat.colors(
+                        n = (length(breaks_i)-1)))
       if (addcontour)
-        contour(X, Y, dfintp$z, add = TRUE)
+        contour(interp_trend2d, add = TRUE)
       if (addpoints)
         points(sp1, sp2, cex = cexpoints)
       title(main = "Spatial Trend (centered)")
@@ -260,17 +257,17 @@ plot_sp2d <- function(object, data,
       }
       if (addint) {
         readline(prompt="Press [enter] to continue")
-        dfintp <- interp(sp1, sp2, f12_int,
-                                xo = X, yo = Y,
-                                linear = FALSE,
-                                duplicate = "median",
-                                extrap = FALSE)
-        fields::image.plot(X, Y, dfintp$z,
+        df_f12_int <- df[, c("sp1", "sp2", "f12_int")]
+        interp_f12_int <- mba.surf(df_f12_int, 
+                                   no.X = npoints,
+                                   no.Y = npoints,
+                                   extend = TRUE)$xyz
+        fields::image.plot(interp_f12_int,
                            breaks = breaks_i,
                            col = heat.colors(
                              n = (length(breaks_i)-1)))
         if (addcontour)
-          contour(X, Y, dfintp$z, add = TRUE)
+          contour(interp_f12_int, add = TRUE)
         if (addpoints)
           points(sp1, sp2, cex = cexpoints)
         title(main = "Spat. Trend: f12_int")

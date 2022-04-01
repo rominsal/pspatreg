@@ -230,7 +230,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1, 
          lwd = 2, 
          cex.main = 1.0, 
-         main = "Total Impacts")
+         main = paste("Total Impacts: ", name_var))
     lines(var[ord], uptot_i[ord], 
           xlab = "", ylab = "", 
           type = "l", col = 2, lty = 2, lwd = 1.5)
@@ -252,7 +252,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1, 
          lwd = 2,
          cex.main = 1.0, 
-         main = "Direct Impacts")
+         main = paste("Direct Impacts:", name_var))
     lines(var[ord], updir_i[ord], 
           xlab = "", 
           ylab = "", 
@@ -278,7 +278,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
          lty = 1,
          lwd = 2,
          cex.main = 1.0, 
-         main = "Indirect Impacts")
+         main = paste("Indirect Impacts: ", name_var))
     lines(var[ord], upind_i[ord], 
           xlab = "",
           ylab = "",

@@ -91,7 +91,7 @@ ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
 ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
 
 ########### Constructing the spatial weights matrix
-ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
+ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
 coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 ID <- row.names(as(ames_sf1, "sf"))
 col_tri_nb <- tri2nb(coord_sf1)
@@ -122,11 +122,12 @@ plot_sp2d(sp2dsar, data = ames_sf1)
 
 ###### MODEL WITH ANOVA DESCOMPOSITION
  form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
-  pspl(lnLot_Area, nknots = 20) + 
-  pspl(lnTotal_Bsmt_SF, nknots = 20) +
-  pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude, Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+                   pspl(lnLot_Area, nknots = 20) + 
+                   pspl(lnTotal_Bsmt_SF, nknots = 20) +
+                   pspl(lnGr_Liv_Area, nknots = 20) +
+                   pspt(Longitude, Latitude, 
+                        nknots = c(10, 10), 
+                        psanova = TRUE)
       
 sp2danovasar <- pspatfit(form2d_psanova, 
                         data = ames_sf1, 

@@ -291,8 +291,8 @@ Function to estimate the model:
   to include the number of knots, named \code{nknots}, 
   which is the dimension of the basis used to represent the smooth term.
   The value of \code{nknots} should not be less than the dimension of the null space of the penalty
-  for the term, see \code{\link[mgcv:null.space.dimension]{null.space.dimension}} 
-  and \code{\link[mgcv:choose.k]{choose.k}} from \pkg{mgcv} 
+  for the term, see \code{\link[mgcv]{null.space.dimension}} 
+  and \code{\link[mgcv]{choose.k}} from \pkg{mgcv} 
   package to know how to choose \code{nknots}.
   
   In \code{pspl(.)} the default is \code{nknots = 10}, see the help of \code{\link{pspl}} function.
@@ -713,6 +713,9 @@ plot_sp2d(geospanova,
          
 ## In plot_sp2d() function, if data is not an sf object, 
 ## you must indicate the spatial coordinates variables
+## first plot is the whole spatial trend,
+## f1_main and f2_main are plots of main functions (in anova)
+## f12_int is the interaction function (in anova)
 plot_sp2d(geospanova, 
          data = unemp_it_short, 
          addmain = TRUE, 

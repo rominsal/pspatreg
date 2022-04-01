@@ -219,14 +219,14 @@
 #'  }
 #'
 #' @importFrom AmesHousing make_ames
-#' @importFrom interp interp
 #' @importFrom dplyr left_join
-#' @importFrom fields image.plot
+#' @importFrom fields image.plot 
 #' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom graphics image contour matplot title points
 #' @importFrom graphics par abline lines
 #' @importFrom grDevices heat.colors
+#' @importFrom MBA mba.surf
 #' @importFrom MASS ginv mvrnorm
 #' @importFrom Matrix bandSparse bdiag crossprod determinant
 #' @importFrom Matrix diag Diagonal kronecker Matrix
