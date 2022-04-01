@@ -18,7 +18,8 @@
 #'   interactions effects of 2nd and 3rd order. The estimation method can be
 #'   restricted maximum likelihood (REML) or maximum likelihood (ML).
 #'
-#' @details Some functionalities that have been included in \pkg{pspatreg}
+#' @details 
+#'   Some functionalities that have been included in \pkg{pspatreg}
 #'   package are:
 #'
 #' @section 1. Estimation of the semiparametric regression model: 

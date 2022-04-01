@@ -118,8 +118,8 @@
 #' @param control List of extra control arguments. See 
 #'   \emph{Control Arguments} section below.
 #'
-#' @section details: 
-#' Function to estimate the model:
+#' @details
+#'   Function to estimate the model:
 #'   \deqn{ y = (\rho*W_{N} \otimes I_T) y 
 #'     + f(s_1,s_2,\tau_{t}) 
 #'     + X \beta 
@@ -381,25 +381,19 @@
 #'  \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
 #'  \code{index} \tab Value of \code{index} argument in the call to \code{pspatfit}. \cr
 #'  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
-#'              mixed model. These betas comes from either parametric
-#'              covariates or fixed coefficients of smooth terms
-#'              reparameterized as mixed models. \cr
+#'              mixed model. \cr
 #'  \code{se_bfixed} \tab Standard errors of fixed betas. \cr
 #'  \code{brandom} \tab Estimated betas corresponding to random effects
-#'              in mixed model. These betas comes from random coefficients of 
-#'              smooth terms reparameterized as mixed models. \cr
+#'              in mixed model. \cr
 #'  \code{se_brandom}\tab Standard errors of random betas. \cr
 #'  \code{vcov_fr} \tab Covariance matrix of fixed and random
 #'              effects using frequentist or sandwich method. \cr
 #'  \code{vcov_by} \tab Covariance matrix of fixed and random
 #'              effects using bayesian method. \cr
 #'  \code{rho} \tab Estimated rho for spatial lag of the
-#'    dependent variable. if the model does not include
-#'    a spatial lag, always \eqn{rho=0}. \cr
+#'    dependent variable. \cr
 #'  \code{se_rho} \tab Standard error of \eqn{rho}. \cr
-#'  \code{delta} \tab Estimated delta for spatial error models, 
-#'    if the model does not include
-#'    spatial error term, always \eqn{delta=0}. \cr
+#'  \code{delta} \tab Estimated delta for spatial error models. \cr
 #'  \code{se_delta} \tab Standard error of \eqn{delta}. \cr
 #'  \code{phi} \tab Estimated phi. If \code{cor="none"} always \eqn{phi=0}. \cr
 #'  \code{se_phi} \tab Standard error of \eqn{phi}. \cr
@@ -429,17 +423,13 @@
 #'
 #' @section Control Arguments:
 #' \tabular{ll}{
-#'   \code{optim} \tab method of estimation between 
-#'     restricted maximum likelihood, \code{"llik_reml"} or
-#'     maximum likelihood, \code{"llik"}. 
-#'     Default = \code{"llik_reml"}. \cr
-#'   \code{typese} \tab method to compute variances and 
-#'     standard errors. Default: \code{"sandwich"} corresponding 
-#'     to the frequentist case. The other option is \code{"bayesian"}.
+#'   \code{optim} \tab method of estimation: \code{"llik_reml"} (default) or
+#'     \code{"llik"}. \cr
+#'   \code{typese} \tab method to compute 
+#'     standard errors. \code{"sandwich"} (default) or \code{"bayesian"}.
 #'     See Fahrmeir et al, pp. 375 for details of computations. \cr   
 #'   \code{vary_init} \tab Initial value of the noise variance in the model.
-#'     Default = `NULL`. If `NULL` the initial variance
-#'     is the sample variance of the dependent variable. \cr
+#'     Default = `NULL`. \cr
 #'   \code{trace} \tab A logical value set to \emph{TRUE} to show 
 #'     intermediate results during the estimation process. 
 #'     Default = \emph{FALSE}. \cr
@@ -456,8 +446,8 @@
 #'   \code{Imult} \tab default 2; used for preparing the Cholesky 
 #'       decompositions for updating in the Jacobian function \cr
 #'   \code{super} \tab  if `NULL` (default), set to `FALSE` to use 
-#'       a simplicial decomposition for the sparse Cholesky decomposition and 
-#'       method "Matrix_J", set to `as.logical(NA)` for method "Matrix", if 
+#'       a simplicial decomposition for the sparse Cholesky decomposition 
+#'       and method "Matrix_J", set to `as.logical(NA)` for method "Matrix", if 
 #'       `TRUE`, use a supernodal decomposition \cr
 #'     \code{cheb_q} \tab default 5; highest power of the approximating 
 #'       polynomial for the Chebyshev approximation \cr
