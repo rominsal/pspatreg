@@ -153,6 +153,7 @@ This function allows the inclusion of a spatial or
   functional way including main and interaction effects.
 }
 \examples{
+For more in-depth examples see \code{\link{pspatfit}}
 library(pspatreg)
 data(unemp_it)
 ## Wsp_it is a matrix. Create a neighboord list 
@@ -178,7 +179,6 @@ unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
  ###############################################
  ### Spatio-temporal semiparametric ANOVA model without spatial lag
  ### Interaction terms f12,f1t,f2t and f12t with nested basis
- ### Remark: It is necessary to include ntime as argument
  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
  
  form2 <- unrate ~ partrate + agri + cons +

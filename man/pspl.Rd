@@ -54,13 +54,21 @@ This function allows the inclusion of non-parametric
  non-parametric term is modelled using p-splines.
 }
 \examples{
+For more in-depth examples see \code{\link{pspatfit}}
+
 library(pspatreg)
-data(unemp_it); Wsp <- Wsp_it
- ######################  GAM pure
+## load spatial panel and Wsp_it
+## 103 Italian provinces. Period 1996-2019
+data(unemp_it, package = "pspatreg")
+## Wsp_it is a matrix. Create a neighboord list 
+lwsp_it <- spdep::mat2listw(Wsp_it)
+## short sample for spatial pure case (2d)
+unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+####  GAM pure with pspatreg
 form1 <- unrate ~ partrate + agri + cons +
                  pspl(serv, nknots = 15) +
                  pspl(empgrowth, nknots = 20)
-gampure <- pspatfit(form1, data = unemp_it)
+gampure <- pspatfit(form1, data = unemp_it_short)
 summary(gampure)
 
 }

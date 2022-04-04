@@ -41,13 +41,21 @@
 #' }
 #' 
 #' @examples
+#' For more in-depth examples see \code{\link{pspatfit}}
+#' 
 #' library(pspatreg)
-#' data(unemp_it); Wsp <- Wsp_it
-#'  ######################  GAM pure
+#' ## load spatial panel and Wsp_it
+#' ## 103 Italian provinces. Period 1996-2019
+#' data(unemp_it, package = "pspatreg")
+#' ## Wsp_it is a matrix. Create a neighboord list 
+#' lwsp_it <- spdep::mat2listw(Wsp_it)
+#' ## short sample for spatial pure case (2d)
+#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+#' ####  GAM pure with pspatreg
 #' form1 <- unrate ~ partrate + agri + cons +
 #'                  pspl(serv, nknots = 15) +
 #'                  pspl(empgrowth, nknots = 20)
-#' gampure <- pspatfit(form1, data = unemp_it)
+#' gampure <- pspatfit(form1, data = unemp_it_short)
 #' summary(gampure)
 #' 
 #' @export
@@ -196,6 +204,7 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #' }
 
 #' @examples
+#' For more in-depth examples see \code{\link{pspatfit}}
 #' library(pspatreg)
 #' data(unemp_it)
 #' ## Wsp_it is a matrix. Create a neighboord list 
@@ -221,7 +230,6 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'  ###############################################
 #'  ### Spatio-temporal semiparametric ANOVA model without spatial lag
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
-#'  ### Remark: It is necessary to include ntime as argument
 #'  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
 #'  
 #'  form2 <- unrate ~ partrate + agri + cons +

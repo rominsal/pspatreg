@@ -234,13 +234,13 @@ Estimate geoadditive spatial or spatio-temporal
 \section{Details}{
  
 Function to estimate the model:
-  \deqn{ y = (\rho*W_{N} \otimes I_T) y 
+  \deqn{y = (\rho*W_{N} \otimes I_T) y 
     + f(s_1,s_2,\tau_{t}) 
     + X \beta 
     + (W_{N} \otimes I_T) X \theta  
     + \sum_{i = 1}^k g(z_i) 
     + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
-    + \epsilon }
+    + \epsilon}
   where:
   \itemize{
     \item \eqn{f(s_1,s_2,\tau_t)} is a smooth spatio-temporal trend
@@ -253,7 +253,7 @@ Function to estimate the model:
     \item \eqn{\rho} is the spatial spillover parameter.
     \item \eqn{I_T} is an identity matrix of order \eqn{T} (\emph{T=1}
       for pure spatial data).
-    \item \eqn{\epsilon ~ N(0,R)} where \eqn{ R = \sigma^2 I_T} if errors
+    \item \eqn{\epsilon ~ N(0,R)} where \eqn{R = \sigma^2 I_T} if errors
       are uncorrelated or it follows an AR(1) temporal autoregressive 
       structure for serially correlated errors.
   }
