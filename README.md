@@ -24,5 +24,5 @@ There are specific functions to compute:
 ## Vignettes
 To view the vignettes online, click on the following links:
 - Vignette A (Introduction to the use of the package and the mathematical theory behind the models): https://gehll.github.io/pspatregpages/A_pspatregPackage.html
-- Vignette B (Includes several examples on how to use the package, its main functions and plot the results.): https://gehll.github.io/pspatregpages/B_Examples_pspatreg_CS_data.html
+- Vignette B (Includes several examples on how to use the package, its main functions and how to plot the results.): https://gehll.github.io/pspatregpages/B_Examples_pspatreg_CS_data.html
 - Vignette C (Examples with spatial panel data): https://gehll.github.io/pspatregpages/C_Examples_pspatreg_Panel_data.html
