@@ -542,8 +542,6 @@ summary(gampure)
 list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(gampure, list_varnopar)
 ######################  Plot non-parametric terms
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_terms(terms_nopar, unemp_it_short)
 
 
@@ -556,8 +554,6 @@ anova(gampure, gamsar)
 \donttest{
 ######### Non-Parametric Total, Direct and Indirect impacts
 ### with impactsnopar(viewplot = TRUE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar <- impactsnopar(gamsar, 
                             listw = lwsp_it, 
                             viewplot = TRUE)
@@ -565,8 +561,6 @@ imp_nparvar <- impactsnopar(gamsar,
 ############ Non-Parametric Total, Direct and Indirect impacts
 ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
 imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
 
 ###################### Parametric Total, Direct and Indirect impacts
@@ -614,14 +608,10 @@ summary(geospsem)
 
 #### Non-Parametric Total, Direct and Indirect impacts 
 #### for spatial sar. First with smooth, second without smoothing
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar_smooth <- impactsnopar(geospsar, 
                                    listw = lwsp_it, 
                                    viewplot = TRUE, 
                                    smooth = TRUE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar_no_smooth <- impactsnopar(geospsar, 
                                       listw = lwsp_it, 
                                       viewplot = TRUE, 
@@ -773,8 +763,6 @@ plot_sptime(sptanova,
  summary(sptanova_sar_ar1)
  ###### Non-Parametric Total, Direct and Indirect Impacts
  list_varnopar <- c("serv", "empgrowth")
- #adjust plot margins
- par(mar = c(1, 1, 1, 1))
  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
  ###### Parametric Total, Direct and Indirect Effects
  list_varpar <- c("partrate","agri","cons")
@@ -856,11 +844,8 @@ gam <- pspatfit(formula = formgam,
 summary(gam)
 # Plot of terms for GAM (without and with demeaning)
 fit_gam <- fit_terms(gam, c("serv", "empgrowth"))
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_terms(fit_gam, unemp_it)
 fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
-par(mar = c(1, 1, 1, 1))
 plot_terms(fit_gam_dem, unemp_it)
 
 ## Demeaning with type = "sar" model

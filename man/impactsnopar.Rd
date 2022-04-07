@@ -136,7 +136,6 @@ gamsar <- pspatfit(form1,
  summary(gamsar)
  ###### Non-Parametric Total, Direct and Indirect impacts
  ## adjust plot margins
- par(mar = c(1, 1, 1, 1))
  imp_nparvar <- impactsnopar(gamsar, 
                              listw = lwsp_it, 
                              viewplot = TRUE)
@@ -161,7 +160,6 @@ sptanova_sar_ar1 <- pspatfit(form2,
 summary(sptanova_sar_ar1)
 ###### Non-Parametric Total, Direct and Indirect impacts
 ## adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar2 <- impactsnopar(sptanova_sar_ar1, 
                              listw = lwsp_it, 
                              viewplot = TRUE)
