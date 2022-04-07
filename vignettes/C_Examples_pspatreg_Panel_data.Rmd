@@ -5,6 +5,11 @@ date: "2022-04-07"
 output: 
   html_document:
     number_sections: true
+bibliography: bibliopsplines.bib
+vignette: |
+  %\VignetteIndexEntry{Using pspatreg with spatial panel data}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 
@@ -981,3 +986,4 @@ plot(fits, resids)
 ```
 
 ![](unnamed-chunk-36-2.png)
+
