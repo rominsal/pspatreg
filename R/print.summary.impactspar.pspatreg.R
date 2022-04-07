@@ -8,6 +8,8 @@
 #'   Default: max(3L, getOption("digits") - 3L).
 #' @param ... further arguments passed to or from other methods.
 #'
+#' @return 
+#'   No return value, called for side effects.
 #' @author 
 #' \tabular{ll}{ 
 #'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr

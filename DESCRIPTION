@@ -3,7 +3,7 @@ Type: Package
 Title: Spatial and Spatio-Temporal Semiparametric Regression Models 
   with Spatial Lags
 Version: 1.0.0
-Date: 2022-03-30
+Date: 2022-04-07
 Authors@R: 
   c(person("Roman", "Minguez", email = "roman.minguez@uclm.es", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0490-3181")),
@@ -20,7 +20,12 @@ Description: Estimation and inference of spatial and spatio-temporal
     lag for the dependent variable and temporal correlation in the noise.
     The spatio-temporal trend can be decomposed in ANOVA way including main and 
     interaction functional terms. Use of SAP algorithm to estimate the spatial 
-    or spatio-temporal trend and non-parametric covariates. 
+    or spatio-temporal trend and non-parametric covariates. The methodology of 
+    these models can be found in next references
+    Basile, R. et al. (2014), <doi:10.1016/j.jedc.2014.06.011>;
+    Rodriguez-Alvarez, M.X. et al. (2015) <doi:10.1007/s11222-014-9464-2> and,
+    particularly referred to the focus of the package, Minguez, R., 
+    Basile, R. and Durban, M. (2020) <doi:10.1007/s10260-019-00492-8>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

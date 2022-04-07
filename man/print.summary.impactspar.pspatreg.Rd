@@ -14,6 +14,9 @@ Default: max(3L, getOption("digits") - 3L).}
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Print method for objects of class summary.impactspar.pspatreg
 }

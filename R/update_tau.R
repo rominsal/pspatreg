@@ -122,7 +122,6 @@ update_tau2d <- function (la, lg, G,
             env$dnoparlist[[k]]
         }
       } else { # no spatial trend
-        #browser()
         if (k == 1) {
           Ginv_dnopar[1:np[2], k] <-
             (1/la[length(la) - env$nvarnopar + k])*

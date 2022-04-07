@@ -66,8 +66,6 @@
 #' list_varnopar <- c("serv", "empgrowth")
 #' terms_nopar <- fit_terms(gamsar, list_varnopar)
 #' #######  Plot non-parametric terms
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(terms_nopar, unemp_it_short)
 #'  
 #' @export
@@ -138,6 +136,8 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
     } else var <- as.matrix(data[, c(name_var)])
     colnames(var) <- name_var
     ord <- order(var)
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
     par(mfrow = c(2, 1))
     plot(var[ord], fit_var[ord], 
          type = "l",
@@ -149,8 +149,8 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
          lty = 1, 
          lwd = 2, 
          cex.main = 1.0,
-         main = paste("Term: ", name_var),
-         sub = "Confidence Intervals in dashed lines")
+         main = paste("Term: ", paste("f(",name_var,")")),
+         sub = "Pointwise confidence intervals in dashed lines")
     lines(var[ord], up_fit_var[ord], 
           xlab = "", 
           ylab = "", 
@@ -176,7 +176,9 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
          lty = 1, 
          lwd = 2,
          cex.main = 1.0,
-         main = paste("Global (red), Fixed (green) and Random (blue) terms"))
+         main = paste("Decomposition of ", 
+                      paste("f(",name_var,")")),
+         sub = paste("Global (red), Fixed (green) and Random (blue) Terms"))
     lines(var[ord], fit_var_fixed[ord], 
           xlab = "", 
           ylab = "", 
@@ -194,7 +196,6 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
     abline(a = 0, b = 0)
     readline(prompt = "Press [enter] to continue")
   }
-  par(mfrow = c(1 ,1))
 }
 
 

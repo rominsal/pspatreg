@@ -113,7 +113,7 @@ imp_nparvar3 <- impactsnopar(sptanova_sar_ar1,
     Mur, J. (2014). Modeling regional economic dynamics: Spatial
     dependence, spatial heterogeneity and nonlinearities. 
     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-    <doi: 10.1016/j.jedc.2014.06.011>               
+    <doi:10.1016/j.jedc.2014.06.011>               
  }
 }
 \seealso{

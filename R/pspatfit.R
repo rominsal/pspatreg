@@ -506,7 +506,7 @@
 #'     Mur, J. (2014). Modeling regional economic dynamics: Spatial
 #'     dependence, spatial heterogeneity and nonlinearities. 
 #'     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-#'     <doi: 10.1016/j.jedc.2014.06.011>
+#'     <doi:10.1016/j.jedc.2014.06.011>
 #'
 #'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
 #'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
@@ -514,25 +514,25 @@
 #'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
 #'   The Joys of P-Splines}. Cambridge University Press.
 #'     
-#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-#'     \emph{Regression. Models, Methods and Applications}.
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+#'     \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
 #'      Springer.
 #'     
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
+#'     (11), 49-69. <doi:10.1177/1471082X1001100104>
 #'
 #'   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
 #'     two-dimensional smoothing with P-spline ANOVA mixed models 
 #'     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-#'     (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
+#'     (61), 22-37. <doi:10.1016/j.csda.2012.11.013>
 #'
 #'   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
 #'     Spatial Econometrics}. CRC Press, Boca Raton.
 #'
 #'   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
 #'     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
-#'     (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+#'     (29), 669-708. <doi:10.1007/s10260-019-00492-8>
 #'
 #'   \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
 #'     with nonparametric spatial trends: A P-Spline approach. 
@@ -542,7 +542,7 @@
 #'     and Eilers, P. (2015). Fast smoothing parameter separation 
 #'     in multidimensional generalized P-splines: the SAP algorithm.
 #'     \emph{Statistics and Computing} 25 (5), 941-957. 
-#'     <doi: 10.1007/s11222-014-9464-2>
+#'     <doi:10.1007/s11222-014-9464-2>
 #'     
 #'   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
 #'   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
@@ -573,8 +573,6 @@
 #' list_varnopar <- c("serv", "empgrowth")
 #' terms_nopar <- fit_terms(gampure, list_varnopar)
 #' ######################  Plot non-parametric terms
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(terms_nopar, unemp_it_short)
 #' 
 #' 
@@ -587,8 +585,6 @@
 #' \donttest{
 #' ######### Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = TRUE)
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' imp_nparvar <- impactsnopar(gamsar, 
 #'                             listw = lwsp_it, 
 #'                             viewplot = TRUE)
@@ -596,8 +592,6 @@
 #' ############ Non-Parametric Total, Direct and Indirect impacts
 #' ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
 #' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
 #' 
 #' ###################### Parametric Total, Direct and Indirect impacts
@@ -645,14 +639,10 @@
 #' 
 #' #### Non-Parametric Total, Direct and Indirect impacts 
 #' #### for spatial sar. First with smooth, second without smoothing
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' imp_nparvar_smooth <- impactsnopar(geospsar, 
 #'                                    listw = lwsp_it, 
 #'                                    viewplot = TRUE, 
 #'                                    smooth = TRUE)
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' imp_nparvar_no_smooth <- impactsnopar(geospsar, 
 #'                                       listw = lwsp_it, 
 #'                                       viewplot = TRUE, 
@@ -804,8 +794,6 @@
 #'  summary(sptanova_sar_ar1)
 #'  ###### Non-Parametric Total, Direct and Indirect Impacts
 #'  list_varnopar <- c("serv", "empgrowth")
-#'  #adjust plot margins
-#'  par(mar = c(1, 1, 1, 1))
 #'  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
 #'  ###### Parametric Total, Direct and Indirect Effects
 #'  list_varpar <- c("partrate","agri","cons")
@@ -887,11 +875,8 @@
 #' summary(gam)
 #' # Plot of terms for GAM (without and with demeaning)
 #' fit_gam <- fit_terms(gam, c("serv", "empgrowth"))
-#' #adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(fit_gam, unemp_it)
 #' fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
-#' par(mar = c(1, 1, 1, 1))
 #' plot_terms(fit_gam_dem, unemp_it)
 #' 
 #' ## Demeaning with type = "sar" model
@@ -1146,43 +1131,6 @@ pspatfit <- function(formula, data, na.action,
   } else nt <- 1
   assign("nsp", nsp, envir = env)
   assign("nt", nt, envir = env)  
-  # # Demeaning case. Follow notation of
-  # #  "Econometric Analysis of Panel Data" (Baltagi)
-  # if (demean) {
-  #   if (nvarspt > 0) 
-  #     stop("It is not possible to demean with spatio-temporal trends")
-  #   browser()
-  #   pXpar <- plm::pdata.frame(as.data.frame(Xpar),
-  #                             index = index)
-  #   
-  #   browser()
-  #   if (!twoways) { # One way fixed effect
-  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
-  #     P_Z <- Matrix::kronecker(Diagonal(nsp),
-  #                              1/nt*J_nt)
-  #     Q_Z <- Diagonal(nsp*nt) - P_Z
-  #     Xpar <- Q_Z %*% Xpar
-  #     y <- Q_Z %*% y
-  #     rm(J_nt, P_Z, Q_Z)
-  #     # Test here. CONTINUE...
-  #   } else { # Two Ways fixed effect
-  #     J_nt <- Matrix::matrix(1, nrow = nt, ncol = nt)
-  #     J_nsp <- Matrix::matrix(1, nrow = nsp, 
-  #                             ncol = nsp)
-  #     I_nsp <- Diagonal(nsp)
-  #     I_nt <- Diagonal(nt)
-  #     Q_Z <- Matrix::kronecker(I_nsp, I_nt) -
-  #           Matrix::kronecker(I_nsp, 1/nt*J_nt) -
-  #           Matrix::kronecker(1/nsp*J_nsp, I_nt) +
-  #           Matrix::kronecker(1/nsp*J_nsp, 1/nt*J_nt)
-  #     Xpar <- Q_Z %*% Xpar
-  #     y <- Q_Z %*% y
-  #     rm(J_nt, J_nsp, I_nsp, I_nt, Q_Z)
-  #   }
-  # }
-  # 
-  
-    
   if (type %in% c("slx", "sdm", "sdem")) {
     if (is.null(Durbin)) Durbin <- update(formula, NULL ~ . )
     # Add intercept in Durbin formula to use it in factor case...
@@ -1367,7 +1315,7 @@ pspatfit <- function(formula, data, na.action,
     assign("names_varnopar", names_varnopar, envir = env)
   }
   if (is.null(con$vary_init)) con$vary_init <- var(y)
-  cat("\nFitting Model...\n")
+  message("\nFitting Model...\n")
   model_fit <- fit_pspat(env, con)
   mt_terms <- attr(mt, "term.labels")
   model_fit$contrasts <- attr(Xpar, "contrasts")

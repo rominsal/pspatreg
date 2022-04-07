@@ -22,7 +22,7 @@
 #' @references \itemize{ 
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
+#'     (11), 49-69. <doi:10.1177/1471082X1001100104>
 #'     
 #'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
 #'   The Joys of P-Splines}. Cambridge University Press.

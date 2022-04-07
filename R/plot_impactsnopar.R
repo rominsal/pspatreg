@@ -51,7 +51,7 @@
 #'     Mur, J. (2014). Modeling regional economic dynamics: Spatial
 #'     dependence, spatial heterogeneity and nonlinearities. 
 #'     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-#'     <doi: 10.1016/j.jedc.2014.06.011>               
+#'     <doi:10.1016/j.jedc.2014.06.011>               
 #'  }
 #'         
 #' @examples
@@ -75,14 +75,12 @@
 #' summary(gamsar)
 #' ###### Non-Parametric Total, Direct and Indirect impacts
 #' ## adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' imp_nparvar <- impactsnopar(gamsar, 
 #'                             listw = lwsp_it, 
 #'                             viewplot = TRUE)  
 #' ##### This returns the same result but using plot_impactsnopar()
 #' imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, 
 #'                             viewplot = FALSE)
-#' par(mar = c(1, 1, 1, 1))
 #' plot_impactsnopar(imp_nparvar, data = unemp_it_short, 
 #'                    smooth = TRUE, 
 #'                    dynamic = FALSE,
@@ -107,7 +105,6 @@
 #' summary(sptanova_sar_ar1)
 #' ###### Non-Parametric Total, Direct and Indirect impacts
 #' ## adjust plot margins
-#' par(mar = c(1, 1, 1, 1))
 #' imp_nparvar3 <- impactsnopar(sptanova_sar_ar1, 
 #'                              listw = lwsp_it, 
 #'                              viewplot = TRUE)
@@ -176,7 +173,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
       if (sum(is.nan(tot_i_smooth)) > 1 ||
           sum(is.nan(uptot_i_smooth)) > 1 ||
           sum(is.nan(lowtot_i_smooth)) > 1 ) {
-        cat(paste("Smoothing of total impacts with variable ", name_var,
+        warning(paste("Smoothing of total impacts with variable ", name_var,
                   " produces NaN. ",
                    "This variable is not suited for smoothing \n", sep = ""))
       } else {
@@ -193,7 +190,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
       if (sum(is.nan(dir_i_smooth)) > 1 ||
           sum(is.nan(updir_i_smooth)) > 1 ||
           sum(is.nan(lowdir_i_smooth)) > 1 ) {
-        cat(paste("Smoothing of direct impacts with variable ", name_var,
+        warning(paste("Smoothing of direct impacts with variable ", name_var,
                   " produces NaN. ",
                   "This variable is not suited for smoothing \n", sep = ""))
       } else {
@@ -210,7 +207,7 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
       if (sum(is.nan(ind_i_smooth)) > 1 ||
           sum(is.nan(upind_i_smooth)) > 1 ||
           sum(is.nan(lowind_i_smooth)) > 1 ) {
-        cat(paste("Smoothing of indirect impacts with variable ", name_var,
+        warning(paste("Smoothing of indirect impacts with variable ", name_var,
                   " produces NaN. ",
                   "This variable is not suited for smoothing \n", sep = ""))
       } else {
@@ -218,7 +215,9 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
         upind_i <- upind_i_smooth
         lowind_i <- lowind_i_smooth
       }       
-   }
+    }
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
     par(mfrow = c(3, 1))
     plot(var[ord], tot_i[ord], 
          type = "l",
@@ -296,5 +295,4 @@ plot_impactsnopar <- function(impactsnopar, data, smooth = TRUE,
     abline(a = 0, b = 0)
     readline(prompt="Press [enter] to continue")
  }
- par(mfrow = c(1,1))
 }

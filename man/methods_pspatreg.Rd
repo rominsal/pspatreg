@@ -53,6 +53,43 @@ and \code{plot} functions.}
 \item{digits}{number of digits to show in printed tables.
 Default: max(3L, getOption("digits") - 3L).}
 }
+\value{
+\code{anova:} An object of class \emph{anova}. Can be printed
+  with \code{summary}. 
+  If argument \code{lrtest = TRUE} (default), the object 
+  returned includes an LR test for nested models. 
+  In this case, a warning message is printed to emphasize 
+  that the LR test remains valid only for nested models.
+
+\code{coef:} A numeric vector including spatial parameters and
+  parameters corresponding to parametric covariates. 
+  Also includes fixed parameters for non-parametric 
+  covariates. Can be printed with \code{print}.
+
+\code{fitted:} A numeric vector including fitted values for the 
+  dependent variable.
+
+\code{logLik:} An object of class \emph{logLik}. Can be printed
+  with \code{print}.
+  If argument \code{REML = FALSE} (default), the object returns 
+  the value of log-likelihood function in the optimum. 
+  If argument \code{REML = TRUE}, the object returns 
+  the value of restricted log-likelihood function in 
+  the optimum.
+
+\code{residuals:} A numeric vector including residuals of the model.
+
+\code{vcov:} A matrix including the covariance matrix for the
+  estimated parameters.
+  If argument \code{bayesian = FALSE} (default), the 
+  covariance matrix is computed using sandwich (frequentist)
+  method. 
+  If argument \code{bayesian = TRUE} , the 
+  covariance matrix is computed using bayesian method. 
+  See Fahrmeir et al. (2021) for details.
+
+\code{print:} No return value
+}
 \description{
 The \code{\link{anova}} function provides tables of fitted 
   `pspatreg` models including information criteria (AIC and BIC), 
@@ -114,6 +151,13 @@ plot(gamsar$fitted.values, gamsar$residuals,
      type = "p", cex.lab = 1.3, cex.main=1.3,
      main = "Residuals geospsar model")
      
+}
+\references{
+\itemize{ 
+    \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+      \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+     Springer.
+   }
 }
 \author{
 \tabular{ll}{

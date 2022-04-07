@@ -174,14 +174,14 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
     Mur, J. (2014). Modeling regional economic dynamics: Spatial
     dependence, spatial heterogeneity and nonlinearities. 
     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-    <doi: 10.1016/j.jedc.2014.06.011>
+    <doi:10.1016/j.jedc.2014.06.011>
         
  \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
        The Joys of P-Splines}. Cambridge University Press.
     
- \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-       \emph{Regression. Models, Methods and Applications}.
-       Springer.         
+ \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+   \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+     Springer.
         
   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
         Spatial Econometrics}. CRC Press, Boca Raton.

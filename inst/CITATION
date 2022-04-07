@@ -1,0 +1,24 @@
+citHeader("To cite pspatreg in publications use:")
+
+citEntry(entry = "Article",
+  title = "An alternative semiparametric model for spatial panel data",
+  author = personList(as.person("Roman Minguez"),
+  as.person("Roberto Basile"), 
+  as.person("Maria Durban")),
+  journal = "Statistical Methods & Applications",
+  volume = "29",
+  number = "4",
+  pages = "669--708",
+  year = "2020",
+  publisher = "Springer",
+  doi = "10.1007/s10260-019-00492-8",
+  url = "https://link.springer.com/article/10.1007/s10260-019-00492-8",
+  
+  textVersion = 
+  paste("Minguez, R.; Basile, R. and Durban, M. (2020).",
+  "An Alternative Semiparametric Model for Spatial Panel Data.",
+  "Statistical Methods and Applications,
+29(4), 669-708.",
+"URL https://link.springer.com/article/10.1007/s10260-019-00492-8")
+)
+
