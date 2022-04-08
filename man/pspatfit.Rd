@@ -246,7 +246,7 @@ Function to estimate the model:
     \item \eqn{\rho} is the spatial spillover parameter.
     \item \eqn{I_T} is an identity matrix of order \eqn{T} (\emph{T=1}
       for pure spatial data).
-    \item \eqn{\epsilon ~ N(0,R)} where \eqn{ R = \sigma^2 I_T} if errors
+    \item \eqn{\epsilon ~ N(0,R)} where \eqn{R = \sigma^2 I_T} if errors
       are uncorrelated or it follows an AR(1) temporal autoregressive 
       structure for serially correlated errors.
   }

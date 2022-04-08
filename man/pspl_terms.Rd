@@ -191,7 +191,6 @@ The \code{pspl()} and \code{pspt()} functions
   functional way including main and interaction effects.
 }
 \examples{
-For more in-depth examples see \code{\link{pspatfit}}
 library(pspatreg)
 data(unemp_it)
 ## short sample for spatial pure case (2d)
