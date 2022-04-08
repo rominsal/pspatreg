@@ -1,8 +1,11 @@
 #' @name plot_sptime 
 #' @rdname plot_sptime 
 #'
-#' @title Plot of time trend for PS-ANOVA models in 3d. 
-#' @description DESCRIBE THE FUNCTION...
+#' @title Plot of time trends for spatio-temporal models in 3d.
+#'  
+#' @description Make plots of the temporal trends for each region
+#'    fitted with \code{\link{pspatfit}} function.
+#'    
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data either sf or dataframe with the data. 
 #' @param time_var name of the temporal variable in data. 
@@ -19,7 +22,7 @@
 #' @references \itemize{ 
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
+#'     (11), 49-69. <doi:10.1177/1471082X1001100104>
 #'     
 #'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
 #'   The Joys of P-Splines}. Cambridge University Press.

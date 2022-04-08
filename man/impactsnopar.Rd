@@ -53,12 +53,14 @@ A list including
  }
 }
 \description{
-Compute and plot direct, indirect and total impect functions 
+Compute and plot direct, indirect and total impact functions 
   for non-parametric covariates included in a semiparametric spatial
   or spatio-temporal econometric model. This model must include a 
   spatial lag of the dependent variable and/or non-parametric covariates, 
   to have indirect impacts different from 0, otherwise, total and direct 
-  function impacts are the same.
+  function impacts are the same. The models can be of type \emph{ps-sar}, 
+  \emph{ps-sarar}, \emph{ps-sdm}, \emph{ps-sdem} or
+  \emph{ps-slx}.
 }
 \details{
 To compute the impact functions of the non-parametric covariates, first 
@@ -134,7 +136,6 @@ gamsar <- pspatfit(form1,
  summary(gamsar)
  ###### Non-Parametric Total, Direct and Indirect impacts
  ## adjust plot margins
- par(mar = c(1, 1, 1, 1))
  imp_nparvar <- impactsnopar(gamsar, 
                              listw = lwsp_it, 
                              viewplot = TRUE)
@@ -159,7 +160,6 @@ sptanova_sar_ar1 <- pspatfit(form2,
 summary(sptanova_sar_ar1)
 ###### Non-Parametric Total, Direct and Indirect impacts
 ## adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar2 <- impactsnopar(sptanova_sar_ar1, 
                              listw = lwsp_it, 
                              viewplot = TRUE)
@@ -172,14 +172,14 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
     Mur, J. (2014). Modeling regional economic dynamics: Spatial
     dependence, spatial heterogeneity and nonlinearities. 
     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-    <doi: 10.1016/j.jedc.2014.06.011>
+    <doi:10.1016/j.jedc.2014.06.011>
         
  \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
        The Joys of P-Splines}. Cambridge University Press.
     
- \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-       \emph{Regression. Models, Methods and Applications}.
-       Springer.         
+ \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+   \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+     Springer.
         
   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
         Spatial Econometrics}. CRC Press, Boca Raton.
@@ -195,10 +195,10 @@ imp_nparvar2 <- impactsnopar(sptanova_sar_ar1,
 }
 \seealso{
 \itemize{
-  \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric PS-SAR
+  \item \code{\link{pspatfit}} estimate spatial or spatio-temporal semiparametric 
     regression models.
-  \item \code{\link{impactspar}} compute and simulate total, direct and indirect impect
-    (or impacts) for parametric continuous covariates.
+  \item \code{\link{impactspar}} compute and simulate total, direct and indirect impacts
+    for parametric continuous covariates.
   \item \code{\link{fit_terms}} compute terms for smooth functions for non-parametric
     continuous covariates and for non-parametric trends.
   \item \code{\link{plot_impactsnopar}} plot the non-parametric impacts functions

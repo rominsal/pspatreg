@@ -57,9 +57,9 @@ The dependent variable in the regression analysis is **`Sale_Price`**, while we 
 Due to the skewed distribution of the dependent variable **`Sale_Price`**, we use the log-transformation:
 
 ```{r, fig.align = 'center'}
-ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
+ggplot(data = ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
 
-ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = log(Sale_Price)))
+ggplot(data = ames_sf) + geom_histogram(mapping = aes(x = log(Sale_Price)))
 
 ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
 ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
@@ -76,13 +76,13 @@ In particular, we have used a graph-based neighbors list (a Delauney triangulati
 
 ```{r}
 ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude)==FALSE,]
-coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
+coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 # Delauney triangulation neighbours (symmetric)
 ID <- row.names(as(ames_sf1, "sf"))
 col.tri.nb <- tri2nb(coord_sf1)
 soi_nb <- graph2nb(soi.graph(col.tri.nb,coord_sf1), row.names=ID)
 is.symmetric.nb(soi_nb,verbose = TRUE, force = FALSE)
-listW <- nb2listw(soi_nb, style="W", zero.policy = FALSE)
+listW <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 ```
 
 ## Defining **`formula`** for parametric and semiparametric models

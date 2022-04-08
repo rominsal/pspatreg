@@ -324,13 +324,13 @@ fit_pspat <- function(env, con) {
 	      dla <- mean(abs(la - lanew))
 	      la <- lanew
 	      if (con$trace) {
-	        cat('\n Iteration SAP: ', it)
-	        cat('\n sig2u ', la[1])
+	        message(paste('\n Iteration SAP: ', it))
+	        message(paste('\n sig2u ', la[1]))
 	        if (env$nvarspt > 0)
-	          cat('\n edfspt:', round(edfspt, 2))
+	          message(paste('\n edfspt:', round(edfspt, 2)))
 	        if (env$nvarnopar > 0) 
-	          cat('\n edfnopar: ', 
-	              round(edfnopar, 2)) }
+	          message(paste('\n edfnopar: ', 
+	              round(edfnopar, 2))) }
 	      #  convergence check
 	      if (dla < con$tol) break
 	    } # end for (it in 1:maxit)
@@ -392,8 +392,9 @@ fit_pspat <- function(env, con) {
       dparam <- mean(abs(param - param_new))
       param <- param_new
       if (con$trace && !(env$type == "sim")) {
-        cat("\n Iteration: ", iq)
-        cat("\n spatial parameters ", param)
+        message(paste("\n Iteration: ", iq))
+        message(paste("\n spatial parameters ", 
+                       param))
       }
       if (!is.null(rho)) rho <- param["rho"]
       if (!is.null(delta)) delta <- param["delta"]
@@ -408,8 +409,8 @@ fit_pspat <- function(env, con) {
 	  if (dparam < con$tol) break
 	} # End loop 
   end <- proc.time()[3]
-	cat("\n Time to fit the model: ", (end - start), 
-	    "seconds \n")
+	message(paste("\n Time to fit the model: ", round(end - start, 2), 
+	    "seconds \n"))
 	param_optim <- param
 	if (length(np_eff) > 1) {
 	  eta <- X %*% bfixed + Z %*% brandom #+ offset
@@ -512,8 +513,8 @@ fit_pspat <- function(env, con) {
   
   if (con$trace) {
     end <- proc.time()[3]
-    cat("\n Time to compute covariances: ", 
-        (end-start), "seconds") }
+    message(paste("\n Time to compute covariances: ", 
+        (end-start), "seconds")) }
   # Fits and Resids
   if (length(np_eff) > 1) {
     fit_A1y <- X %*% bfixed + Z %*% brandom # + offset

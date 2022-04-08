@@ -84,6 +84,13 @@ NULL
 
 #' @name anova
 #' @rdname methods_pspatreg
+#' @return 
+#'   \code{anova:} An object of class \emph{anova}. Can be printed
+#'   with \code{summary}. 
+#'   If argument \code{lrtest = TRUE} (default), the object 
+#'   returned includes an LR test for nested models. 
+#'   In this case, a warning message is printed to emphasize 
+#'   that the LR test remains valid only for nested models.         
 #' @export
 #' 
 anova.pspatreg <- function(object, ..., lrtest = TRUE) {
@@ -97,7 +104,7 @@ anova.pspatreg <- function(object, ..., lrtest = TRUE) {
   vLL <- vRLL <- vAIC <- vBIC <- vdf <- numeric(nmodels) 
   vresdf <- vresdev <- vsigmasq <- numeric(nmodels)
   if (lrtest) {
-    cat("Warning: LR test should be used only for nested models.\n")
+    message("Warning: LR test should be used only for nested models.\n")
     vlrtest <- vpval <- vector(mode = "numeric", 
                                length = nmodels)
     vlrtest[1] <- vpval[1] <- NA
@@ -149,6 +156,11 @@ anova.pspatreg <- function(object, ..., lrtest = TRUE) {
 
 #' @name coef
 #' @rdname methods_pspatreg
+#' @return
+#'   \code{coef:} A numeric vector including spatial parameters and
+#'   parameters corresponding to parametric covariates. 
+#'   Also includes fixed parameters for non-parametric 
+#'   covariates. Can be printed with \code{print}.
 #' @export
 coef.pspatreg <- function(object, ...) {
   ret <- NULL
@@ -165,6 +177,9 @@ coef.pspatreg <- function(object, ...) {
 
 #' @name fitted
 #' @rdname methods_pspatreg
+#' @return 
+#'   \code{fitted:} A numeric vector including fitted values for the 
+#'   dependent variable.
 #' @export
 fitted.pspatreg <- function(object, ...)
 {
@@ -176,6 +191,14 @@ fitted.pspatreg <- function(object, ...)
 
 #' @name logLik
 #' @rdname methods_pspatreg
+#' @return 
+#'   \code{logLik:} An object of class \emph{logLik}. Can be printed
+#'   with \code{print}.
+#'   If argument \code{REML = FALSE} (default), the object returns 
+#'   the value of log-likelihood function in the optimum. 
+#'   If argument \code{REML = TRUE}, the object returns 
+#'   the value of restricted log-likelihood function in 
+#'   the optimum.
 #' @export
 logLik.pspatreg <- function(object, ..., REML = FALSE) {
   edftot <- object$edftot
@@ -194,6 +217,8 @@ logLik.pspatreg <- function(object, ..., REML = FALSE) {
 
 #' @name residuals
 #' @rdname methods_pspatreg
+#' @return
+#'   \code{residuals:} A numeric vector including residuals of the model.
 #' @export
 residuals.pspatreg <- function(object, ...) {
   if (is.null(object$na.action))
@@ -204,6 +229,21 @@ residuals.pspatreg <- function(object, ...) {
 
 #' @name vcov
 #' @rdname methods_pspatreg
+#' @return
+#'   \code{vcov:} A matrix including the covariance matrix for the
+#'   estimated parameters.
+#'   If argument \code{bayesian = FALSE} (default), the 
+#'   covariance matrix is computed using sandwich (frequentist)
+#'   method. 
+#'   If argument \code{bayesian = TRUE} , the 
+#'   covariance matrix is computed using bayesian method. 
+#'   See Fahrmeir et al. (2021) for details. 
+#' @references
+#'   \itemize{ 
+#'     \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+#'       \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+#'      Springer.
+#'    } 
 #' @export
 vcov.pspatreg <- function(object, ..., bayesian = FALSE) {
   if (!bayesian) 
@@ -218,6 +258,8 @@ vcov.pspatreg <- function(object, ..., bayesian = FALSE) {
 
 #' @name print
 #' @rdname methods_pspatreg
+#' @return
+#'  \code{print:} No return value
 #' @export
 print.pspatreg <- function(x, digits = max(3L, getOption("digits") - 3L),
                         ...) {

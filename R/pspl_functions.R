@@ -1,15 +1,101 @@
+#' @name pspl_terms
+#' @title Functions to include non-parametric continous covariates 
+#'   and spatial or spatio-temporal trends in semiparametric
+#'   regression models. 
+#'   
+#' @description The \code{pspl()} and \code{pspt()} functions 
+#'   allow the inclusion of non-parametric continuous covariates
+#'   and spatial or spatio-temporal trends in semiparametric 
+#'   regression models. Both type of terms are modelled using P-splines.
+#'     
+#' @references 
+#'   \itemize{ 
+#'     \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
+#'       B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
+#'     
+#'     \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
+#'       The Joys of P-Splines}. Cambridge University Press.
+#'     
+#'     \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+#'       \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+#'       Springer.
+#'
+#'     \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
+#'       Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
+#'       (11), 49-69. <doi:10.1177/1471082X1001100104>
+#'
+#'     \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
+#'       two-dimensional smoothing with P-spline ANOVA mixed models 
+#'       and nested bases. \emph{Computational Statistics & Data Analysis}, 
+#'       (61), 22-37. <doi:10.1016/j.csda.2012.11.013>
+#
+#'
+#'     \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
+#'       Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
+#'       (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+#'     
+#'     \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
+#'       An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
+#' }
+#' @seealso 
+#'    \code{\link{pspatfit}} estimate semiparametric spatial or
+#'    spatio-temporal regression models.
+#'
+#' @examples
+#' library(pspatreg)
+#' data(unemp_it)
+#' ## short sample for spatial pure case (2d)
+#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+#'  ######################  GAM pure
+#' form1 <- unrate ~ partrate + agri + cons +
+#'                  pspl(serv, nknots = 15) +
+#'                  pspl(empgrowth, nknots = 20)
+#' gampure <- pspatfit(form1, data = unemp_it_short)
+#' summary(gampure)
+#' #########  GAM pure with spatial non-parametric term
+#'  \donttest{
+#'  geosp1 <- pspatfit(form1, data = unemp_it_short)
+#'  summary(geosp1)
+#' 
+#'  ###############################################
+#'  ### Spatio-temporal semiparametric ANOVA model 
+#'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
+#'  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
+#'  
+#'  form2 <- unrate ~ partrate + agri + cons +
+#'                    pspl(serv, nknots = 15) + 
+#'                    pspl(empgrowth, nknots = 20) +
+#'                    pspt(long, lat, year, 
+#'                         nknots = c(18, 18, 8), 
+#'                         psanova = TRUE, 
+#'                         nest_sp1 = c(1, 2, 2), 
+#'                         nest_sp2 = c(1, 2, 2),
+#'                         nest_time = c(1, 2, 2))
+#'  sptanova <- pspatfit(form2, data = unemp_it,
+#'                       control = list(tol = 1e-2))
+#'  summary(sptanova)
+#'  
+#' 
+#'  ################################################  
+#'  ### Interaction terms f1t not included in ANOVA decomposition
+#'  form3 <- unrate ~ partrate + agri + cons +
+#'                    pspl(serv, nknots = 15) + 
+#'                    pspl(empgrowth, nknots=20) +
+#'                    pspt(long, lat, year, 
+#'                         nknots = c(18, 18, 8),
+#'                         psanova = TRUE, 
+#'                         nest_sp1 = c(1, 2, 3), 
+#'                         nest_sp2 = c(1, 2, 3),
+#'                         nest_time = c(1, 2, 2), 
+#'                         f1t_int = FALSE)
+#'  sptanova2 <- pspatfit(form3, data = unemp_it,
+#'                        control = list(tol = 1e-1))
+#'  summary(sptanova2)
+#'  }
+NULL
+
 #' @name pspl
-#' @rdname pspl
-#'
-#' @title Non-parametric terms for continuous covariates in 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.
-#'
-#' @description This function allows the inclusion of non-parametric
-#'   continuous covariates in the formula of semiparametric PS-SAR, 
-#'   PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. Each non-parametric 
-#'   covariate must be included with its own \code{pspl} term in a
-#'  formula. See \code{Examples} to understand how to do this. Each 
-#'  non-parametric term is modelled using p-splines. 
+#' @rdname pspl_terms 
 #'   
 #' @param x Name of the covariate.
 #' @param xl Minimum of the interval for the continuous covariate.
@@ -27,36 +113,19 @@
 #'   penalty matrix. If \code{decom = 2} the fixed part is given by
 #'   \eqn{X = [1|x|...|x^(pord-1)] }. Default = 2.
 #'   
-#'   @return A list object.
-#'    \tabular{ll}{
-#'      \code{B} \tab Matrix including B-spline basis for the covariate \cr
-#'      \code{a} \tab List including \emph{nknots}, \emph{knots}, \emph{bdeg},
-#'         \emph{pord} and \emph{decom}.  \cr
-#'    }
+#' @description 
+#'   \code{pspl()}: This function allows the inclusion of terms for
+#'   non-parametric covariates in semiparametric models. 
+#'   Each non-parametric covariate must be included with its own \code{pspl} 
+#'   term in a formula.
 #'    
-#' @seealso
-#' \itemize{
-#'   \item \code{\link{pspt}} Include a non-parametric spatial or 
-#'     spatio-temporal trend in the formula of the model.
-#' }
-#' 
-#' @examples
-#' For more in-depth examples see \code{\link{pspatfit}}
-#' 
-#' library(pspatreg)
-#' ## load spatial panel and Wsp_it
-#' ## 103 Italian provinces. Period 1996-2019
-#' data(unemp_it, package = "pspatreg")
-#' ## Wsp_it is a matrix. Create a neighboord list 
-#' lwsp_it <- spdep::mat2listw(Wsp_it)
-#' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-#' ####  GAM pure with pspatreg
-#' form1 <- unrate ~ partrate + agri + cons +
-#'                  pspl(serv, nknots = 15) +
-#'                  pspl(empgrowth, nknots = 20)
-#' gampure <- pspatfit(form1, data = unemp_it_short)
-#' summary(gampure)
+#' @return 
+#'   \code{pspl()}: An object of class \emph{bs} including.
+#'   \tabular{ll}{
+#'     \code{B} \tab Matrix including B-spline basis for the covariate \cr
+#'     \code{a} \tab List including \emph{nknots}, \emph{knots}, \emph{bdeg},
+#'         \emph{pord} and \emph{decom}.  \cr
+#'  }
 #' 
 #' @export
 pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
@@ -73,15 +142,13 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 
 #####################################################################################
 #' @name pspt
-#' @rdname pspt
+#' @rdname pspl_terms
 #'
-#' @title Non-parametric term spatio-temporal trend in 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models.
-#'
-#' @description This function allows the inclusion of a spatial or
-#'   spatio-temporal trend in the formula of 
-#'   semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN models. 
-#'   This term is modelled using p-splines and can be decomposed in ANOVA
+#' @description
+#'   \code{pspt()}: This function allows the inclusion of a spatial or
+#'   spatio-temporal trend in the formula of the
+#'   semiparametric spatial or spatio-temporal models. 
+#'   The trend can be decomposed in an ANOVA
 #'   functional way including main and interaction effects.
 #'    
 #' @param sp1 Name of the first spatial coordinate. 
@@ -157,7 +224,8 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'   between first and second spatial coordinates and temporal 
 #'   coordinates in ANOVA models. Default = `TRUE`. 
 #'                              
-#' @return A list object.
+#' @return 
+#'   \code{pspt()}: An object of class \emph{bs} including.
 #'   \tabular{ll}{
 #'      \code{B} \tab Matrix including B-spline basis for the covariate \cr
 #'      \code{a} \tab List including \emph{sp1}, \emph{sp2}, \emph{time},
@@ -168,101 +236,6 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'        \emph{f12t_int}. \cr 
 #'    }
 #'    
-#' @seealso
-#' \itemize{
-#'   \item \code{\link{pspl}} Include non-parametric continuous covariates 
-#'     in a \code{\link[stats]{formula}}.
-#' }
-#'    
-#' @references \itemize{ 
-#'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
-#'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
-#'     
-#'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
-#'   The Joys of P-Splines}. Cambridge University Press.
-#'     
-#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-#'     \emph{Regression. Models, Methods and Applications}.
-#'      Springer.     
-#'
-#'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
-#'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
-#'
-#'   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
-#'     two-dimensional smoothing with P-spline ANOVA mixed models 
-#'     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-#'     (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
-#
-#'
-#'   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
-#'     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
-#'     (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
-#'     
-#'   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
-#'   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
-#' }
-
-#' @examples
-#' For more in-depth examples see \code{\link{pspatfit}}
-#' library(pspatreg)
-#' data(unemp_it)
-#' ## Wsp_it is a matrix. Create a neighboord list 
-#' lwsp_it <- spdep::mat2listw(Wsp_it)
-#' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-#' #########  GAM pure with spatial non-parametric term
-#' ### Spatial semiparametric model without spatial lag
-#'  
-#'  form1 <- unrate ~ partrate + agri + cons +
-#'                 pspl(serv, nknots = 15) + 
-#'                 pspl(empgrowth, nknots = 20) +
-#'                 pspt(long, lat, nknots = c(20, 20))
-#'  \donttest{
-#'  ### Spatial trend fixed for 2019
-#'  geosp1 <- pspatfit(form1, data = unemp_it_short)
-#'  summary(geosp1)
-#'  ### Spatial trend fixed for period 1996- 2019
-#'  geosp2 <- pspatfit(form1, data = unemp_it)
-#'  summary(geosp2)
-#' 
-#' 
-#'  ###############################################
-#'  ### Spatio-temporal semiparametric ANOVA model without spatial lag
-#'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
-#'  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
-#'  
-#'  form2 <- unrate ~ partrate + agri + cons +
-#'                    pspl(serv, nknots = 15) + 
-#'                    pspl(empgrowth, nknots = 20) +
-#'                    pspt(long, lat, year, 
-#'                         nknots = c(18, 18, 8), 
-#'                         psanova = TRUE, 
-#'                         nest_sp1 = c(1, 2, 2), 
-#'                         nest_sp2 = c(1, 2, 2),
-#'                         nest_time = c(1, 2, 2))
-#'  sptanova <- pspatfit(form2, data = unemp_it,
-#'                       control = list(tol = 1e-2))
-#'  summary(sptanova)
-#'  
-#' 
-#'  ################################################  
-#'  ### Interaction terms f1t not included in ANOVA decomposition
-#'  
-#'  form3 <- unrate ~ partrate + agri + cons +
-#'                    pspl(serv, nknots = 15) + 
-#'                    pspl(empgrowth, nknots=20) +
-#'                    pspt(long, lat, year, 
-#'                         nknots = c(18, 18, 8),
-#'                         psanova = TRUE, 
-#'                         nest_sp1 = c(1, 2, 3), 
-#'                         nest_sp2 = c(1, 2, 3),
-#'                         nest_time = c(1, 2, 2), 
-#'                         f1t_int = FALSE)
-#'  sptanova2 <- pspatfit(form3, data = unemp_it,
-#'                        control = list(tol = 1e-1))
-#'  summary(sptanova2)
-#'  }
 #' @export
 pspt <- function(sp1, sp2, time = NULL, scale = TRUE, ntime = NULL,
                 xl_sp1 = min(sp1) - 0.01, xr_sp1 = max(sp1) + 0.01,

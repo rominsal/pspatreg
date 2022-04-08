@@ -27,7 +27,7 @@ pspatfit(
 \arguments{
 \item{formula}{A formula similar to GAM specification including
 parametric and non-parametric terms. Parametric covariates
-are included in the usual way and non-parametric p-spline smooth terms are
+are included in the usual way and non-parametric P-spline smooth terms are
 specified using \code{pspl(.)} and \code{pspt(.)} for the non-parametric 
 covariates and spatial   or spatio-temporal trend, respectively.
 More details in \emph{Details} and \emph{Examples}.}
@@ -169,25 +169,19 @@ A list object of class \emph{pspatreg}
  \code{eff_demean} \tab Value of \code{eff_demean} argument in the call to \code{pspatfit}. \cr
  \code{index} \tab Value of \code{index} argument in the call to \code{pspatfit}. \cr
  \code{bfixed} \tab Estimated betas corresponding to fixed effects in
-             mixed model. These betas comes from either parametric
-             covariates or fixed coefficients of smooth terms
-             reparameterized as mixed models. \cr
+             mixed model. \cr
  \code{se_bfixed} \tab Standard errors of fixed betas. \cr
  \code{brandom} \tab Estimated betas corresponding to random effects
-             in mixed model. These betas comes from random coefficients of 
-             smooth terms reparameterized as mixed models. \cr
+             in mixed model. \cr
  \code{se_brandom}\tab Standard errors of random betas. \cr
  \code{vcov_fr} \tab Covariance matrix of fixed and random
              effects using frequentist or sandwich method. \cr
  \code{vcov_by} \tab Covariance matrix of fixed and random
              effects using bayesian method. \cr
  \code{rho} \tab Estimated rho for spatial lag of the
-   dependent variable. if the model does not include
-   a spatial lag, always \eqn{rho=0}. \cr
+   dependent variable. \cr
  \code{se_rho} \tab Standard error of \eqn{rho}. \cr
- \code{delta} \tab Estimated delta for spatial error models, 
-   if the model does not include
-   spatial error term, always \eqn{delta=0}. \cr
+ \code{delta} \tab Estimated delta for spatial error models. \cr
  \code{se_delta} \tab Standard error of \eqn{delta}. \cr
  \code{phi} \tab Estimated phi. If \code{cor="none"} always \eqn{phi=0}. \cr
  \code{se_phi} \tab Standard error of \eqn{phi}. \cr
@@ -231,17 +225,16 @@ Estimate geoadditive spatial or spatio-temporal
   The estimation method can be restricted maximum likelihood (REML)
   or maximum likelihood (ML).
 }
-\section{Details}{
- 
+\details{
 Function to estimate the model:
-  \deqn{y = (\rho*W_{N} \otimes I_T) y 
+  \deqn{ y = (\rho*W_{N} \otimes I_T) y 
     + f(s_1,s_2,\tau_{t}) 
     + X \beta 
     + (W_{N} \otimes I_T) X \theta  
     + \sum_{i = 1}^k g(z_i) 
     + \sum_{i = 1}^k g((\gamma_i*W_{N} \otimes I_T) z_i)  
-    + \epsilon}
-  where:
+    + \epsilon }
+ where:
   \itemize{
     \item \eqn{f(s_1,s_2,\tau_t)} is a smooth spatio-temporal trend
     of the spatial coordinates \eqn{s1,s_2} and of the temporal
@@ -253,11 +246,10 @@ Function to estimate the model:
     \item \eqn{\rho} is the spatial spillover parameter.
     \item \eqn{I_T} is an identity matrix of order \eqn{T} (\emph{T=1}
       for pure spatial data).
-    \item \eqn{\epsilon ~ N(0,R)} where \eqn{R = \sigma^2 I_T} if errors
+    \item \eqn{\epsilon ~ N(0,R)} where \eqn{ R = \sigma^2 I_T} if errors
       are uncorrelated or it follows an AR(1) temporal autoregressive 
       structure for serially correlated errors.
   }
-
 \describe{
   \item{Including non-parametric terms}{
   The non-parametric terms are included in \code{formula} using
@@ -285,14 +277,13 @@ Function to estimate the model:
   temporal coordinate, that is, in the previous example would be 
   specified as \code{pspt(long,lat)}.
   }
-  
   \item{How to use \code{pspl()} and \code{pspt()}}{   
   Note that both in \code{pspl(.)} and \code{pspt(.)}, we have 
   to include the number of knots, named \code{nknots}, 
   which is the dimension of the basis used to represent the smooth term.
   The value of \code{nknots} should not be less than the dimension of the null space of the penalty
-  for the term, see \code{\link[mgcv:null.space.dimension]{null.space.dimension}} 
-  and \code{\link[mgcv:choose.k]{choose.k}} from \pkg{mgcv} 
+  for the term, see \code{\link[mgcv]{null.space.dimension}} 
+  and \code{\link[mgcv]{choose.k}} from \pkg{mgcv} 
   package to know how to choose \code{nknots}.
   
   In \code{pspl(.)} the default is \code{nknots = 10}, see the help of \code{\link{pspl}} function.
@@ -310,7 +301,6 @@ Function to estimate the model:
   indicating the basis for each spatial coordinate. 
   For spatio-temporal smoothing, it will be a length 3 vector.
   }
-  
   \item{ANOVA descomposition}{
   In many situations the  spatio-temporal trend, given by 
   \eqn{f(s_1,s_2,\tau_t)}, can be very complex and the use of a 
@@ -387,21 +377,19 @@ Function to estimate the model:
   We can also exclude the second- and third-order
   effects functions setting to `FALSE` the arguments \code{f12_int}, \code{f1t_int}, 
   \code{f2t_int} or \code{f12t_int} in \code{pspl(.)}.
-  } }
-
-  All the terms included in the model are jointly fitted using Separation of Anisotropic 
+  }
+ }
+ All the terms included in the model are jointly fitted using Separation of Anisotropic 
   Penalties (SAP) algorithm (see \emph{Rodriguez-Alvarez et al., (2015)}) 
   which allows to the mixed model reparameterization of the model. 
   For type of models \code{"sar", "sem", "sdm", "sdem", "sarar"}  or 
   \code{cor = "ar1"}, the parameters \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} 
   are numerically estimated using 
-  \code{\link[minqa]{bobyqa}} function implemented in pakage \pkg{minqa}.
+  \code{\link[minqa]{bobyqa}} function implemented in package \pkg{minqa}.
   In these cases, an iterative process between SAP and numerical 
   optimization of \eqn{\rho}, \eqn{\lambda} and \eqn{\phi} is applied until
   convergence. See details in \emph{Minguez et al.}, (2018).
-  
- \describe{
-  
+ \describe{   
  \item{Plotting non-parametric terms}{
    To plot the non-linear functions corresponding to 
    non-parametric terms we need to compute the fitted values,
@@ -423,7 +411,6 @@ Function to estimate the model:
   corresponds to the dataframe used to fitted the model 
   although a different database can be used to plot the 
   non-parametric terms.}
- 
  \item{Spatial impacts}{
    For the spatial models given by  \code{type = "sar"}, 
    \code{"sdm"}, \code{"sdem"}, \code{"sarar"} 
@@ -433,7 +420,7 @@ Function to estimate the model:
    parametric and non-parametric covariates when computing spatial 
    impacts.}
    \itemize{
-     \item {spatial impacts for parametric covariates}{
+     \item spatial impacts for parametric covariates \cr
       In this case, the spatial impacts are computed in the 
       usual way using simulation. See LeSage and Page (2009) 
       for computational details. The function \code{impactspar()}
@@ -453,9 +440,7 @@ Function to estimate the model:
       
       \code{imp_parvar <- impactspar(MODEL, listw = W)} \cr
       \code{summary(imp_parvar)}
-      \cr
-  }
-  \item {spatial impacts for non-parametric covariates}{
+  \item spatial impacts for non-parametric covariates \cr
     In this case direct, indirect and total 
     \emph{spatial impacts functions} are 
     obtained using \code{impactsnopar}. The details of 
@@ -471,25 +456,19 @@ Function to estimate the model:
     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = TRUE)} \cr
     \code{imp_nparvar <- impactsnopar(MODEL, listw = W, viewplot = FALSE)} \cr
     \code{plot_impactsnopar(imp_nparvar, data = DATA)} \cr
-  }
- } 
+ }
 }
 }
-
 \section{Control Arguments}{
 
 \tabular{ll}{
-  \code{optim} \tab method of estimation between 
-    restricted maximum likelihood, \code{"llik_reml"} or
-    maximum likelihood, \code{"llik"}. 
-    Default = \code{"llik_reml"}. \cr
-  \code{typese} \tab method to compute variances and 
-    standard errors. Default: \code{"sandwich"} corresponding 
-    to the frequentist case. The other option is \code{"bayesian"}.
+  \code{optim} \tab method of estimation: \code{"llik_reml"} (default) or
+    \code{"llik"}. \cr
+  \code{typese} \tab method to compute 
+    standard errors. \code{"sandwich"} (default) or \code{"bayesian"}.
     See Fahrmeir et al, pp. 375 for details of computations. \cr   
   \code{vary_init} \tab Initial value of the noise variance in the model.
-    Default = `NULL`. If `NULL` the initial variance
-    is the sample variance of the dependent variable. \cr
+    Default = `NULL`. \cr
   \code{trace} \tab A logical value set to \emph{TRUE} to show 
     intermediate results during the estimation process. 
     Default = \emph{FALSE}. \cr
@@ -506,8 +485,8 @@ Function to estimate the model:
   \code{Imult} \tab default 2; used for preparing the Cholesky 
       decompositions for updating in the Jacobian function \cr
   \code{super} \tab  if `NULL` (default), set to `FALSE` to use 
-      a simplicial decomposition for the sparse Cholesky decomposition and 
-      method "Matrix_J", set to `as.logical(NA)` for method "Matrix", if 
+      a simplicial decomposition for the sparse Cholesky decomposition 
+      and method "Matrix_J", set to `as.logical(NA)` for method "Matrix", if 
       `TRUE`, use a supernodal decomposition \cr
     \code{cheb_q} \tab default 5; highest power of the approximating 
       polynomial for the Chebyshev approximation \cr
@@ -563,8 +542,6 @@ summary(gampure)
 list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(gampure, list_varnopar)
 ######################  Plot non-parametric terms
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_terms(terms_nopar, unemp_it_short)
 
 
@@ -577,8 +554,6 @@ anova(gampure, gamsar)
 \donttest{
 ######### Non-Parametric Total, Direct and Indirect impacts
 ### with impactsnopar(viewplot = TRUE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar <- impactsnopar(gamsar, 
                             listw = lwsp_it, 
                             viewplot = TRUE)
@@ -586,8 +561,6 @@ imp_nparvar <- impactsnopar(gamsar,
 ############ Non-Parametric Total, Direct and Indirect impacts
 ### with impactsnopar(viewplot = FALSE) and using plot_impactsnopar()
 imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, viewplot = FALSE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_impactsnopar(imp_nparvar, data = unemp_it_short, smooth = TRUE)
 
 ###################### Parametric Total, Direct and Indirect impacts
@@ -635,14 +608,10 @@ summary(geospsem)
 
 #### Non-Parametric Total, Direct and Indirect impacts 
 #### for spatial sar. First with smooth, second without smoothing
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar_smooth <- impactsnopar(geospsar, 
                                    listw = lwsp_it, 
                                    viewplot = TRUE, 
                                    smooth = TRUE)
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 imp_nparvar_no_smooth <- impactsnopar(geospsar, 
                                       listw = lwsp_it, 
                                       viewplot = TRUE, 
@@ -713,6 +682,9 @@ plot_sp2d(geospanova,
          
 ## In plot_sp2d() function, if data is not an sf object, 
 ## you must indicate the spatial coordinates variables
+## first plot is the whole spatial trend,
+## f1_main and f2_main are plots of main functions (in anova)
+## f12_int is the interaction function (in anova)
 plot_sp2d(geospanova, 
          data = unemp_it_short, 
          addmain = TRUE, 
@@ -791,8 +763,6 @@ plot_sptime(sptanova,
  summary(sptanova_sar_ar1)
  ###### Non-Parametric Total, Direct and Indirect Impacts
  list_varnopar <- c("serv", "empgrowth")
- #adjust plot margins
- par(mar = c(1, 1, 1, 1))
  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
  ###### Parametric Total, Direct and Indirect Effects
  list_varpar <- c("partrate","agri","cons")
@@ -874,11 +844,8 @@ gam <- pspatfit(formula = formgam,
 summary(gam)
 # Plot of terms for GAM (without and with demeaning)
 fit_gam <- fit_terms(gam, c("serv", "empgrowth"))
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_terms(fit_gam, unemp_it)
 fit_gam_dem <- fit_terms(gam_dem, c("serv", "empgrowth"))
-par(mar = c(1, 1, 1, 1))
 plot_terms(fit_gam_dem, unemp_it)
 
 ## Demeaning with type = "sar" model
@@ -898,7 +865,7 @@ summary(gamsar_dem)
     Mur, J. (2014). Modeling regional economic dynamics: Spatial
     dependence, spatial heterogeneity and nonlinearities. 
     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-    <doi: 10.1016/j.jedc.2014.06.011>
+    <doi:10.1016/j.jedc.2014.06.011>
 
   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
@@ -906,25 +873,25 @@ summary(gamsar_dem)
   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
   The Joys of P-Splines}. Cambridge University Press.
     
-  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-    \emph{Regression. Models, Methods and Applications}.
+  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+    \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
      Springer.
     
   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-    (11), 49-69. <doi: 10.1177/1471082X1001100104>
+    (11), 49-69. <doi:10.1177/1471082X1001100104>
 
   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
     two-dimensional smoothing with P-spline ANOVA mixed models 
     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-    (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
+    (61), 22-37. <doi:10.1016/j.csda.2012.11.013>
 
   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
     Spatial Econometrics}. CRC Press, Boca Raton.
 
   \item Minguez, R.; Basile, R. and Durban, M. (2020). An Alternative 
     Semiparametric Model for Spatial Panel Data. \emph{Statistical Methods and Applications},
-    (29), 669-708. <doi:	10.1007/s10260-019-00492-8>
+    (29), 669-708. <doi:10.1007/s10260-019-00492-8>
 
   \item Montero, J., Minguez, R., and Durban, M. (2012). SAR models 
     with nonparametric spatial trends: A P-Spline approach. 
@@ -934,7 +901,7 @@ summary(gamsar_dem)
     and Eilers, P. (2015). Fast smoothing parameter separation 
     in multidimensional generalized P-splines: the SAP algorithm.
     \emph{Statistics and Computing} 25 (5), 941-957. 
-    <doi: 10.1007/s11222-014-9464-2>
+    <doi:10.1007/s11222-014-9464-2>
     
   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.

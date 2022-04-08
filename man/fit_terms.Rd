@@ -2,9 +2,8 @@
 % Please edit documentation in R/fit_terms.R
 \name{fit_terms}
 \alias{fit_terms}
-\title{Compute terms for non-parametric spatial (2d) or 
-  spatio-temporal (3d) trends and for smooth functions of continous 
-  non-parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.}
+\title{Compute terms of the non-parametric covariates in the
+  semiparametric regression models.}
 \usage{
 fit_terms(object, variables)
 }
@@ -69,8 +68,6 @@ list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(gamsar, list_varnopar)
 
 ######################  Plot non-parametric terms
-#adjust plot margins
-par(mar = c(1, 1, 1, 1))
 plot_terms(terms_nopar, unemp_it_short)
  
 }
@@ -78,14 +75,14 @@ plot_terms(terms_nopar, unemp_it_short)
 \itemize{ 
   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-    (11), 49-69. <doi: 10.1177/1471082X1001100104>
+    (11), 49-69. <doi:10.1177/1471082X1001100104>
     
   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
   The Joys of P-Splines}. Cambridge University Press.
     
-  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-    \emph{Regression. Models, Methods and Applications}.
-     Springer.
+  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+    \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+    Springer.
         
   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
@@ -94,7 +91,9 @@ plot_terms(terms_nopar, unemp_it_short)
 \seealso{
 \itemize{
   \item \code{\link{pspatfit}} estimate spatial or spatio-temporal 
-    semiparametric PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+    semiparametric regression models. The model can be of type \emph{ps-sim},
+    \emph{ps-sar}, \emph{ps-slx}, \emph{ps-sem}, \emph{ps-sdm} or 
+    \emph{ps-sarar}.
   \item \code{\link{plot_terms}} plot smooth functions of non-parametric
     covariates.
 }

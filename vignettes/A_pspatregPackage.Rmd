@@ -99,7 +99,7 @@ This package is available in GitHub (<https://github.com/rominsal/pspatreg>) and
 
 # Basic information on the package
 
-The package is accompanied by other two vignettes ([B_Examples_pspatreg_CS_data.html](file:///C:/Users/rober/Dropbox/spatialmodels/B_Examples_pspatreg_CS_data.html) and [C_Examples_pspatreg_Panel_data.html](file:///C:/Users/rober/Dropbox/spatialmodels/C_Examples_pspatreg_Panel_data.html)), introducing the application of `pspatreg` to cross-sectional and panel data. Here, we introduce some basic general information about the package.
+The package is accompanied by other two vignettes **B_Examples_pspatreg_CS_data.html** and **C_Examples_pspatreg_Panel_data.html**, introducing the application of `pspatreg` to cross-sectional and panel data. Here, we introduce some basic general information about the package.
 
 ## The function `pspatfit()`
 

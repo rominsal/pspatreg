@@ -1,7 +1,7 @@
 ---
 title: "Using pspatreg with cross-sectional data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
-date: "2022-03-30"
+date: "2022-03-31"
 output: 
   html_document:
     number_sections: true
@@ -57,13 +57,13 @@ Due to the skewed distribution of the dependent variable **`Sale_Price`**, we us
 
 
 ```r
-ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
+ggplot(data = ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
 ```
 
 <img src="unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
 
 ```r
-ggplot(data=ames_sf) + geom_histogram(mapping = aes(x = log(Sale_Price)))
+ggplot(data = ames_sf) + geom_histogram(mapping = aes(x = log(Sale_Price)))
 ```
 
 <img src="unnamed-chunk-2-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
@@ -84,7 +84,7 @@ In particular, we have used a graph-based neighbors list (a Delauney triangulati
 
 ```r
 ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude)==FALSE,]
-coord_sf1 <- cbind(ames_sf1$Longitude,ames_sf1$Latitude)
+coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 # Delauney triangulation neighbours (symmetric)
 ID <- row.names(as(ames_sf1, "sf"))
 col.tri.nb <- tri2nb(coord_sf1)
@@ -97,7 +97,7 @@ is.symmetric.nb(soi_nb,verbose = TRUE, force = FALSE)
 ```
 
 ```r
-listW <- nb2listw(soi_nb, style="W", zero.policy = FALSE)
+listW <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 ```
 
 ## Defining **`formula`** for parametric and semiparametric models
@@ -165,7 +165,7 @@ linsar <- pspatfit(formlin, data = ames_sf1,listw = listW, method = "eigen", typ
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  20.75 seconds
+##  Time to fit the model:  27.77 seconds
 ```
 
 ```r
@@ -325,27 +325,27 @@ summary(imp_parvar_sar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0520754  0.0120871  4.3083361        0
-## lnTotal_Bsmt_SF  0.0815877  0.0050095 16.2867302        0
-## lnGr_Liv_Area    0.6419407  0.0248380 25.8451089        0
-## Garage_Cars      0.1924615  0.0090925 21.1670037        0
-## Fireplaces       0.0900624  0.0095923  9.3890702        0
+## lnLot_Area       0.0530550  0.0121927  4.3513854        0
+## lnTotal_Bsmt_SF  0.0815066  0.0051216 15.9142847        0
+## lnGr_Liv_Area    0.6425593  0.0242185 26.5317227        0
+## Garage_Cars      0.1918820  0.0097374 19.7055849        0
+## Fireplaces       0.0891885  0.0104662  8.5215682        0
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0350627  0.0081362  4.3094558        0
-## lnTotal_Bsmt_SF  0.0549293  0.0032737 16.7789240        0
-## lnGr_Liv_Area    0.4321757  0.0150891 28.6416619        0
-## Garage_Cars      0.1295693  0.0056772 22.8228628        0
-## Fireplaces       0.0606364  0.0064170  9.4493783        0
+## lnLot_Area       0.0357610  0.0081801  4.3717037        0
+## lnTotal_Bsmt_SF  0.0549440  0.0033301 16.4992830        0
+## lnGr_Liv_Area    0.4331557  0.0147367 29.3929010        0
+## Garage_Cars      0.1293429  0.0060800 21.2733826        0
+## Fireplaces       0.0601201  0.0069640  8.6329227        0
 ## 
 ##  Indirect Parametric Impacts (sar) 
 ##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0170127  0.0039873  4.2666805        0
-## lnTotal_Bsmt_SF  0.0266584  0.0019150 13.9210536        0
-## lnGr_Liv_Area    0.2097650  0.0115021 18.2370221        0
-## Garage_Cars      0.0628922  0.0038820 16.2010763        0
-## Fireplaces       0.0294259  0.0032991  8.9194623        0
+## lnLot_Area       0.0172940  0.0040509  4.2691608        0
+## lnTotal_Bsmt_SF  0.0265625  0.0019722 13.4683722        0
+## lnGr_Liv_Area    0.2094036  0.0114016 18.3661167        0
+## Garage_Cars      0.0625392  0.0041184 15.1852346        0
+## Fireplaces       0.0290684  0.0036203  8.0292496        0
 ```
 
 As expected, all marginal impacts are strongly significant and spillover impacts are rather high. We compare these results with those obtained using ML estimates with **`lagsarlm()`** (package **`spatialreg`**):
@@ -450,11 +450,11 @@ round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = 
 
 ```
 ##                 spatialreg_direct sptpreg_direct
-## lnLot_Area                  0.035          0.035
+## lnLot_Area                  0.035          0.036
 ## lnTotal_Bsmt_SF             0.055          0.055
-## lnGr_Liv_Area               0.433          0.432
-## Garage_Cars                 0.129          0.130
-## Fireplaces                  0.060          0.061
+## lnGr_Liv_Area               0.433          0.433
+## Garage_Cars                 0.129          0.129
+## Fireplaces                  0.060          0.060
 ```
 
 ```r
@@ -466,7 +466,7 @@ round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short 
 ##                 spatialreg_indirect sptpreg_indirect
 ## lnLot_Area                    0.017            0.017
 ## lnTotal_Bsmt_SF               0.027            0.027
-## lnGr_Liv_Area                 0.210            0.210
+## lnGr_Liv_Area                 0.210            0.209
 ## Garage_Cars                   0.063            0.063
 ## Fireplaces                    0.029            0.029
 ```
@@ -478,11 +478,11 @@ round(data.frame(spatialreg_total = summary(SAR.impact, zstats = TRUE, short = T
 
 ```
 ##                 spatialreg_total sptpreg_total
-## lnLot_Area                 0.053         0.052
+## lnLot_Area                 0.053         0.053
 ## lnTotal_Bsmt_SF            0.081         0.082
-## lnGr_Liv_Area              0.643         0.642
+## lnGr_Liv_Area              0.643         0.643
 ## Garage_Cars                0.192         0.192
-## Fireplaces                 0.090         0.090
+## Fireplaces                 0.090         0.089
 ```
 
 ### Spatial Lag in X variables (SLX) model. REML estimates using **`pspatfit()`**
@@ -675,7 +675,7 @@ linsdm <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", ty
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  16.57 seconds
+##  Time to fit the model:  20.49 seconds
 ```
 
 ```r
@@ -860,7 +860,7 @@ linsem <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", ty
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  17.47 seconds
+##  Time to fit the model:  22 seconds
 ```
 
 ```r
@@ -1012,7 +1012,7 @@ gam <- pspatfit(formgam, data = ames_sf1)
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  0.39 seconds
+##  Time to fit the model:  0.25 seconds
 ```
 
 ```r
@@ -1061,7 +1061,7 @@ gamsar <- pspatfit(formgam, data = ames_sf1,
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  32.17 seconds
+##  Time to fit the model:  30.08 seconds
 ```
 
 ```r
@@ -1135,7 +1135,7 @@ sp2dsar <- pspatfit(form2d, data = ames_sf1,
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  80 seconds
+##  Time to fit the model:  82.09 seconds
 ```
 
 ```r
@@ -1258,7 +1258,7 @@ sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, method 
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  75.25 seconds
+##  Time to fit the model:  86.29 seconds
 ```
 
 ```r
@@ -1391,7 +1391,7 @@ sp2danovasdm <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, method 
 ## 
 ## Fitting Model...
 ## 
-##  Time to fit the model:  97.97 seconds
+##  Time to fit the model:  95.75 seconds
 ```
 
 ```r

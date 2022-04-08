@@ -1,8 +1,11 @@
 #' @name plot_sp3d 
 #' @rdname plot_sp3d
 #'
-#' @title Plot and mapping spatio-temporal trends        
-#' @description DESCRIBE THE FUNCTION...
+#' @title Plot and mapping spatio-temporal trends.
+#'         
+#' @description Make plots and maps of the spatio-temporal trends 
+#'   in 3d of the objects fitted with \code{\link{pspatfit}} function.
+#'   
 #' @param object object returned from \code{\link{pspatfit}} 
 #' @param data sf object. 
 #' @param time_var name of the temporal variable in data.
@@ -22,14 +25,14 @@
 #' @references \itemize{ 
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
+#'     (11), 49-69. <doi:10.1177/1471082X1001100104>
 #'     
 #'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
 #'   The Joys of P-Splines}. Cambridge University Press.
 #'     
-#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-#'     \emph{Regression. Models, Methods and Applications}.
-#'      Springer.
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+#'     \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+#'     Springer.
 #'         
 #'   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
 #'   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.

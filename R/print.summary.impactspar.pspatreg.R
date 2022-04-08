@@ -8,6 +8,8 @@
 #'   Default: max(3L, getOption("digits") - 3L).
 #' @param ... further arguments passed to or from other methods.
 #'
+#' @return 
+#'   No return value, called for side effects.
 #' @author 
 #' \tabular{ll}{ 
 #'   Roman Minguez  \tab \email{roman.minguez@@uclm.es} \cr
@@ -19,8 +21,7 @@
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{impactspar}} Compute direct, indirect and
-#'     total effects (or impacts).
-#'     for continous parametric covariates in PS-SAR, PS-SEM, PS-SARAR, PS-SLX or PS-DURBIN regression models.
+#'     total impacts for continous parametric covariates.
 #'   \item \code{\link{summary.impactspar.pspatreg}} Summary method
 #'     for \emph{summary.pspatreg} objects.
 #' }

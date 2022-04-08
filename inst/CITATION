@@ -1,0 +1,44 @@
+citHeader("To cite pspatreg in publications use:")
+
+citEntry(entry = "Article",
+  title = "An alternative semiparametric model for spatial panel data",
+  author = personList(as.person("Román Mínguez"),
+  as.person("Roberto Basile"), 
+  as.person("María Durbán")),
+  journal = "Statistical Methods & Applications",
+  volume = "29",
+  number = "4",
+  pages = "669--708",
+  year = "2020",
+  publisher = "Springer",
+  doi = "10.1007/s10260-019-00492-8",
+  url = "https://link.springer.com/article/10.1007/s10260-019-00492-8",
+  
+  textVersion = 
+  paste("Mínguez, R.; Basile, R. and Durbán, M. (2020).",
+  "An Alternative Semiparametric Model for Spatial Panel Data.",
+  "Statistical Methods and Applications,
+29(4), 669-708.",
+"URL https://link.springer.com/article/10.1007/s10260-019-00492-8")
+)
+
+citEntry(entry = "Article",
+  title = "Modeling regional economic dynamics: spatial dependence, spatial heterogeneity and nonlinearities",
+  author = personList(as.person("Roberto Basile"),
+  as.person("María Durbán"),
+  as.person("Román Mínguez"),
+  as.person("José María Montero"),
+  as.person("Jesús Mur")),
+  journal = "Journal of Economic Dynamics and Control",
+  year = "2014",
+  volume = "48",
+  pages = "229--245",
+  doi = "10.1016/j.jedc.2014.06.011",
+  url = "http://www.sciencedirect.com/science/article/pii/S0165188914001493",
+  
+  textVersion = paste("Basile, R.; Durbán, M.; Mínguez, R.; Montero, J.M. and Mur, J. (2014).",
+  "Modeling regional economic dynamics: Spatial dependence, spatial heterogeneity and nonlinearities.",
+  "Journal of Economic Dynamics and Control, 
+  48, 229-245.",
+  "URL http://www.sciencedirect.com/science/article/pii/S0165188914001493")
+)

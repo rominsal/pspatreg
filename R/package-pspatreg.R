@@ -18,7 +18,8 @@
 #'   interactions effects of 2nd and 3rd order. The estimation method can be
 #'   restricted maximum likelihood (REML) or maximum likelihood (ML).
 #'
-#' @details Some functionalities that have been included in \pkg{pspatreg}
+#' @details 
+#'   Some functionalities that have been included in \pkg{pspatreg}
 #'   package are:
 #'
 #' @section 1. Estimation of the semiparametric regression model: 
@@ -131,7 +132,7 @@
 #'   of the estimated parameters. The argument \code{bayesian} 
 #'   (default = `FALSE`) allows to choose between sandwhich 
 #'   (frequentist) or bayesian method to compute the variances and 
-#'   covariances. See Fahrmeir et al. (2013) for details.
+#'   covariances. See Fahrmeir et al. (2021) for details.
 #'   }
 #'
 #' @section Datasets: 
@@ -168,7 +169,7 @@
 #'     Mur, J. (2014). Modeling regional economic dynamics: Spatial
 #'     dependence, spatial heterogeneity and nonlinearities. 
 #'     \emph{Journal of Economic Dynamics and Control}, (48), 229-245.
-#'     <doi: 10.1016/j.jedc.2014.06.011>
+#'     <doi:10.1016/j.jedc.2014.06.011>
 #'
 #'   \item Eilers, P. and Marx, B. (1996). Flexible Smoothing with 
 #'     B-Splines and Penalties. \emph{Statistical Science}, (11), 89-121.
@@ -176,18 +177,18 @@
 #'   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
 #'   The Joys of P-Splines}. Cambridge University Press.
 #'     
-#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-#'     \emph{Regression. Models, Methods and Applications}.
-#'      Springer.
+#'   \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+#'     \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
+#'     Springer.
 #'     
 #'   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
 #'     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-#'     (11), 49-69. <doi: 10.1177/1471082X1001100104>
+#'     (11), 49-69. <doi:10.1177/1471082X1001100104>
 #'
 #'   \item Lee, D. J., Durban, M., and Eilers, P. (2013). Efficient
 #'     two-dimensional smoothing with P-spline ANOVA mixed models 
 #'     and nested bases. \emph{Computational Statistics & Data Analysis}, 
-#'     (61), 22-37. <doi: 10.1016/j.csda.2012.11.013>
+#'     (61), 22-37. <doi:10.1016/j.csda.2012.11.013>
 #'
 #'   \item LeSage, J. and Pace, K. (2009). \emph{Introduction to 
 #'     Spatial Econometrics}. CRC Press, Boca Raton.
@@ -204,7 +205,7 @@
 #'     and Eilers, P. (2015). Fast smoothing parameter separation 
 #'     in multidimensional generalized P-splines: the SAP algorithm.
 #'     \emph{Statistics and Computing} 25 (5), 941-957. 
-#'     <doi: 10.1007/s11222-014-9464-2>
+#'     <doi:10.1007/s11222-014-9464-2>
 #'     
 #'   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
 #'   An Introduction with \code{R}} (second edition). CRC Press, Boca Raton.
@@ -219,14 +220,14 @@
 #'  }
 #'
 #' @importFrom AmesHousing make_ames
-#' @importFrom interp interp
 #' @importFrom dplyr left_join
-#' @importFrom fields image.plot
+#' @importFrom fields image.plot 
 #' @importFrom ggplot2 ggplot geom_line ggtitle labs aes xlim ylim
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom graphics image contour matplot title points
 #' @importFrom graphics par abline lines
 #' @importFrom grDevices heat.colors
+#' @importFrom MBA mba.surf
 #' @importFrom MASS ginv mvrnorm
 #' @importFrom Matrix bandSparse bdiag crossprod determinant
 #' @importFrom Matrix diag Diagonal kronecker Matrix

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_sp2d.R
 \name{plot_sp2d}
 \alias{plot_sp2d}
-\title{Plot and mapping spatial trends}
+\title{Plot and mapping spatial trends.}
 \usage{
 plot_sp2d(
   object,
@@ -39,7 +39,8 @@ plot_sp2d(
 plots and maps of the spatial trends
 }
 \description{
-DESCRIBE THE FUNCTION...
+Make plots and maps of the spatial trends 
+  in 2d of the objects fitted with \code{\link{pspatfit}} function.
 }
 \examples{
 library(pspatreg, package = "pspatreg")
@@ -91,7 +92,7 @@ ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
 ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
 
 ########### Constructing the spatial weights matrix
-ames_sf1 <- ames_sf[duplicated(ames_sf$Longitude) == FALSE, ]
+ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
 coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
 ID <- row.names(as(ames_sf1, "sf"))
 col_tri_nb <- tri2nb(coord_sf1)
@@ -122,11 +123,12 @@ plot_sp2d(sp2dsar, data = ames_sf1)
 
 ###### MODEL WITH ANOVA DESCOMPOSITION
  form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
-  pspl(lnLot_Area, nknots = 20) + 
-  pspl(lnTotal_Bsmt_SF, nknots = 20) +
-  pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude, Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+                   pspl(lnLot_Area, nknots = 20) + 
+                   pspl(lnTotal_Bsmt_SF, nknots = 20) +
+                   pspl(lnGr_Liv_Area, nknots = 20) +
+                   pspt(Longitude, Latitude, 
+                        nknots = c(10, 10), 
+                        psanova = TRUE)
       
 sp2danovasar <- pspatfit(form2d_psanova, 
                         data = ames_sf1, 
@@ -144,13 +146,13 @@ plot_sp2d(sp2danovasar, data = ames_sf1,
 \itemize{ 
   \item Lee, D. and Durban, M. (2011). P-Spline ANOVA Type Interaction 
     Models for Spatio-Temporal Smoothing. \emph{Statistical Modelling}, 
-    (11), 49-69. <doi: 10.1177/1471082X1001100104>
+    (11), 49-69. <doi:10.1177/1471082X1001100104>
     
   \item Eilers, P. and Marx, B. (2021). \emph{Practical Smoothing. 
   The Joys of P-Splines}. Cambridge University Press.
     
-  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2013). 
-    \emph{Regression. Models, Methods and Applications}.
+  \item Fahrmeir, L.; Kneib, T.;  Lang, S.; and Marx, B. (2021). 
+    \emph{Regression. Models, Methods and Applications (2nd Ed.)}.
      Springer.
         
   \item Wood, S.N. (2017). \emph{Generalized Additive Models. 
