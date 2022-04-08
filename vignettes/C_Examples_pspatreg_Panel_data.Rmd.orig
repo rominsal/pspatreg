@@ -3,8 +3,16 @@ title: "Using pspatreg with spatial panel data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
-    number_sections: true
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: true
+    toc_depth: 3
+    fig_width: 7
+    fig_heigh: 4
+    fig_caption: true
+    df_print: kable 
+    highlight: tango
+    citation_package: natbib
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{Using pspatreg with spatial panel data}
@@ -40,7 +48,7 @@ The empirical illustration is based on data on regional unemployment in Italy. T
 
 ## Dataset, spatial weights matrix and model specifications
 
-The library provides the panel data `unemp_it` (an object of class `data.frame`) and the spatial weights matrix `Wsp_it` (a 103 by 103 square matrix). The raw data - a balanced panel with 103 Italian provinces observed for each year between 1996 and 2019 -  can be transformed in a spatial polygonal dataset of class `sf` after having joined the `data.frame` object with the shapefile of Italian provinces:
+The package provides the panel data `unemp_it` (an object of class `data.frame`) and the spatial weights matrix `Wsp_it` (a 103 by 103 square matrix). The raw data - a balanced panel with 103 Italian provinces observed for each year between 1996 and 2019 -  can be transformed in a spatial polygonal dataset of class `sf` after having joined the `data.frame` object with the shapefile of Italian provinces:
 
 ```{r}
 data(unemp_it, package = "pspatreg")
@@ -56,7 +64,7 @@ summary(lwsp_it)
 
 ## Linear model (comparison with `splm`)
 
-Using these data, we first estimate fully parametric spatial linear autoregressive panel models using the function `pspatfit()` included in the library `pspatreg` (based on the REML estimator) and compare them with the results obtained using the functions provided by the library `splm` (based on the ML estimator).
+Using these data, we first estimate fully parametric spatial linear autoregressive panel models using the function `pspatfit()` included in the package `pspatreg` (based on the REML estimator) and compare them with the results obtained using the functions provided by the package `splm` (based on the ML estimator).
 
 ### Spatial Lag model (SAR). REML estimates using `pspatfit()`
 

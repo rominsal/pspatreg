@@ -3,8 +3,10 @@ title: "An introduction to pspatreg"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
-    number_sections: true
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: true
+    citation_package: natbib    
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{An introduction to pspatreg}
@@ -142,11 +144,11 @@ Both `data.frame` and `sf` class objects can be used as `data` inputs.[^3] `sf` 
 
 [^3]: `sf` means simple features of spatial vector objects. The geographic vector data model is based on points located within a coordinate reference system (CRS). Points can represent self-standing features (e.g., the location of a house) or they can be linked together to form more complex geometries such as lines and polygons. Most point geometries contain only two dimensions `x` and `y` (3-dimensional CRSs contain an additional `z` value, typically representing height above sea level). `sf` objects provide both a *geometry* information, describing where on Earth the feature is located, and *attributes* information, describing other properties (like the population of the region, the unemployment rate, etc.). `data.frame` objects store only attributes information.
 
-## Plotting smmoth terms
+## Plotting smooth terms
 
 Plotting the estimated non-parametric smooth terms represents an important step in semiparametric regression analyses. First, the function `fit_terms()` computes estimated non-parametric smooth terms. Then, the functions `plot_sp2d()` and `plot_sp3d()` are used to plot and map spatial and spatio-temporal trends, respectively, while `plot_sptime()` is used to plot the time trend for PS-ANOVA models in 3d; finally, and `plot_terms()` is used to plot smooth non-parametric terms.
 
-## Computing marginal effects
+## Computing marginal impacts
 
 In the case of a semiparametric model without the spatial lag of the dependent variable (PS model), if all regressors are manipulated independently of the errors, $\widehat{g}_\delta(x_{\delta, it})$ can be interpreted as the conditional expectation of $y$ given $x_{\delta}$ (net of the effect of the other regressors). \@blu.pow.03 use the term Average Structural Function (ASF) with reference to these functions. Instead, in PS-SAR, PS-SDM or in PS-SARAR model, when $\rho$ is different from zero, the estimated smooth functions cannot be interpreted as ASF. Taking advantage of the results obtained for parametric SAR, we can compute the total smooth effect (total--ASF) of $x_{\delta}$ as:\
 $$\widehat{g}_{\delta}^{T}\left(x_{\delta}\right)=\Sigma_{q}
@@ -154,17 +156,17 @@ $$\widehat{g}_{\delta}^{T}\left(x_{\delta}\right)=\Sigma_{q}
 
 where $b_{\delta q}(x_{\delta})$ are P-spline basis functions, and $\widehat{\beta}_{\delta q}$ the corresponding estimated parameters.
 
-We can also compute direct and indirect (or spillover) effects of smooth terms in the PS-SAR case as:
+We can also compute direct and indirect (or spillover) impacts of smooth terms in the PS-SAR case as:
 
 $$\widehat{g}_{\delta}^{D}\left(x_{\delta}\right)=\Sigma_{q}
 \left[\textbf{I}_{n}-\widehat{\rho}\textbf{W}_{n}\right]^{-1}_{ii} b_{\delta q}(x_{k})\widehat{\beta}_{\delta q}$$
 
 $$\widehat{g}_{\delta}^{I}\left(x_{\delta}\right)=\widehat{g}_{\delta}^{T}\left(x_{\delta}\right)-\widehat{g}_{\delta}^{D}\left(x_{\delta}\right)$$
 
-Similar expressions can be provided for the direct, indirect and total effects of the PS-SDM.
+Similar expressions can be provided for the direct, indirect and total impacts of the PS-SDM.
 
 The function `impactspar()` computes direct, indirect and total impacts for continuous parametric covariates using the standard procedure for their computation [@les.pac.09].
 
-The function `impactsnopar()` computes direct, indirect and total impacts functions for continuous non-parametric covariates, while the function `plot_impactsnopar()` is used to plot these impacts functions. It is worth noticing that total, direct and indirect effects are never smooth over the domain of the variable $x_\delta$ due to the presence of the spatial multiplier matrix in the algorithm for their computation. Indeed, a wiggly profile of direct, indirect and total effects would appear even if the model were linear. Therefore, in the spirit of the semiparametric approach, we included the possibility of applying a spline smoother to obtain smooth curves (using the argument `smooth=TRUE` in the function `plot_impactsnopar()`).  
+The function `impactsnopar()` computes direct, indirect and total impacts functions for continuous non-parametric covariates, while the function `plot_impactsnopar()` is used to plot these impacts functions. It is worth noticing that total, direct and indirect impacts are never smooth over the domain of the variable $x_\delta$ due to the presence of the spatial multiplier matrix in the algorithm for their computation. Indeed, a wiggly profile of direct, indirect and total impacts would appear even if the model were linear. Therefore, in the spirit of the semiparametric approach, we included the possibility of applying a spline smoother to obtain smooth curves (using the argument `smooth=TRUE` in the function `plot_impactsnopar()`).  
 
 # References {.unnumbered}

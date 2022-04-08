@@ -3,8 +3,16 @@ title: "Using pspatreg with cross-sectional data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
-    number_sections: true
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: true
+    toc_depth: 3
+    fig_width: 7
+    fig_heigh: 4
+    fig_caption: true
+    df_print: kable 
+    highlight: tango
+    citation_package: natbib
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{Using pspatreg with cross-sectional data}
