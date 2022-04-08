@@ -34,11 +34,11 @@ citEntry(entry = "Article",
   volume = "48",
   pages = "229--245",
   doi = "10.1016/j.jedc.2014.06.011",
-  url = "http://www.sciencedirect.com/science/article/pii/S0165188914001493",
+  url = "https://www.sciencedirect.com/science/article/abs/pii/S0165188914001493",
   
   textVersion = paste("Basile, R.; Durbán, M.; Mínguez, R.; Montero, J.M. and Mur, J. (2014).",
   "Modeling regional economic dynamics: Spatial dependence, spatial heterogeneity and nonlinearities.",
   "Journal of Economic Dynamics and Control, 
   48, 229-245.",
-  "URL http://www.sciencedirect.com/science/article/pii/S0165188914001493")
+  "URL https://www.sciencedirect.com/science/article/abs/pii/S0165188914001493")
 )

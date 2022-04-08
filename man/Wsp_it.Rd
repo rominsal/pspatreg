@@ -11,7 +11,7 @@ The rows and columns follow the same order than provinces included in
 }
 \source{
 Italian National Institute of Statistics (ISTAT)
-        \url{https://www.istat.it/}
+        \url{https://www.istat.it}
 }
 \usage{
 Wsp_it
