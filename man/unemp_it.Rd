@@ -30,7 +30,7 @@ A data frame with 2472 rows and 17 variables:
 }
 \source{
 Italian National Institute of Statistics (ISTAT)
-        \url{https://www.istat.it/}
+        \url{https://www.istat.it}
 }
 \usage{
 unemp_it

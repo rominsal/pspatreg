@@ -13,7 +13,7 @@ An sf object with 103 rows and 2 columns:
 }
 \source{
 Italian National Institute of Statistics (ISTAT)
-        \url{https://www.istat.it/}
+        \url{https://www.istat.it}
 }
 \usage{
 map_it
