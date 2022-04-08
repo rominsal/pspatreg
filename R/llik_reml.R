@@ -214,6 +214,7 @@ llikc_reml <- function(param, env) {
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C 
     Hinv <- solve(H)
+    browser()
     P <- (1/sig2u)*Ifull - 
       (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
   }
