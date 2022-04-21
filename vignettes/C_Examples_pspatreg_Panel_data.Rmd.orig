@@ -21,10 +21,11 @@ vignette: |
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, cache = FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r}
+library(pspatreg)
 library(spatialreg)
 library(spdep)
 library(sf)
@@ -38,11 +39,11 @@ library(splm)
 
 This section focuses on the semiparametric P-Spline model for spatial panel data. The model may include a smooth spatio-temporal trend, a spatial lag of dependent and independent variables, a time lag of the dependent variable and of its spatial lag, and a time series autoregressive noise. Specifically, we consider a spatio-temporal ANOVA model, disaggregating the trend into spatial and temporal main effects, as well as second- and third-order interactions between them.
 
-The empirical illustration is based on data on regional unemployment in Italy. This example shows that this model represents a valid alternative to parametric methods aimed at disentangling strong and weak cross-sectional dependence when both spatial and temporal heterogeneity are smoothly distributed \citep[see][]{minguez2020alternative}. The section is organized as follows:
+The empirical illustration is based on data on regional unemployment in Italy. This example shows that this model represents a valid alternative to parametric methods aimed at disentangling strong and weak cross-sectional dependence when both spatial and temporal heterogeneity are smoothly distributed [see @minguez2020alternative]. The section is organized as follows:
 
 -   Description of dataset, spatial weights matrix and model specifications;
 
--   Estimation results of linear spatial models and comparison with the results obtained with `splm`;
+-   Estimation results of linear spatial models and comparison with the results obtained with **splm**;
 
 -   Estimation results of semiparametric spatial models.
 
@@ -62,9 +63,9 @@ lwsp_it <- spdep::mat2listw(Wsp_it)
 summary(lwsp_it)
 ```
 
-## Linear model (comparison with `splm`)
+## Linear model (comparison with **splm**)
 
-Using these data, we first estimate fully parametric spatial linear autoregressive panel models using the function `pspatfit()` included in the package `pspatreg` (based on the REML estimator) and compare them with the results obtained using the functions provided by the package `splm` (based on the ML estimator).
+Using these data, we first estimate fully parametric spatial linear autoregressive panel models using the function `pspatfit()` included in the package **pspatreg** (in the default based on the REML estimator) and compare them with the results obtained using the functions provided by the package **splm** (based on the ML estimator).
 
 ### Spatial Lag model (SAR). REML estimates using `pspatfit()`
 
@@ -97,7 +98,10 @@ Linear_WITHIN_sar_ML <- spml(formlin,
                lag=TRUE, 
                Hess = FALSE)
 
-round(data.frame(Linear_WITHIN_sar_REML = c(Linear_WITHIN_sar_REML$rho, Linear_WITHIN_sar_REML$bfixed), Linear_WITHIN_sar_ML = c(Linear_WITHIN_sar_ML$coefficients[1],Linear_WITHIN_sar_ML$coefficients[-1])),3)
+round(data.frame(Linear_WITHIN_sar_REML = c(Linear_WITHIN_sar_REML$rho, 
+                                            Linear_WITHIN_sar_REML$bfixed), 
+                Linear_WITHIN_sar_ML = c(Linear_WITHIN_sar_ML$coefficients[1], 
+                                         Linear_WITHIN_sar_ML$coefficients[-1])),3)
 ```
 Clearly, both methods give exactly the same results, at least at the third digit level.
 
@@ -171,8 +175,9 @@ Linear_WITHIN_sem_ML <- spml(formlin,
                          Hess = FALSE)
 
 round(data.frame(Linear_WITHIN_sem_REML = c(Linear_WITHIN_sem_REML$delta, 
-                                        Linear_WITHIN_sem_REML$bfixed), 
-                 Linear_WITHIN_sem_ML = c(Linear_WITHIN_sem_ML$spat.coef,                           Linear_WITHIN_sem_ML$coefficients[-1])),3)
+                                            Linear_WITHIN_sem_REML$bfixed), 
+                 Linear_WITHIN_sem_ML = c(Linear_WITHIN_sem_ML$spat.coef, 
+                                          Linear_WITHIN_sem_ML$coefficients[-1])),3)
 ```
 
 
@@ -196,26 +201,18 @@ The same model, but with a spatial autoregressive term (SAR): $$y_{it}= \rho \su
 $$\epsilon_{it} \sim i.i.d.(0,\sigma^2_\epsilon)$$
 
 ```{r}
-gamsar <- pspatfit(formgam, 
-               data = unemp_it,
-               listw = lwsp_it, 
-               method = "eigen",
-               type = "sar")
+gamsar <- pspatfit(formgam, data = unemp_it, listw = lwsp_it, method = "eigen", type = "sar")
 summary(gamsar)
 ```
 
 and a spatial error term: $$y_{it}= \sum_{k=1}^K \beta_k z_{k,it} + \sum_{\delta=1}^{\Delta} g_\delta(x_{\delta_{it}}) + \epsilon_{it}$$
 
-$$\epsilon_{it}=\theta \sum_{j=1}^N w_{ij,N}\epsilon_{it}+u_{it}$$
+$$\epsilon_{it} = \delta \sum_{j=1}^N w_{ij,N}\epsilon_{it}+u_{it}$$
 
 $$u_{it} \sim i.i.d.(0,\sigma^2_u)$$
 
 ```{r}
-gamsem <- pspatfit(formgam, 
-               data = unemp_it,
-               listw = lwsp_it, 
-               method = "eigen",
-               type = "sem")
+gamsem <- pspatfit(formgam, data = unemp_it, listw = lwsp_it, method = "eigen", type = "sem")
 summary(gamsem)
 ```
 
@@ -231,17 +228,13 @@ form3d_psanova <- unrate ~ partrate + agri + cons +
                   pspl(serv, nknots = 15) + 
                   pspl(empgrowth, nknots = 20) +
                   pspt(long, lat, year, 
-                       nknots = c(18,18,8),
-                       psanova = TRUE, 
+                       nknots = c(18,18,8), psanova = TRUE, 
                        nest_sp1 = c(1, 2, 3), 
                        nest_sp2 = c(1, 2, 3),
                        nest_time = c(1, 2, 2))
 
-sp3danova <- pspatfit(form3d_psanova,
-                    data = unemp_it,
-                    listw = lwsp_it,
-                    method = "Chebyshev",
-                     control = list(tol = 1e-1))  
+sp3danova <- pspatfit(form3d_psanova, data = unemp_it,
+                    listw = lwsp_it, method = "Chebyshev")  
 
 summary(sp3danova)
 ```
@@ -253,18 +246,14 @@ form3d_psanova_restr <- unrate ~ partrate + agri + cons +
                         pspl(serv, nknots = 15) + 
                         pspl(empgrowth, nknots = 20) +
                         pspt(long, lat, year, 
-                         nknots = c(18,18,8),
-                         psanova = TRUE, 
+                         nknots = c(18,18,8), psanova = TRUE, 
                          nest_sp1 = c(1, 2, 3), 
                          nest_sp2 = c(1, 2, 3),
                          nest_time = c(1, 2, 2),
                          f1t = FALSE, f2t = FALSE)
 
-sp3danova_restr <- pspatfit(form3d_psanova_restr,
-                    data = unemp_it,
-                    listw = lwsp_it,
-                    method = "Chebyshev",
-                     control = list(tol = 1e-1))  
+sp3danova_restr <- pspatfit(form3d_psanova_restr, data = unemp_it,
+                    listw = lwsp_it, method = "Chebyshev")  
 
 summary(sp3danova_restr)
 ```
@@ -277,13 +266,9 @@ f_1(s_{1i})+f_2(s_{2i})+f_{\tau}(\tau_t)+ \\ f_{1,2}(s_{1i},s_{2i})+f_{1,\tau}(s
 $$\epsilon_{it} \sim i.i.d.(0,\sigma^2_\epsilon)$$
 
 ```{r}
-sp3danovasarar1 <- pspatfit(form3d_psanova_restr, 
-                              data = unemp_it, 
-                              listw = lwsp_it, 
-                              method = "Chebyshev", 
-                              type = "sar",
-                              cor = "ar1",
-                     control = list(tol = 1e-1))  
+sp3danovasarar1 <- pspatfit(form3d_psanova_restr, data = unemp_it, 
+                              listw = lwsp_it, method = "Chebyshev", 
+                              type = "sar", cor = "ar1")  
 summary(sp3danovasarar1)
 ```
 
@@ -315,7 +300,6 @@ summary(imp_nparvar)
 
 
 ```{r}
-par(mar = c(1, 1, 1, 1))
 imp_nparvar <- impactsnopar(sp3danovasarar1, listw = lwsp_it, viewplot = TRUE)
 ```
 
@@ -325,8 +309,7 @@ Plot of spatial trends in 1996, 2005 and 2019
 
 ```{r}
 plot_sp3d(sp3danovasarar1, data = unemp_it_sf, 
-          time_var = "year", 
-          time_index = c(1996, 2005, 2019),
+          time_var = "year", time_index = c(1996, 2005, 2019),
           addmain = FALSE, addint = FALSE)
 ```
 
@@ -334,8 +317,7 @@ Plot of spatio-temporal trend, main effects and interaction effect for a year:
 
 ```{r}
 plot_sp3d(sp3danovasarar1, data = unemp_it_sf, 
-          time_var = "year", 
-          time_index = c(2019),
+          time_var = "year", time_index = c(2019),
           addmain = TRUE, addint = TRUE)
 ```
 
@@ -343,8 +325,7 @@ Plot of temporal trend for each province:
 
 ```{r}
 plot_sptime(sp3danovasarar1, data = unemp_it, 
-            time_var = "year", 
-            reg_var = "prov")
+            time_var = "year", reg_var = "prov")
 ```
 
 Plots of *fitted* and *residuals* of the last model:
@@ -355,3 +336,5 @@ resids <- residuals(sp3danovasarar1)
 plot(fits, unemp_it$unrate)
 plot(fits, resids)
 ```
+
+# References

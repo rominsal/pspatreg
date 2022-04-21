@@ -55,7 +55,6 @@ fit_pspat <- function(env, con) {
     }
     namesla <- c(namesla, namestauspt)
   }
-
   if (env$nvarnopar > 0) {
     namestaunopar <- paste("taunopar", 1:env$nvarnopar, 
                          sep = "")
@@ -131,6 +130,7 @@ fit_pspat <- function(env, con) {
       Xstar <- A2 %*% X
       Zstar <- A2 %*% Z
     }
+    edftot_old <- 0
     for (it in 1:con$maxit) {
       if (length(np_eff) > 1) {
           # Model includes random effects
@@ -177,17 +177,17 @@ fit_pspat <- function(env, con) {
           dZtPZ <- 1/la[1] * apply((t(Hinv[-(1:np_eff[1]), ]) * 
                      mat$ZtXtZ), 2, sum)
           ## Check (8). Paper SAP
-          # n1 <- ncol(Zfull)
-          # n2 <- ncol(Xfull)
-          # pr <- cbind(
-          #      matrix(0, nrow = n1,
-          #               ncol = n2),
-          #      Diagonal(n1)
-          #      )
-          # dZtPZ2 <- (1/la[1]*pr %*%
-          #   Hinv %*% mat$ZtXtZ)
-          # diag_dZtPZ2 <- diag(as.matrix(dZtPZ2))
-          # range(dZtPZ - diag_dZtPZ2)
+           # n1 <- ncol(env$Zfull)
+           # n2 <- ncol(env$Xfull)
+           # pr <- cbind(
+           #      matrix(0, nrow = n1,
+           #               ncol = n2),
+           #      Diagonal(n1)
+           #      )
+           # dZtPZ2 <- (1/la[1]*pr %*%
+           #   Hinv %*% mat$ZtXtZ)
+           # diag_dZtPZ2 <- diag(as.matrix(dZtPZ2))
+           # range(dZtPZ - diag_dZtPZ2)
           index.zeros.G <- G == 0
           brandom_wide <- dZtPZ_wide <- rep(0, length(G))
           brandom_wide[!index.zeros.G] <- brandom
@@ -265,10 +265,11 @@ fit_pspat <- function(env, con) {
           }
           if (env$nvarnopar > 0) {
             taunopar <- ltau_edf$taunopar
-            names(taunopar) <- namestaunopar
             # Add 1 for fixed effects of each nonparametric variable
-            edfnopar <- ltau_edf$edfnopar + 1 
-            names(edfnopar) <- gsub("tau", "", namestaunopar)
+            # edfnopar <- ltau_edf$edfnopar + 1
+            edfnopar <- ltau_edf$edfnopar
+            names(edfnopar) <- paste("edfnopar", 1:env$nvarnopar, 
+                                     sep = "")
           } else {
             taunopar <- NULL
             edfnopar <- NULL
@@ -323,8 +324,12 @@ fit_pspat <- function(env, con) {
 	      # Update rho and delta
 	      dla <- mean(abs(la - lanew))
 	      la <- lanew
+	      dedftot <- edftot - edftot_old
+	      edftot_old <- edftot
 	      if (con$trace) {
 	        message(paste('\n Iteration SAP: ', it))
+	        message(paste('\n mean change in penalization param.: ', dla))
+	        message(paste('\n change in edftot: ', dedftot))
 	        message(paste('\n sig2u ', la[1]))
 	        if (env$nvarspt > 0)
 	          message(paste('\n edfspt:', round(edfspt, 2)))
@@ -332,8 +337,12 @@ fit_pspat <- function(env, con) {
 	          message(paste('\n edfnopar: ', 
 	              round(edfnopar, 2))) }
 	      #  convergence check
-	      if (dla < con$tol) break
-	    } # end for (it in 1:maxit)
+	      if (nfull > 500) {
+	        if (dedftot < con$tol2) break
+	      } else {
+	        if (dla < con$tol1) break
+	      } 
+	  } # end for (it in 1:maxit)
     env$sig2u <- sig2u
     if (!(env$type %in% c("sim", "slx")) || env$cor == "ar1") { 
       # Optimize using spatial and/or correlation parameters
@@ -354,8 +363,8 @@ fit_pspat <- function(env, con) {
       if (!is.null(phi)) {
         param <- c(param, phi)
         namesparam <- c(namesparam, "phi")
-        lower_par <- c(lower_par, -1)
-        upper_par <- c(upper_par, 1)
+        lower_par <- c(lower_par, -0.99)
+        upper_par <- c(upper_par, 0.99)
       } 
       names(param) <- namesparam
       if (con$optim == "llik_reml") {
@@ -368,16 +377,6 @@ fit_pspat <- function(env, con) {
                             env = env)
         param_new <- par_optim$par
       }
-      # if (con$optim == "score_llik_reml") {
-      #   stop ("Not implemented yet...")
-      #   ## rho solves equation analytical_score_reml_2d = 0
-      #   par_optim <- uniroot(ansco_llikc_reml_2d, 
-      #                        lower = lower_par,
-      #                        upper = upper_par,
-      #                        env = env)
-      #   param_new <- par_optim$root
-      #   names(param_new) <- namesparam
-      # }
       if (con$optim == "llik") {
         par_optim <- bobyqa(par = param, 
                             fn = llikc,
@@ -391,11 +390,6 @@ fit_pspat <- function(env, con) {
       names(param_new) <- namesparam
       dparam <- mean(abs(param - param_new))
       param <- param_new
-      if (con$trace && !(env$type == "sim")) {
-        message(paste("\n Iteration: ", iq))
-        message(paste("\n spatial parameters ", 
-                       param))
-      }
       if (!is.null(rho)) rho <- param["rho"]
       if (!is.null(delta)) delta <- param["delta"]
       if (!is.null(phi)) phi <- param["phi"]
@@ -404,9 +398,19 @@ fit_pspat <- function(env, con) {
       param <- c(rho, delta, phi)
       param_optim <- param
       dparam <- 0
-    } 
+    }
+    if (con$trace) {
+      message(paste("\n Iteration Spatials and/or 
+                    Correlation Parameters: ", iq))
+      if (!is.null(rho)) 
+        message(paste("\n  rho: ", rho))
+      if (!is.null(delta)) 
+        message(paste("\n  delta: ", delta))
+      if (!is.null(phi)) 
+        message(paste("\n  phi: ", phi))
+    }
     # Check Convergence 
-	  if (dparam < con$tol) break
+	  if (dparam < con$tol3) break
 	} # End loop 
   end <- proc.time()[3]
 	message(paste("\n Time to fit the model: ", round(end - start, 2), 

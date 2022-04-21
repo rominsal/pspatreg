@@ -153,7 +153,7 @@
 #'   this database. 
 #'   \cr
 #'   source: Italian National Institute of Statistics (ISTAT)
-#'         \url{https://www.istat.it/}
+#'         \emph{https://www.istat.it}
 #'   \cr \cr       
 #'   
 #'   For the spatial pure case, the examples included use the 

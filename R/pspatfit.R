@@ -433,8 +433,17 @@
 #'   \code{trace} \tab A logical value set to \emph{TRUE} to show 
 #'     intermediate results during the estimation process. 
 #'     Default = \emph{FALSE}. \cr
-#'   \code{tol} \tab Numerical value for the tolerance of convergence
-#'     in the estimation process. Default 1e-3. \cr
+#'   \code{tol1} \tab Numerical value for the tolerance of convergence
+#'     of penalization parameters during the estimation process. 
+#'     Default 1e-3. This tolerance is only used 
+#'     for small samples (<= 500 observations). \cr
+#'   \code{tol2} \tab Numerical value for the tolerance of convergence
+#'     of total estimated degrees of freedom ("edftot") during the 
+#'     estimation process. Default 5e-1. This tolerance is used for 
+#'     medium or big samples (> 500 observations). \cr
+#'   \code{tol3} \tab Numerical value for the tolerance of convergence
+#'     of spatial and correlation parameters during the 
+#'     estimation process. Default 1e-2.  \cr
 #'   \code{maxit} \tab An integer value for the maximum number of 
 #'     iterations until convergence. Default = 200. \cr
 #'   \code{rho_init} \tab An initial value for \eqn{rho} parameter. 
@@ -746,8 +755,7 @@
 #'                         nest_sp1 = c(1, 2, 3), 
 #'                         nest_sp2 = c(1, 2, 3),
 #'                         nest_time = c(1, 2, 2))
-#'  sptanova <- pspatfit(form4, data = unemp_it,
-#'                   control = list(tol = 1e-1))
+#'  sptanova <- pspatfit(form4, data = unemp_it)
 #'  summary(sptanova)
 #'  
 #' ### Create sf object to make the plot 
@@ -778,8 +786,7 @@
 #'  ### Spatio-temporal semiparametric ANOVA model with spatial lag
 #'  sptanova_sar <- pspatfit(form4, data = unemp_it,
 #'                           listw = lwsp_it, 
-#'                           type = "sar",
-#'                           control = list(tol = 1e-1))
+#'                           type = "sar")
 #'  summary(sptanova_sar)
 #'  
 #'  
@@ -789,12 +796,13 @@
 #'  sptanova_sar_ar1 <- pspatfit(form4, data = unemp_it, 
 #'                               listw = lwsp_it, 
 #'                               type = "sar",
-#'                               cor = "ar1", 
-#'                               control = list(tol = 1e-1))
+#'                               cor = "ar1")
 #'  summary(sptanova_sar_ar1)
 #'  ###### Non-Parametric Total, Direct and Indirect Impacts
 #'  list_varnopar <- c("serv", "empgrowth")
-#'  imp_nparvar <- impactsnopar(sptanova_sar_ar1, listw = lwsp_it, viewplot = TRUE)
+#'  imp_nparvar <- impactsnopar(sptanova_sar_ar1, 
+#'                              listw = lwsp_it, 
+#'                              viewplot = TRUE)
 #'  ###### Parametric Total, Direct and Indirect Effects
 #'  list_varpar <- c("partrate","agri","cons")
 #'  imp_parvar <- impactspar(sptanova_sar_ar1, listw = lwsp_it)
@@ -815,9 +823,7 @@
 #'                        nest_sp2 = c(1, 2, 3),
 #'                        nest_time = c(1, 2, 2), 
 #'                        f2t_int = FALSE)
-#'  sptanova2 <- pspatfit(form5, 
-#'                        data = unemp_it,
-#'                        control = list(tol = 1e-1))
+#'  sptanova2 <- pspatfit(form5, data = unemp_it)
 #'  summary(sptanova2)
 #'  
 #' ######################  Demeaning (Within Estimators)
@@ -904,7 +910,8 @@ pspatfit <- function(formula, data, na.action,
                      eff_demean = "individual",
                      index = NULL,
                      control = list()) {
-  con <- list(tol = 1e-3, maxit = 200, trace = FALSE,
+  con <- list(tol1 = 1e-3, tol2 = 5e-1, tol3 = 1e-2, 
+              maxit = 200, trace = FALSE,
               optim = "llik_reml", 
               typese = "sandwich", 
               ## Values:llik_reml, score_llik_reml, llik, score_llik
@@ -1031,10 +1038,9 @@ pspatfit <- function(formula, data, na.action,
   nvarpar <- length(names_varpar)
   if (nvarpar > 0) {
     # Careful: The dataset could include factors...
-    # We need to redefine nvarpar and names_varpar
     Xpar <- model.matrix(mt, mf)
     names_varpar <- colnames(Xpar)[!grepl("pspl", colnames(Xpar)) & 
-                                     !grepl("pspt", colnames(Xpar))]
+                                   !grepl("pspt", colnames(Xpar))]
     Xpar <- Xpar[, names_varpar, drop = FALSE]
     nvarpar <- length(names_varpar)
   }
@@ -1285,7 +1291,8 @@ pspatfit <- function(formula, data, na.action,
   assign("nvarpar", nvarpar, envir = env)
   assign("names_varpar", names_varpar, envir = env)
   assign("nvarnopar", nvarnopar, envir = env)
-  assign("names_nvarnopar", nvarnopar, envir = env)
+  assign("names_nvarnopar", names_varnopar, 
+         envir = env)
   assign("nvarspt", nvarspt, envir = env)
   if (nvarspt > 0) {
     assign("sp1", sp1, envir = env)
