@@ -27,7 +27,7 @@
 #' }
 #'
 #' @source Italian National Institute of Statistics (ISTAT)
-#'         \url{https://www.istat.it}
+#'         \emph{https://www.istat.it}
 "unemp_it"
 
 #' Spatial weight matrix for Italian provinces
@@ -39,7 +39,7 @@
 #' \emph{unemp_it} data frame.
 #' 
 #' @source Italian National Institute of Statistics (ISTAT)
-#'         \url{https://www.istat.it}
+#'         \emph{https://www.istat.it}
 "Wsp_it"
 
 #' map of Italian provinces
@@ -52,6 +52,6 @@
 #'   \item{geometry}{geometry (polygons) of the sf object.}
 #'  }
 #' @source Italian National Institute of Statistics (ISTAT)
-#'         \url{https://www.istat.it}
+#'         \emph{https://www.istat.it}
 "map_it" 
 

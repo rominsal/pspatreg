@@ -1,8 +1,8 @@
 ---
 title: "Using pspatreg with cross-sectional data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
-date: '2022-04-08'
-output:
+date: "2022-04-20"
+output: 
   rmarkdown::html_vignette:
     number_sections: yes
     toc: true
@@ -12,7 +12,7 @@ output:
     fig_caption: true
     df_print: kable 
     highlight: tango
-    citation_package: natbib    
+    citation_package: natbib
 bibliography: bibliopsplines.bib
 vignette: |
   %\VignetteIndexEntry{Using pspatreg with cross-sectional data}
@@ -24,11 +24,11 @@ vignette: |
 
 # Models for cross-sectional data
 
-We start our demo with an application of **`pspatreg`** to the analysis of cross-sectional data. In particular, we use Ames dataset (included in the package `AmesHousing`) which contains data on 2,930 properties in Ames, Iowa. The dataset includes information related to house characteristics (bedrooms, garages, fireplaces, pools, porches, etc.), location characteristics (neighborhood), lot information (zoning, shape, size, etc.), ratings of condition and quality and sale price (from 2006 to 2010). The section is organized as follows:
+We start our demo with an application of **pspatreg** to the analysis of cross-sectional data. In particular, we use Ames dataset (included in the package **AmesHousing**) which contains data on 2,930 properties in Ames, Iowa. The dataset includes information related to house characteristics (bedrooms, garages, fireplaces, pools, porches, etc.), location characteristics (neighborhood), lot information (zoning, shape, size, etc.), ratings of condition and quality and sale price (from 2006 to 2010). The section is organized as follows:
 
 -   Description of dataset, spatial weights matrix and model specifications;
 
--   Estimation results of linear spatial models and comparison with the results obtained with the package `spatialreg`;
+-   Estimation results of linear spatial models and comparison with the results obtained with the package **spatialreg**;
 
 -   Estimation results of semiparametric spatial models.
 
@@ -44,24 +44,23 @@ library(ggplot2)
 library(dplyr)
 library(dbscan)
 ames <- AmesHousing::make_ames()# Raw Ames Housing Data
-ames_sf <- st_as_sf(ames, 
-                    coords = c("Longitude", "Latitude"))
+ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
 ames_sf$Latitude <- ames$Latitude
 ```
-The dependent variable in the regression analysis is **`Sale_Price`**, while we selected the following variables as covariates:
+The dependent variable in the regression analysis is *Sale_Price*, while we selected the following variables as covariates:
 
-\- **`Lot_Area`**: Lot size in square feet
+\- *Lot_Area*: Lot size in square feet
 
-\- **`Total_Bsmt_SF`**: Total square feet of basement area
+\- *Total_Bsmt_SF*: Total square feet of basement area
 
-\- **`Garage_Cars`**: Size of garage in car capacity
+\- *Garage_Cars*: Size of garage in car capacity
 
-\- **`Gr_Liv_Area`**: Above grade (ground) living area square feet
+\- *Gr_Liv_Area*: Above grade (ground) living area square feet
 
-\- **`Fireplaces`**: Number of fireplaces
+\- *Fireplaces*: Number of fireplaces
 
-Due to the skewed distribution of the dependent variable **`Sale_Price`**, we use the log-transformation:
+Due to the skewed distribution of the dependent variable *Sale_Price*, we use the log-transformation:
 
 
 ```r
@@ -108,9 +107,9 @@ is.symmetric.nb(soi_nb,verbose = TRUE, force = FALSE)
 listW <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 ```
 
-## Defining **`formula`** for parametric and semiparametric models
+## Defining *formula* for parametric and semiparametric models
 
-We define different **`formula`** for linear and nonlinear (semiparametric) models with and without a spatial trend. The Durbin **`formula`** is used for type "sdm", "slx" or "sdem".
+We define different *formula* for linear and nonlinear (semiparametric) models with and without a spatial trend. The Durbin *formula* is used for types "sdm", "slx" or "sdem".
 
 In the case of semiparametric terms, in 3d or in 2d (as it is the case of spatial trend), the number of knots used to construct the B-splines basis needs to be specified.
 
@@ -136,8 +135,7 @@ form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
   pspl(lnLot_Area, nknots = 20) + 
   pspl(lnTotal_Bsmt_SF, nknots = 20) +
   pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = FALSE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = FALSE)
 
 # Semiparametric model with PS-ANOVA spatial trend in 2d
 
@@ -145,18 +143,16 @@ form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+    pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 
-  durbinformnonlin <- ~ Fireplaces + Garage_Cars +
-  pspl(lnLot_Area, nknots = 20) 
+  durbinformnonlin <- ~ Fireplaces + Garage_Cars + pspl(lnLot_Area, nknots = 20) 
 ```
 
 ## Estimating parametric linear models
 
-We first estimate standard spatial linear autoregressive models using the function **`pspatfit()`** included in the library **`pspatreg`** (based on the REML estimator) and compare them with the results obtained using the functions provided by the library **`spatialreg`** (based on the ML estimator).
+We first estimate standard spatial linear autoregressive models using the function `pspatfit()` included in the package **pspatreg** (based, in the default, on the REML estimators) and compare them with the results obtained using the functions provided by the package **spatialreg** (based on the ML estimators).
 
-### Spatial Lag (SAR) model. REML estimates using **`pspatfit()`**
+### Spatial Lag (SAR) model. REML estimates using `pspatfit()`
 
 The SAR model for cross-sectional data can be specified as:
 $$y_{i}=\rho \sum_{j=1}^N w_{ij,N} y_{j} + 
@@ -177,23 +173,32 @@ summary(linsar)
 ##     method = "eigen")
 ## 
 ##  Parametric Terms 
-##                   Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept)     3.6869500  0.1034422 35.6426 < 2.2e-16 ***
-## lnLot_Area      0.0326570  0.0074695  4.3720 1.276e-05 ***
-## lnTotal_Bsmt_SF 0.0505118  0.0030498 16.5623 < 2.2e-16 ***
-## lnGr_Liv_Area   0.3989839  0.0136347 29.2623 < 2.2e-16 ***
-## Garage_Cars     0.1191812  0.0053933 22.0981 < 2.2e-16 ***
-## Fireplaces      0.0556175  0.0061133  9.0978 < 2.2e-16 ***
-## rho             0.3791429  0.0110000 34.4676 < 2.2e-16 ***
+##                   Estimate Std. Error t value  Pr(>|t|)
+## (Intercept)     3.6976628  0.1034715 35.7361 < 2.2e-16
+## lnLot_Area      0.0327109  0.0074716  4.3780 1.242e-05
+## lnTotal_Bsmt_SF 0.0505658  0.0030507 16.5753 < 2.2e-16
+## lnGr_Liv_Area   0.3993883  0.0136386 29.2837 < 2.2e-16
+## Garage_Cars     0.1194316  0.0053948 22.1383 < 2.2e-16
+## Fireplaces      0.0557000  0.0061150  9.1088 < 2.2e-16
+## rho             0.3791002  0.0110024 34.4562 < 2.2e-16
+##                    
+## (Intercept)     ***
+## lnLot_Area      ***
+## lnTotal_Bsmt_SF ***
+## lnGr_Liv_Area   ***
+## Garage_Cars     ***
+## Fireplaces      ***
+## rho             ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total:      7 
-##  Sigma: 0.207251 
+##  Sigma: 0.208602 
 ##  AIC:  -6438.86 
-##  BIC:  -6397.36
+##  BIC:  -6397.35
 ```
 
 All $\beta's$ are significant and positive as expected. The estimated spatial autoregressive (0.38) is also positive and significant.
@@ -206,10 +211,12 @@ coef(linsar)
 ```
 
 ```
-##             rho     (Intercept)      lnLot_Area lnTotal_Bsmt_SF   lnGr_Liv_Area     Garage_Cars 
-##      0.37914289      3.68695005      0.03265698      0.05051180      0.39898386      0.11918120 
+##             rho     (Intercept)      lnLot_Area 
+##      0.37910018      3.69766281      0.03271090 
+## lnTotal_Bsmt_SF   lnGr_Liv_Area     Garage_Cars 
+##      0.05056578      0.39938825      0.11943160 
 ##      Fireplaces 
-##      0.05561747
+##      0.05570003
 ```
 
 Extract fitted values and residuals:
@@ -237,7 +244,7 @@ logLik(linsar)
 ```
 
 ```
-## 'log Lik.' 3226.43 (df=7)
+## 'log Lik.' 3226.428 (df=7)
 ```
 
 ```r
@@ -245,10 +252,10 @@ logLik(linsar, REML = TRUE)
 ```
 
 ```
-## 'log Lik.' 3195.182 (df=7)
+## 'log Lik.' 3195.181 (df=7)
 ```
 
-Extract the covariance matrix of estimated coefficients. Argument **`bayesian`** allows to get frequentist (default) or bayesian covariances:
+Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get frequentist (default) or bayesian covariances:
 
 
 ```r
@@ -256,20 +263,27 @@ vcov(linsar)
 ```
 
 ```
-##                   (Intercept)    lnLot_Area lnTotal_Bsmt_SF lnGr_Liv_Area   Garage_Cars
-## (Intercept)      1.070029e-02 -3.453954e-04   -3.954499e-05 -1.073115e-03  2.102490e-04
-## lnLot_Area      -3.453954e-04  5.579367e-05    3.373658e-07 -2.106257e-05 -4.424820e-06
-## lnTotal_Bsmt_SF -3.954499e-05  3.373658e-07    9.301295e-06 -2.956793e-06 -2.170831e-06
-## lnGr_Liv_Area   -1.073115e-03 -2.106257e-05   -2.956793e-06  1.859057e-04 -2.821929e-05
-## Garage_Cars      2.102490e-04 -4.424820e-06   -2.170831e-06 -2.821929e-05  2.908747e-05
-## Fireplaces       2.393512e-04 -6.362072e-06   -1.474422e-06 -2.601437e-05 -2.951033e-06
-##                    Fireplaces
-## (Intercept)      2.393512e-04
-## lnLot_Area      -6.362072e-06
-## lnTotal_Bsmt_SF -1.474422e-06
-## lnGr_Liv_Area   -2.601437e-05
-## Garage_Cars     -2.951033e-06
-## Fireplaces       3.737200e-05
+##                   (Intercept)    lnLot_Area
+## (Intercept)      1.070634e-02 -3.455908e-04
+## lnLot_Area      -3.455908e-04  5.582523e-05
+## lnTotal_Bsmt_SF -3.956736e-05  3.375567e-07
+## lnGr_Liv_Area   -1.073722e-03 -2.107449e-05
+## Garage_Cars      2.103679e-04 -4.427323e-06
+## Fireplaces       2.394866e-04 -6.365671e-06
+##                 lnTotal_Bsmt_SF lnGr_Liv_Area
+## (Intercept)       -3.956736e-05 -1.073722e-03
+## lnLot_Area         3.375567e-07 -2.107449e-05
+## lnTotal_Bsmt_SF    9.306556e-06 -2.958465e-06
+## lnGr_Liv_Area     -2.958465e-06  1.860109e-04
+## Garage_Cars       -2.172059e-06 -2.823525e-05
+## Fireplaces        -1.475256e-06 -2.602909e-05
+##                   Garage_Cars    Fireplaces
+## (Intercept)      2.103679e-04  2.394866e-04
+## lnLot_Area      -4.427323e-06 -6.365671e-06
+## lnTotal_Bsmt_SF -2.172059e-06 -1.475256e-06
+## lnGr_Liv_Area   -2.823525e-05 -2.602909e-05
+## Garage_Cars      2.910392e-05 -2.952703e-06
+## Fireplaces      -2.952703e-06  3.739314e-05
 ```
 
 ```r
@@ -277,20 +291,27 @@ vcov(linsar, bayesian = TRUE)
 ```
 
 ```
-##                   (Intercept)    lnLot_Area lnTotal_Bsmt_SF lnGr_Liv_Area   Garage_Cars
-## (Intercept)      1.070029e-02 -3.453954e-04   -3.954499e-05 -1.073115e-03  2.102490e-04
-## lnLot_Area      -3.453954e-04  5.579367e-05    3.373658e-07 -2.106257e-05 -4.424820e-06
-## lnTotal_Bsmt_SF -3.954499e-05  3.373658e-07    9.301295e-06 -2.956793e-06 -2.170831e-06
-## lnGr_Liv_Area   -1.073115e-03 -2.106257e-05   -2.956793e-06  1.859057e-04 -2.821929e-05
-## Garage_Cars      2.102490e-04 -4.424820e-06   -2.170831e-06 -2.821929e-05  2.908747e-05
-## Fireplaces       2.393512e-04 -6.362072e-06   -1.474422e-06 -2.601437e-05 -2.951033e-06
-##                    Fireplaces
-## (Intercept)      2.393512e-04
-## lnLot_Area      -6.362072e-06
-## lnTotal_Bsmt_SF -1.474422e-06
-## lnGr_Liv_Area   -2.601437e-05
-## Garage_Cars     -2.951033e-06
-## Fireplaces       3.737200e-05
+##                   (Intercept)    lnLot_Area
+## (Intercept)      1.070634e-02 -3.455908e-04
+## lnLot_Area      -3.455908e-04  5.582523e-05
+## lnTotal_Bsmt_SF -3.956736e-05  3.375567e-07
+## lnGr_Liv_Area   -1.073722e-03 -2.107449e-05
+## Garage_Cars      2.103679e-04 -4.427323e-06
+## Fireplaces       2.394866e-04 -6.365671e-06
+##                 lnTotal_Bsmt_SF lnGr_Liv_Area
+## (Intercept)       -3.956736e-05 -1.073722e-03
+## lnLot_Area         3.375567e-07 -2.107449e-05
+## lnTotal_Bsmt_SF    9.306556e-06 -2.958465e-06
+## lnGr_Liv_Area     -2.958465e-06  1.860109e-04
+## Garage_Cars       -2.172059e-06 -2.823525e-05
+## Fireplaces        -1.475256e-06 -2.602909e-05
+##                   Garage_Cars    Fireplaces
+## (Intercept)      2.103679e-04  2.394866e-04
+## lnLot_Area      -4.427323e-06 -6.365671e-06
+## lnTotal_Bsmt_SF -2.172059e-06 -1.475256e-06
+## lnGr_Liv_Area   -2.823525e-05 -2.602909e-05
+## Garage_Cars      2.910392e-05 -2.952703e-06
+## Fireplaces      -2.952703e-06  3.739314e-05
 ```
 
 A print method to get printed coefficients, standard errors and p-values of parametric terms:
@@ -302,13 +323,13 @@ print(linsar)
 
 ```
 ##                 Estimate Std. Error t value Pr(>|t|)
-## (Intercept)       3.6870     0.1034 35.6426        0
-## lnLot_Area        0.0327     0.0075  4.3720        0
-## lnTotal_Bsmt_SF   0.0505     0.0030 16.5623        0
-## lnGr_Liv_Area     0.3990     0.0136 29.2623        0
-## Garage_Cars       0.1192     0.0054 22.0981        0
-## Fireplaces        0.0556     0.0061  9.0978        0
-## rho               0.3791     0.0110 34.4676        0
+## (Intercept)       3.6977     0.1035 35.7361        0
+## lnLot_Area        0.0327     0.0075  4.3780        0
+## lnTotal_Bsmt_SF   0.0506     0.0031 16.5753        0
+## lnGr_Liv_Area     0.3994     0.0136 29.2837        0
+## Garage_Cars       0.1194     0.0054 22.1383        0
+## Fireplaces        0.0557     0.0061  9.1088        0
+## rho               0.3791     0.0110 34.4562        0
 ```
 
 Computing average direct, indirect and total marginal impacts:
@@ -322,43 +343,61 @@ summary(imp_parvar_sar)
 ```
 ## 
 ##  Total Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0524448  0.0115411  4.5441706        0
-## lnTotal_Bsmt_SF  0.0814584  0.0052086 15.6391364        0
-## lnGr_Liv_Area    0.6427742  0.0252151 25.4916629        0
-## Garage_Cars      0.1923869  0.0098904 19.4519682        0
-## Fireplaces       0.0896505  0.0100635  8.9084521        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0521190  0.0123449  4.2218921
+## lnTotal_Bsmt_SF  0.0816164  0.0052111 15.6618939
+## lnGr_Liv_Area    0.6432398  0.0252946 25.4299434
+## Garage_Cars      0.1928710  0.0093188 20.6970820
+## Fireplaces       0.0899593  0.0105895  8.4951155
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ## 
 ##  Direct Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0353240  0.0077858  4.5369537        0
-## lnTotal_Bsmt_SF  0.0548556  0.0033909 16.1773170        0
-## lnGr_Liv_Area    0.4328476  0.0152237 28.4325585        0
-## Garage_Cars      0.1295536  0.0062478 20.7359088        0
-## Fireplaces       0.0603697  0.0066828  9.0336230        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0351155  0.0082951  4.2333125
+## lnTotal_Bsmt_SF  0.0549917  0.0034134 16.1103355
+## lnGr_Liv_Area    0.4333902  0.0153661 28.2043851
+## Garage_Cars      0.1299500  0.0058991 22.0288023
+## Fireplaces       0.0606106  0.0070538  8.5926044
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ## 
 ##  Indirect Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0171208  0.0037970  4.5090193        0
-## lnTotal_Bsmt_SF  0.0266028  0.0020005 13.2982886        0
-## lnGr_Liv_Area    0.2099267  0.0118191 17.7616340        0
-## Garage_Cars      0.0628333  0.0041258 15.2292893        0
-## Fireplaces       0.0292808  0.0035062  8.3512007        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0170035  0.0040849  4.1625660
+## lnTotal_Bsmt_SF  0.0266247  0.0019695 13.5181776
+## lnGr_Liv_Area    0.2098497  0.0116605 17.9966276
+## Garage_Cars      0.0629210  0.0038987 16.1388336
+## Fireplaces       0.0293486  0.0036501  8.0404851
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ```
 
-As expected, all marginal impacts are strongly significant and spillover impacts are rather high. We compare these results with those obtained using ML estimates with **`lagsarlm()`** (package **`spatialreg`**):
+As expected, all marginal impacts are strongly significant and spillover impacts are rather high. We compare these results with those obtained using ML estimates with `lagsarlm()` (package **spatialreg**):
 
 
 ```r
-spatregsar <- spatialreg::lagsarlm(formlin, data = ames_sf1,
-                                   listw = listW, 
-                                   method = "eigen") 
+spatregsar <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, method = "eigen") 
 summary(spatregsar)
 ```
 
 ```
 ## 
-## Call:spatialreg::lagsarlm(formula = formlin, data = ames_sf1, listw = listW,     method = "eigen")
+## Call:
+## spatialreg::lagsarlm(formula = formlin, data = ames_sf1, listw = listW, 
+##     method = "eigen")
 ## 
 ## Residuals:
 ##       Min        1Q    Median        3Q       Max 
@@ -415,33 +454,52 @@ summary(imp_parvar)
 ```
 ## 
 ##  Total Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0526220  0.0126179  4.1704192        0
-## lnTotal_Bsmt_SF  0.0814651  0.0050327 16.1870910        0
-## lnGr_Liv_Area    0.6430183  0.0251969 25.5197282        0
-## Garage_Cars      0.1920278  0.0094160 20.3936966        0
-## Fireplaces       0.0891758  0.0099131  8.9957309        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0527053  0.0126207  4.1761050
+## lnTotal_Bsmt_SF  0.0815465  0.0050342 16.1985605
+## lnGr_Liv_Area    0.6436259  0.0252074 25.5331721
+## Garage_Cars      0.1924182  0.0094206 20.4252207
+## Fireplaces       0.0893026  0.0099155  9.0063271
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ## 
 ##  Direct Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0354407  0.0084902  4.1743014        0
-## lnTotal_Bsmt_SF  0.0548620  0.0032619 16.8189873        0
-## lnGr_Liv_Area    0.4330217  0.0149949 28.8779233        0
-## Garage_Cars      0.1293176  0.0059206 21.8419735        0
-## Fireplaces       0.0600564  0.0066181  9.0745510        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0354985  0.0084924  4.1800142
+## lnTotal_Bsmt_SF  0.0549195  0.0032628 16.8320907
+## lnGr_Liv_Area    0.4334517  0.0149992 28.8982965
+## Garage_Cars      0.1295867  0.0059223 21.8810737
+## Fireplaces       0.0601447  0.0066199  9.0854955
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ## 
 ##  Indirect Parametric Impacts (sar) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0171813  0.0041649  4.1252365        0
-## lnTotal_Bsmt_SF  0.0266031  0.0019565 13.5975115        0
-## lnGr_Liv_Area    0.2099966  0.0119414 17.5856410        0
-## Garage_Cars      0.0627103  0.0039899 15.7171328        0
-## Fireplaces       0.0291194  0.0034218  8.5098537        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0172068  0.0041656  4.1306973
+## lnTotal_Bsmt_SF  0.0266271  0.0019574 13.6031501
+## lnGr_Liv_Area    0.2101742  0.0119501 17.5876251
+## Garage_Cars      0.0628315  0.0039944 15.7298777
+## Fireplaces       0.0291579  0.0034229  8.5184981
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ```
 
 ```r
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$direct, sptpreg_direct = summary(imp_parvar_sar)$dir_table[,1]), 3)
+round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$direct, 
+sptpreg_direct = summary(imp_parvar_sar)$dir_table[,1]), 3)
 ```
 
 ```
@@ -450,12 +508,13 @@ round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = 
 ## lnTotal_Bsmt_SF             0.055          0.055
 ## lnGr_Liv_Area               0.433          0.433
 ## Garage_Cars                 0.129          0.130
-## Fireplaces                  0.060          0.060
+## Fireplaces                  0.060          0.061
 ```
 
 ```r
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$indirect, sptpreg_indirect = summary(imp_parvar_sar)$ind_table[,1]),3)
+round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$indirect, 
+sptpreg_indirect = summary(imp_parvar_sar)$ind_table[,1]),3)
 ```
 
 ```
@@ -469,29 +528,31 @@ round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short 
 
 ```r
 # Let's compare total impacts
-round(data.frame(spatialreg_total = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$total, sptpreg_total = summary(imp_parvar_sar)$tot_table[,1]), 3)
+round(data.frame(spatialreg_total = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$total, 
+sptpreg_total = summary(imp_parvar_sar)$tot_table[,1]), 3)
 ```
 
 ```
 ##                 spatialreg_total sptpreg_total
 ## lnLot_Area                 0.053         0.052
-## lnTotal_Bsmt_SF            0.081         0.081
+## lnTotal_Bsmt_SF            0.081         0.082
 ## lnGr_Liv_Area              0.643         0.643
-## Garage_Cars                0.192         0.192
+## Garage_Cars                0.192         0.193
 ## Fireplaces                 0.090         0.090
 ```
 
-### Spatial Lag in X variables (SLX) model. REML estimates using **`pspatfit()`**
+### Spatial Lag in X variables (SLX) model. REML estimates using `pspatfit()`
 
 We now estimate the SLX model that only captures local spatial spillovers through the spatial lags of the explanatory variables:
 
 $$y_{i}= \sum_{k=1}^K \beta_k x_{k,i} +\sum_{k=1}^K \delta_k \sum_{j=1}^N w_{ij,N}x_{k,j}+ \epsilon_{i}$$ 
 $$\epsilon_{i} \sim i.i.d.(0,\sigma^2_\epsilon)$$
-This model is estimated with the function **`pspatfit()`** using the option `type = "slx"` and specifying the set of spatial lags through `Durbin = durbinformlin`:
+This model is estimated with the function `pspatfit()` using the option `type = "slx"` and specifying the set of spatial lags through `Durbin = durbinformlin`:
 
 
 ```r
-linslx <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", type = "slx", Durbin = durbinformlin)
+linslx <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", 
+                   type = "slx", Durbin = durbinformlin)
 summary(linslx)
 ```
 
@@ -502,20 +563,33 @@ summary(linslx)
 ##     method = "eigen", Durbin = durbinformlin)
 ## 
 ##  Parametric Terms 
-##                         Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept)           7.0751382  0.1528354 46.2925 < 2.2e-16 ***
-## lnLot_Area            0.0644581  0.0130493  4.9396 8.296e-07 ***
-## lnTotal_Bsmt_SF       0.0544297  0.0035152 15.4843 < 2.2e-16 ***
-## lnGr_Liv_Area         0.4297845  0.0171579 25.0489 < 2.2e-16 ***
-## Garage_Cars           0.1234317  0.0068662 17.9767 < 2.2e-16 ***
-## Fireplaces            0.0631958  0.0071814  8.7999 < 2.2e-16 ***
-## Wlag.lnLot_Area      -0.0333047  0.0144459 -2.3055 0.0212136 *  
-## Wlag.lnTotal_Bsmt_SF  0.0339716  0.0046119  7.3661 2.307e-13 ***
-## Wlag.lnGr_Liv_Area    0.0588254  0.0210296  2.7973 0.0051895 ** 
-## Wlag.Garage_Cars      0.1404327  0.0082123 17.1002 < 2.2e-16 ***
-## Wlag.Fireplaces       0.0305388  0.0090539  3.3730 0.0007537 ***
+##                         Estimate Std. Error t value
+## (Intercept)           7.0751382  0.1528354 46.2925
+## lnLot_Area            0.0644581  0.0130493  4.9396
+## lnTotal_Bsmt_SF       0.0544297  0.0035152 15.4843
+## lnGr_Liv_Area         0.4297845  0.0171579 25.0489
+## Garage_Cars           0.1234317  0.0068662 17.9767
+## Fireplaces            0.0631958  0.0071814  8.7999
+## Wlag.lnLot_Area      -0.0333047  0.0144459 -2.3055
+## Wlag.lnTotal_Bsmt_SF  0.0339716  0.0046119  7.3661
+## Wlag.lnGr_Liv_Area    0.0588254  0.0210296  2.7973
+## Wlag.Garage_Cars      0.1404327  0.0082123 17.1002
+## Wlag.Fireplaces       0.0305388  0.0090539  3.3730
+##                       Pr(>|t|)    
+## (Intercept)          < 2.2e-16 ***
+## lnLot_Area           8.296e-07 ***
+## lnTotal_Bsmt_SF      < 2.2e-16 ***
+## lnGr_Liv_Area        < 2.2e-16 ***
+## Garage_Cars          < 2.2e-16 ***
+## Fireplaces           < 2.2e-16 ***
+## Wlag.lnLot_Area      0.0212136 *  
+## Wlag.lnTotal_Bsmt_SF 2.307e-13 ***
+## Wlag.lnGr_Liv_Area   0.0051895 ** 
+## Wlag.Garage_Cars     < 2.2e-16 ***
+## Wlag.Fireplaces      0.0007537 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
@@ -527,7 +601,7 @@ summary(linslx)
 
 Now we compute impacts for the SLX model. In this case, contrary to the case of the SAR and SDM models, we do not need simulations to make inference on these marginal impacts. We only need to properly compute the variance of total impact using this formula:  
 
-$$ Var(\hat{\beta_k}\_{tot}) = Var(\hat{\beta}) + Var(\hat{\delta}) + 2* Cov(\hat{\beta}, \hat{\delta}) $$
+$$ Var(\hat{\beta_k})\_{tot} = Var(\hat{\beta_k}) + Var(\hat{\delta_k}) + 2* Cov(\hat{\beta_k}, \hat{\delta_k}) $$
 
 
 ```r
@@ -570,7 +644,7 @@ summary(imp_parvar_slx)
 ## Fireplaces       6.847e-19 3.718e-04  2.990e-22
 ```
 
-We compare the non-nested models **`linsar`** and **`linslx`** using the function **`anova`** with the argument `lrtest = FALSE`:
+We compare the non-nested models `linsar` and `linslx` using the function `anova()` with the argument `lrtest = FALSE`:
 
 
 ```r
@@ -585,7 +659,7 @@ anova(linsar, linslx, lrtest = FALSE)
 
 It emerges that, from a statistical point of view, the SAR model outperforms the SLX model, suggesting a global spatial diffusion of idiosyncratic shocks. 
 
-Now, we compare the results obtained with **pspatfit()**  with those obtained using ML estimates with **`lmSLX()`** (library **`satialreg`**):
+Now, we compare the results obtained with `pspatfit()`  with those obtained using ML estimates with `lmSLX()` (package **spatialreg**):
 
 
 ```r
@@ -593,7 +667,8 @@ spatregslx <- spatialreg::lmSLX(formlin, data = ames_sf1,
                                 listw = listW) 
 SLX.impact <- spatialreg::impacts(spatregslx)
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SLX.impact)$impacts$direct, sptpreg_direct = summary(imp_parvar_slx)$mimpacts[,1]), 3)
+round(data.frame(spatialreg_direct = summary(SLX.impact)$impacts$direct, 
+sptpreg_direct = summary(imp_parvar_slx)$mimpacts[,1]), 3)
 ```
 
 ```
@@ -607,7 +682,8 @@ round(data.frame(spatialreg_direct = summary(SLX.impact)$impacts$direct, sptpreg
 
 ```r
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SLX.impact)$impacts$indirect, sptpreg_indirect = summary(imp_parvar_slx)$mimpacts[,2]), 3)
+round(data.frame(spatialreg_indirect = summary(SLX.impact)$impacts$indirect, 
+sptpreg_indirect = summary(imp_parvar_slx)$mimpacts[,2]), 3)
 ```
 
 ```
@@ -620,8 +696,9 @@ round(data.frame(spatialreg_indirect = summary(SLX.impact)$impacts$indirect, spt
 ```
 
 ```r
-# Let's compare indirect impacts
-round(data.frame(spatialreg_total = summary(SLX.impact)$impacts$total,                 sptpreg_total = summary(imp_parvar_slx)$mimpacts[,3]), 3)
+# Let's compare total impacts
+round(data.frame(spatialreg_total = summary(SLX.impact)$impacts$total, 
+sptpreg_total = summary(imp_parvar_slx)$mimpacts[,3]), 3)
 ```
 
 ```
@@ -633,7 +710,7 @@ round(data.frame(spatialreg_total = summary(SLX.impact)$impacts$total,          
 ## Fireplaces                 0.094         0.094
 ```
 
-### Spatial Durbin model (SDM). REML estimates using the function **`pspatfit()`**:
+### Spatial Durbin model (SDM). REML estimates using the function `pspatfit()`:
 
 The SDM specification encompasses both SAR and SLX:
 $$y_{i}=\rho \sum_{j=1}^N w_{ij,N} y_{j} + 
@@ -655,28 +732,42 @@ summary(linsdm)
 ##     method = "eigen")
 ## 
 ##  Parametric Terms 
-##                         Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept)           4.4597496  0.1342379 33.2227 < 2.2e-16 ***
-## lnLot_Area            0.0737198  0.0114615  6.4320 1.479e-10 ***
-## lnTotal_Bsmt_SF       0.0480672  0.0030874 15.5687 < 2.2e-16 ***
-## lnGr_Liv_Area         0.4197362  0.0150700 27.8524 < 2.2e-16 ***
-## Garage_Cars           0.0976557  0.0060307 16.1931 < 2.2e-16 ***
-## Fireplaces            0.0572769  0.0063076  9.0807 < 2.2e-16 ***
-## Wlag.lnLot_Area      -0.0555470  0.0126881 -4.3779 1.243e-05 ***
-## Wlag.lnTotal_Bsmt_SF  0.0077602  0.0040507  1.9158    0.0555 .  
-## Wlag.lnGr_Liv_Area   -0.1116222  0.0184707 -6.0432 1.714e-09 ***
-## Wlag.Garage_Cars      0.0685589  0.0072130  9.5049 < 2.2e-16 ***
-## Wlag.Fireplaces       0.0016591  0.0079522  0.2086    0.8347    
-## rho                   0.3707484  0.0143322 25.8682 < 2.2e-16 ***
+##                         Estimate Std. Error t value
+## (Intercept)           4.4726568  0.1342919 33.3055
+## lnLot_Area            0.0736741  0.0114661  6.4254
+## lnTotal_Bsmt_SF       0.0480986  0.0030887 15.5726
+## lnGr_Liv_Area         0.4197858  0.0150761 27.8445
+## Garage_Cars           0.0977829  0.0060331 16.2076
+## Fireplaces            0.0573061  0.0063101  9.0816
+## Wlag.lnLot_Area      -0.0554372  0.0126932 -4.3675
+## Wlag.lnTotal_Bsmt_SF  0.0078896  0.0040523  1.9469
+## Wlag.lnGr_Liv_Area   -0.1107810  0.0184781 -5.9953
+## Wlag.Garage_Cars      0.0689136  0.0072159  9.5502
+## Wlag.Fireplaces       0.0018016  0.0079554  0.2265
+## rho                   0.3706482  0.0143361 25.8542
+##                       Pr(>|t|)    
+## (Intercept)          < 2.2e-16 ***
+## lnLot_Area           1.543e-10 ***
+## lnTotal_Bsmt_SF      < 2.2e-16 ***
+## lnGr_Liv_Area        < 2.2e-16 ***
+## Garage_Cars          < 2.2e-16 ***
+## Fireplaces           < 2.2e-16 ***
+## Wlag.lnLot_Area      1.303e-05 ***
+## Wlag.lnTotal_Bsmt_SF   0.05165 .  
+## Wlag.lnGr_Liv_Area   2.296e-09 ***
+## Wlag.Garage_Cars     < 2.2e-16 ***
+## Wlag.Fireplaces        0.82085    
+## rho                  < 2.2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total:     12 
-##  Sigma: 0.201599 
-##  AIC:  -6555.7 
-##  BIC:  -6484.55
+##  Sigma: 0.204557 
+##  AIC:  -6555.69 
+##  BIC:  -6484.54
 ```
 
 LR test for nested models and ANOVA tables:
@@ -687,9 +778,12 @@ anova(linsar, linsdm, lrtest = TRUE)
 ```
 
 ```
-##        logLik rlogLik edf     AIC     BIC LRtest      p.val
-## linsar 3226.4  3195.2   7 -6438.9 -6334.9                  
-## linsdm 3289.9  3234.7  12 -6555.7 -6374.3 78.992 1.3639e-15
+##        logLik rlogLik edf     AIC     BIC LRtest
+## linsar 3226.4  3195.2   7 -6438.9 -6334.9       
+## linsdm 3289.8  3234.7  12 -6555.7 -6374.3 78.991
+##             p.val
+## linsar           
+## linsdm 1.3644e-15
 ```
 
 ```r
@@ -697,9 +791,12 @@ anova(linslx, linsdm, lrtest = TRUE)
 ```
 
 ```
-##        logLik rlogLik edf     AIC     BIC LRtest       p.val
-## linslx 3032.5  2978.7  11 -6042.9 -5870.3                   
-## linsdm 3289.9  3234.7  12 -6555.7 -6374.3 511.93 2.4173e-113
+##        logLik rlogLik edf     AIC     BIC LRtest
+## linslx 3032.5  2978.7  11 -6042.9 -5870.3       
+## linsdm 3289.8  3234.7  12 -6555.7 -6374.3 511.92
+##              p.val
+## linslx            
+## linsdm 2.4194e-113
 ```
 
 The LR test suggests that the parametric SDM model outperforms both SAR and SLX.
@@ -715,41 +812,61 @@ summary(imp_parvar_sdm)
 ```
 ## 
 ##  Total Parametric Impacts (sdm) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0280274  0.0130185  2.1528858   0.0313
-## lnTotal_Bsmt_SF  0.0888369  0.0071508 12.4233303   0.0000
-## lnGr_Liv_Area    0.4900106  0.0318132 15.4027473   0.0000
-## Garage_Cars      0.2648267  0.0127248 20.8117870   0.0000
-## Fireplaces       0.0933162  0.0138719  6.7269735   0.0000
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0280348  0.0130094  2.1549672
+## lnTotal_Bsmt_SF  0.0890978  0.0072098 12.3578037
+## lnGr_Liv_Area    0.4909620  0.0320430 15.3219618
+## Garage_Cars      0.2656510  0.0124283 21.3746147
+## Fireplaces       0.0936987  0.0139967  6.6943653
+##                 Pr(>|t|)
+## lnLot_Area        0.0312
+## lnTotal_Bsmt_SF   0.0000
+## lnGr_Liv_Area     0.0000
+## Garage_Cars       0.0000
+## Fireplaces        0.0000
 ## 
 ##  Direct Parametric Impacts (sdm) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area       0.0669941  0.0102556  6.5324437        0
-## lnTotal_Bsmt_SF  0.0536952  0.0031345 17.1302808        0
-## lnGr_Liv_Area    0.4291807  0.0156770 27.3764393        0
-## Garage_Cars      0.1208013  0.0060731 19.8912720        0
-## Fireplaces       0.0621083  0.0063070  9.8474848        0
+##                   Estimate Std. Error    t value
+## lnLot_Area       0.0674193  0.0104178  6.4715501
+## lnTotal_Bsmt_SF  0.0537648  0.0032167 16.7142793
+## lnGr_Liv_Area    0.4293906  0.0156969 27.3551022
+## Garage_Cars      0.1209794  0.0059681 20.2709144
+## Fireplaces       0.0621563  0.0062509  9.9436250
+##                 Pr(>|t|)
+## lnLot_Area             0
+## lnTotal_Bsmt_SF        0
+## lnGr_Liv_Area          0
+## Garage_Cars            0
+## Fireplaces             0
 ## 
 ##  Indirect Parametric Impacts (sdm) 
-##                   Estimate Std. Error    t value Pr(>|t|)
-## lnLot_Area      -0.0389667  0.0134727 -2.8922703   0.0038
-## lnTotal_Bsmt_SF  0.0351417  0.0054987  6.3908995   0.0000
-## lnGr_Liv_Area    0.0608298  0.0255479  2.3810082   0.0173
-## Garage_Cars      0.1440254  0.0102915 13.9945639   0.0000
-## Fireplaces       0.0312079  0.0108925  2.8650918   0.0042
+##                   Estimate Std. Error    t value
+## lnLot_Area      -0.0393844  0.0134482 -2.9286087
+## lnTotal_Bsmt_SF  0.0353330  0.0054891  6.4369121
+## lnGr_Liv_Area    0.0615714  0.0256972  2.3960389
+## Garage_Cars      0.1446716  0.0100585 14.3830237
+## Fireplaces       0.0315424  0.0109690  2.8755961
+##                 Pr(>|t|)
+## lnLot_Area        0.0034
+## lnTotal_Bsmt_SF   0.0000
+## lnGr_Liv_Area     0.0166
+## Garage_Cars       0.0000
+## Fireplaces        0.0040
 ```
 
-Comparing the results with those obtained using ML estimates with **`lagsalm()`** (library **`satialreg`**):
+Comparing the results with those obtained using ML estimates with `lagsarlm()` function of package **spatialreg**:
 
 
 ```r
-spatregsdm <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, method = "eigen", Durbin = TRUE)
+spatregsdm <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, 
+                                   method = "eigen", Durbin = TRUE)
 W <- as(listW, "CsparseMatrix")
 trMatc <- spatialreg::trW(W, type = "mult")
 set.seed(1)
 SDM.impact <- spatialreg::impacts(spatregsdm, tr = trMatc, R = 200)
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$direct, sptpreg_direct = summary(imp_parvar_sdm)$dir_table[,1]),3)
+round(data.frame(spatialreg_direct = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$direct, 
+sptpreg_direct = summary(imp_parvar_sdm)$dir_table[,1]),3)
 ```
 
 ```
@@ -763,33 +880,35 @@ round(data.frame(spatialreg_direct = summary(SDM.impact, zstats = TRUE, short = 
 
 ```r
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$indirect, sptpreg_indirect = summary(imp_parvar_sdm)$ind_table[,1]), 3)
+round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$indirect, 
+sptpreg_indirect = summary(imp_parvar_sdm)$ind_table[,1]), 3)
 ```
 
 ```
 ##                 spatialreg_indirect sptpreg_indirect
 ## lnLot_Area                   -0.039           -0.039
 ## lnTotal_Bsmt_SF               0.035            0.035
-## lnGr_Liv_Area                 0.060            0.061
-## Garage_Cars                   0.144            0.144
-## Fireplaces                    0.031            0.031
+## lnGr_Liv_Area                 0.060            0.062
+## Garage_Cars                   0.144            0.145
+## Fireplaces                    0.031            0.032
 ```
 
 ```r
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats=TRUE, short = TRUE)$res$total, sptpreg_indirect = summary(imp_parvar_sdm)$tot_table[,1]), 3)
+round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats=TRUE, short = TRUE)$res$total, 
+sptpreg_indirect = summary(imp_parvar_sdm)$tot_table[,1]), 3)
 ```
 
 ```
 ##                 spatialreg_indirect sptpreg_indirect
 ## lnLot_Area                    0.029            0.028
 ## lnTotal_Bsmt_SF               0.089            0.089
-## lnGr_Liv_Area                 0.490            0.490
-## Garage_Cars                   0.264            0.265
-## Fireplaces                    0.094            0.093
+## lnGr_Liv_Area                 0.490            0.491
+## Garage_Cars                   0.264            0.266
+## Fireplaces                    0.094            0.094
 ```
 
-### Spatial Error model (SEM). REML estimates using **`pspatfit()`**
+### Spatial Error model (SEM). REML estimates using `pspatfit()`
 
 The last parametric specification considered here is the SEM. This model that spatial spillovers occurs only for the unobserved random shocks:  
 
@@ -808,23 +927,32 @@ summary(linsem)
 ##     method = "eigen")
 ## 
 ##  Parametric Terms 
-##                   Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept)     7.2353221  0.1291946 56.0033 < 2.2e-16 ***
-## lnLot_Area      0.0751755  0.0106334  7.0698 1.956e-12 ***
-## lnTotal_Bsmt_SF 0.0502717  0.0032850 15.3034 < 2.2e-16 ***
-## lnGr_Liv_Area   0.4842230  0.0158176 30.6130 < 2.2e-16 ***
-## Garage_Cars     0.1194911  0.0063206 18.9051 < 2.2e-16 ***
-## Fireplaces      0.0643181  0.0067376  9.5462 < 2.2e-16 ***
-## delta           0.4466720  0.0158589 28.1654 < 2.2e-16 ***
+##                   Estimate Std. Error t value  Pr(>|t|)
+## (Intercept)     7.2271291  0.1293879 55.8563 < 2.2e-16
+## lnLot_Area      0.0747966  0.0106472  7.0250 2.684e-12
+## lnTotal_Bsmt_SF 0.0505039  0.0032908 15.3469 < 2.2e-16
+## lnGr_Liv_Area   0.4853052  0.0158438 30.6306 < 2.2e-16
+## Garage_Cars     0.1206543  0.0063310 19.0578 < 2.2e-16
+## Fireplaces      0.0645938  0.0067493  9.5704 < 2.2e-16
+## delta           0.4459877  0.0158826 28.0803 < 2.2e-16
+##                    
+## (Intercept)     ***
+## lnLot_Area      ***
+## lnTotal_Bsmt_SF ***
+## lnGr_Liv_Area   ***
+## Garage_Cars     ***
+## Fireplaces      ***
+## delta           ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total:      7 
-##  Sigma: 0.234569 
-##  AIC:  -6060.69 
-##  BIC:  -6019.19
+##  Sigma: 0.234186 
+##  AIC:  -6060.65 
+##  BIC:  -6019.15
 ```
 
 ```r
@@ -832,14 +960,17 @@ anova(linsem,linsdm, lrtest = TRUE)
 ```
 
 ```
-##        logLik rlogLik edf     AIC     BIC LRtest     p.val
-## linsem 3037.3  3007.7   7 -6060.7 -5959.9                 
-## linsdm 3289.9  3234.7  12 -6555.7 -6374.3 453.97 6.835e-96
+##        logLik rlogLik edf     AIC     BIC LRtest
+## linsem 3037.3  3007.7   7 -6060.7 -5959.9       
+## linsdm 3289.8  3234.7  12 -6555.7 -6374.3 453.99
+##             p.val
+## linsem           
+## linsdm 6.7678e-96
 ```
 
 The spatial spillover parameter $\delta$ is rather high (0.45) and statistically significant. As well known,  the SEM is also nested in the SDM, so we can use a LR test to compare the two models. The results suggest again that the SDM is the best parametric specification.
 
-Comparing the results with those obtained using ML estimates with **`errorsarlm()`** (library **`spatialreg`**):
+Comparing the results with those obtained using ML estimates with `errorsarlm()` function of package **spatialreg**:
 
 
 ```r
@@ -849,7 +980,9 @@ summary(spatregsem)
 
 ```
 ## 
-## Call:spatialreg::errorsarlm(formula = formlin, data = ames_sf1, listw = listW,     method = "eigen")
+## Call:
+## spatialreg::errorsarlm(formula = formlin, data = ames_sf1, listw = listW, 
+##     method = "eigen")
 ## 
 ## Residuals:
 ##       Min        1Q    Median        3Q       Max 
@@ -898,10 +1031,13 @@ spatialreg::LR.Sarlm(spatregsdm,spatregsem)## Common factor test
 ## 	Likelihood ratio for spatial linear models
 ## 
 ## data:  
-## Likelihood ratio = 505.03, df = 5, p-value < 2.2e-16
+## Likelihood ratio = 505.03, df = 5, p-value <
+## 2.2e-16
 ## sample estimates:
-## Log likelihood of spatregsdm Log likelihood of spatregsem 
-##                     737.9734                     485.4588
+## Log likelihood of spatregsdm 
+##                     737.9734 
+## Log likelihood of spatregsem 
+##                     485.4588
 ```
 
 ```r
@@ -910,12 +1046,12 @@ round(data.frame(sptpsar = summary(linsem)$bfixed, spatregsem = summary(spatregs
 
 ```
 ##                 sptpsar spatregsem
-## (Intercept)       7.235      7.236
+## (Intercept)       7.227      7.236
 ## lnLot_Area        0.075      0.075
-## lnTotal_Bsmt_SF   0.050      0.050
-## lnGr_Liv_Area     0.484      0.484
-## Garage_Cars       0.119      0.119
-## Fireplaces        0.064      0.064
+## lnTotal_Bsmt_SF   0.051      0.050
+## lnGr_Liv_Area     0.485      0.484
+## Garage_Cars       0.121      0.119
+## Fireplaces        0.065      0.064
 ```
 
 ## Estimating semiparametric nonlinear models with and without a spatial trend
@@ -923,7 +1059,7 @@ round(data.frame(sptpsar = summary(linsem)$bfixed, spatregsem = summary(spatregs
 We now provide examples of the estimation of semiparametric models. Let's start with a simple semiparametric model without spatial trends and without spatially lagged terms: $$y_{i}=\sum_{k=1}^K \beta^*_k x^*_{k,it} +\sum_{\delta=1}^\Delta g_\delta(x_{\delta, it}) + \epsilon_{i}$$
 
 $$\epsilon_{i}\sim i.i.d.(0,\sigma^2_\epsilon)$$
-In particular, we introduce the discrete variables `Fireplaces` and `Garage_Cars` as linear terms and the continuous variables `lnLot_Area`, `lnTotal_Bsmt_SF`, and `lnGr_Liv_Area` as smooth terms, using the function `pspl()` with 20 knots:  
+In particular, we introduce the discrete variables *Fireplaces* and *Garage_Cars* as linear terms and the continuous variables *lnLot_Area*, *lnTotal_Bsmt_SF*, and *lnGr_Liv_Area* as smooth terms, using the function `pspl()` with 20 knots:  
 
 
 ```r
@@ -946,24 +1082,25 @@ summary(gam)
 ## 
 ##  Parametric Terms 
 ##                Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept) 10.8256642  0.2786217  38.854 < 2.2e-16 ***
-## Fireplaces   0.0700200  0.0069732  10.041 < 2.2e-16 ***
-## Garage_Cars  0.1569159  0.0063887  24.561 < 2.2e-16 ***
+## (Intercept) 10.7419169  0.1940518  55.356 < 2.2e-16 ***
+## Fireplaces   0.0706684  0.0069634  10.149 < 2.2e-16 ***
+## Garage_Cars  0.1578378  0.0063725  24.769 < 2.2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                         EDF
-## pspl(lnLot_Area, nknots = 20)      15.3270
-## pspl(lnTotal_Bsmt_SF, nknots = 20)  8.2794
-## pspl(lnGr_Liv_Area, nknots = 20)   16.5394
+## pspl(lnLot_Area, nknots = 20)      11.6416
+## pspl(lnTotal_Bsmt_SF, nknots = 20)  6.1814
+## pspl(lnGr_Liv_Area, nknots = 20)   13.8279
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 43.1458 
-##  Sigma: 0.202724 
-##  AIC:  -5829.32 
-##  BIC:  -5573.5
+##  EDF Total: 34.6509 
+##  Sigma: 0.202927 
+##  AIC:  -5876.5 
+##  BIC:  -5671.05
 ```
 
 The EDF numbers clearly suggest that the three continuout variables enter the model nonlinearly.
@@ -974,9 +1111,7 @@ $$\epsilon_{i}\sim i.i.d.(0,\sigma^2_\epsilon)$$
 
 
 ```r
-gamsar <- pspatfit(formgam, data = ames_sf1,
-                   listw = listW,
-                   method = "eigen", type = "sar")
+gamsar <- pspatfit(formgam, data = ames_sf1, listw = listW, method = "eigen", type = "sar")
 summary(gamsar)
 ```
 
@@ -988,35 +1123,39 @@ summary(gamsar)
 ## 
 ##  Parametric Terms 
 ##               Estimate Std. Error t value  Pr(>|t|)    
-## (Intercept) 6.9298965  0.2368363 29.2603 < 2.2e-16 ***
-## Fireplaces  0.0505097  0.0058953  8.5678 < 2.2e-16 ***
-## Garage_Cars 0.1033091  0.0054018 19.1249 < 2.2e-16 ***
-## rho         0.3431876  0.0110779 30.9794 < 2.2e-16 ***
+## (Intercept) 6.9278045  0.2321497 29.8420 < 2.2e-16 ***
+## Fireplaces  0.0505388  0.0058912  8.5787 < 2.2e-16 ***
+## Garage_Cars 0.1033614  0.0053970 19.1515 < 2.2e-16 ***
+## rho         0.3432733  0.0110722 31.0031 < 2.2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                         EDF
-## pspl(lnLot_Area, nknots = 20)      15.7714
-## pspl(lnTotal_Bsmt_SF, nknots = 20)  8.2458
-## pspl(lnGr_Liv_Area, nknots = 20)   17.1545
+## pspl(lnLot_Area, nknots = 20)      14.4067
+## pspl(lnTotal_Bsmt_SF, nknots = 20)  7.1898
+## pspl(lnGr_Liv_Area, nknots = 20)   16.1097
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 45.1718 
-##  Sigma: 0.189564 
-##  AIC:  -6574.85 
-##  BIC:  -6307.02
+##  EDF Total: 41.7062 
+##  Sigma: 0.189394 
+##  AIC:  -6585.59 
+##  BIC:  -6338.31
 ```
 
 ```r
-anova(linsar,gamsar,lrtest = TRUE)
+anova(linsar, gamsar, lrtest = TRUE)
 ```
 
 ```
-##        logLik rlogLik    edf     AIC     BIC LRtest      p.val
-## linsar 3226.4  3195.2  7.000 -6438.9 -6334.9                  
-## gamsar 3332.6  3319.9 45.172 -6574.8 -6282.3 249.39 8.0086e-33
+##        logLik rlogLik    edf     AIC     BIC LRtest
+## linsar 3226.4  3195.2  7.000 -6438.9 -6334.9       
+## gamsar 3334.5  3321.7 41.706 -6585.6 -6313.3 252.96
+##             p.val
+## linsar           
+## gamsar 5.6473e-35
 ```
 
 The spatial spillover parameter is now 0.34, a bit lower than the one estimated with the linear SAR (0.38) and SDM (0.37), confirming the trade off between nonlinearities and spatial dependence [@basdurminmonmur14]. The log-likelihood of the semiparametric SAR is higher than that of the linear SAR, and the LR test also suggests that this difference is statistically significant (notice that the linear SAR model is nested in the semiparametric SAR). Moreover, the AIC value of the semiparametric model is lower than that of the linear SAR, confirming that the goodness of fit of the semiparametric model is higher that that of the linear model. However, the BIC value works in favor of the linear specification. This is because the BIC  penalizes more strongly more complex models than the AIC.
@@ -1033,9 +1172,7 @@ To speed up the computational time, we compute the spatial Jacobian using the Ch
 
 
 ```r
-sp2dsar <- pspatfit(form2d, data = ames_sf1, 
-                    listw = listW, method = "Chebyshev", 
-                    type = "sar")
+sp2dsar <- pspatfit(form2d, data = ames_sf1, listw = listW, method = "Chebyshev", type = "sar")
 summary(sp2dsar)
 ```
 
@@ -1047,28 +1184,29 @@ summary(sp2dsar)
 ## 
 ##  Parametric Terms 
 ##               Estimate Std. Error t value  Pr(>|t|)    
-## Fireplaces  0.0562369  0.0057884  9.7155 < 2.2e-16 ***
-## Garage_Cars 0.0658497  0.0056870 11.5789 < 2.2e-16 ***
-## rho         0.1853866  0.0132202 14.0230 < 2.2e-16 ***
+## Fireplaces  0.0566376  0.0057981  9.7684 < 2.2e-16 ***
+## Garage_Cars 0.0654183  0.0056882 11.5007 < 2.2e-16 ***
+## rho         0.1807030  0.0132934 13.5934 < 2.2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
-##                                         EDF
-## pspl(lnLot_Area, nknots = 20)      16.0553
-## pspl(lnTotal_Bsmt_SF, nknots = 20)  8.3376
-## pspl(lnGr_Liv_Area, nknots = 20)   17.2740
+##                                        EDF
+## pspl(lnLot_Area, nknots = 20)      14.849
+## pspl(lnTotal_Bsmt_SF, nknots = 20)  7.296
+## pspl(lnGr_Liv_Area, nknots = 20)   16.207
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##                EDF
-## f(sp1, sp2) 44.293
+## f(sp1, sp2) 48.402
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 92.9601 
-##  Sigma: 0.16269 
-##  AIC:  -6876.14 
-##  BIC:  -6324.97
+##  EDF Total: 93.7541 
+##  Sigma: 0.174099 
+##  AIC:  -6873.89 
+##  BIC:  -6318.01
 ```
 
 ```r
@@ -1076,13 +1214,16 @@ anova(gamsar, sp2dsar, lrtest=TRUE)
 ```
 
 ```
-##         logLik rlogLik    edf     AIC     BIC LRtest      p.val
-## gamsar  3332.6  3319.9 45.172 -6574.8 -6282.3                  
-## sp2dsar 3531.0  3524.0 92.960 -6876.1 -6314.0 408.19 1.0661e-58
+##         logLik rlogLik    edf     AIC     BIC LRtest
+## gamsar  3334.5  3321.7 41.706 -6585.6 -6313.3       
+## sp2dsar 3530.7  3524.3 93.754 -6873.9 -6308.4 405.22
+##              p.val
+## gamsar            
+## sp2dsar 3.6448e-56
 ```
 The estimated spatial spillover parameter $\rho$ (0.19) is much lower than the one estimated above, suggesting that the SAR model without spatial trend (both linear and nonlinear) actually captures spatial autocorrelated unobserved heterogeneity.    
 
-The marginal (direct, indirect and total) impacts for parametric terms are computed as usual with the function `impactspar`:
+The marginal (direct, indirect and total) impacts for parametric terms are computed as usual with the function `impactspar()`:
 
 
 ```r
@@ -1095,18 +1236,18 @@ summary(imp_parvar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##               Estimate Std. Error    t value Pr(>|t|)
-## Fireplaces   0.0691195  0.0074816  9.2385704        0
-## Garage_Cars  0.0810955  0.0071723 11.3066974        0
+## Fireplaces   0.0692105  0.0074557  9.2829108        0
+## Garage_Cars  0.0801063  0.0071279 11.2383344        0
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##               Estimate Std. Error    t value Pr(>|t|)
-## Fireplaces   0.0573004  0.0061232  9.3579505        0
-## Garage_Cars  0.0672319  0.0058632 11.4668213        0
+## Fireplaces   0.0576530  0.0061305  9.4042300        0
+## Garage_Cars  0.0667326  0.0058558 11.3960476        0
 ## 
 ##  Indirect Parametric Impacts (sar) 
 ##              Estimate Std. Error   t value Pr(>|t|)
-## Fireplaces  0.0118191  0.0016008 7.3831475        0
-## Garage_Cars 0.0138636  0.0016446 8.4300379        0
+## Fireplaces  0.0115575  0.0015763 7.3322498        0
+## Garage_Cars 0.0133737  0.0016118 8.2972527        0
 ```
 
 As for the three non-parametric terms, we can plot the estimated smooth impact functions using the algorithms described in the vignette A:
@@ -1137,13 +1278,13 @@ This model is estimated using the option `psanova = TRUE` within the function `p
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 ```
 
 
 ```r
-sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, method = "Chebyshev", type = "sar")
+sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, 
+                         method = "Chebyshev", type = "sar")
 summary(sp2danovasar)
 ```
 
@@ -1155,31 +1296,32 @@ summary(sp2danovasar)
 ## 
 ##  Parametric Terms 
 ##               Estimate Std. Error t value  Pr(>|t|)    
-## Intercept   8.8866528  0.2301981 38.6044 < 2.2e-16 ***
-## Fireplaces  0.0566274  0.0057752  9.8053 < 2.2e-16 ***
-## Garage_Cars 0.0650483  0.0056834 11.4454 < 2.2e-16 ***
-## rho         0.1792813  0.0132803 13.4998 < 2.2e-16 ***
+## Intercept   8.9920451  0.2321429 38.7350 < 2.2e-16 ***
+## Fireplaces  0.0570771  0.0058221  9.8035 < 2.2e-16 ***
+## Garage_Cars 0.0649741  0.0057239 11.3514 < 2.2e-16 ***
+## rho         0.1759478  0.0133925 13.1378 < 2.2e-16 ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                         EDF
-## pspl(lnLot_Area, nknots = 20)      16.0947
-## pspl(lnTotal_Bsmt_SF, nknots = 20)  8.3458
-## pspl(lnGr_Liv_Area, nknots = 20)   17.2882
+## pspl(lnLot_Area, nknots = 20)      15.0875
+## pspl(lnTotal_Bsmt_SF, nknots = 20)  7.3422
+## pspl(lnGr_Liv_Area, nknots = 20)   16.2796
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##        EDF
-## f1   0.683
-## f2   6.814
-## f12 38.454
+## f1   0.826
+## f2   6.985
+## f12 77.470
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 94.6793 
-##  Sigma: 0.161741 
-##  AIC:  -6862.9 
-##  BIC:  -6301.53
+##  EDF Total: 130.991 
+##  Sigma: 0.195116 
+##  AIC:  -6786.08 
+##  BIC:  -6009.42
 ```
 
 ```r
@@ -1187,9 +1329,9 @@ anova(sp2dsar, sp2danovasar, lrtest=FALSE)
 ```
 
 ```
-##              logLik rlogLik    edf     AIC     BIC
-## sp2dsar      3531.0  3524.0 92.960 -6876.1 -6314.0
-## sp2danovasar 3526.1  3507.5 94.679 -6862.9 -6267.5
+##              logLik rlogLik     edf     AIC     BIC
+## sp2dsar      3530.7  3524.3  93.754 -6873.9 -6308.4
+## sp2danovasar 3524.0  3505.9 130.991 -6786.1 -5979.4
 ```
 
 Plot of non-parametric direct, indirect and total impacts:
@@ -1215,23 +1357,23 @@ summary(imp_parvar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##               Estimate Std. Error    t value Pr(>|t|)
-## Fireplaces   0.0689737  0.0068851 10.0178934        0
-## Garage_Cars  0.0791433  0.0070879 11.1659996        0
+## Fireplaces   0.0692412  0.0069141 10.0145083        0
+## Garage_Cars  0.0787322  0.0071085 11.0757132        0
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##               Estimate Std. Error    t value Pr(>|t|)
-## Fireplaces   0.0575553  0.0056611 10.1667305        0
-## Garage_Cars  0.0660413  0.0057987 11.3889612        0
+## Fireplaces   0.0579769  0.0057039 10.1645145        0
+## Garage_Cars  0.0659238  0.0058361 11.2957841        0
 ## 
 ##  Indirect Parametric Impacts (sar) 
 ##              Estimate Std. Error   t value Pr(>|t|)
-## Fireplaces  0.0114184  0.0015085 7.5691246        0
-## Garage_Cars 0.0131020  0.0016358 8.0092770        0
+## Fireplaces  0.0112643  0.0015043 7.4880408        0
+## Garage_Cars 0.0128083  0.0016253 7.8808174        0
 ```
 
 ## Examples of plotting spatial trends for spatial point coordinates
 
-Now, we show how to plot spatial trends using spatial coordinates. Notice, that the database is an **`sf`** object and excludes duplicated spatial points. For the model without the ANOVA decomposition, we can only plot the 2d smooth interaction effect of latitude and longitude:
+Now, we show how to plot spatial trends using spatial coordinates. Notice, that the database is an `sf` object and excludes duplicated spatial points. For the model without the ANOVA decomposition, we can only plot the 2d smooth interaction effect of latitude and longitude:
 
 
 ```r
@@ -1244,8 +1386,7 @@ For the model with the ANOVA decomposition, we plot either the 2d spatial trend 
 
 
 ```r
-plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, 
-          addint = TRUE)
+plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, addint = TRUE)
 ```
 
 <img src="plot2dpoints_anova_ames-1-vignetteB.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-2-vignetteB.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-3-vignetteB.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" /><img src="plot2dpoints_anova_ames-4-vignetteB.png" title="plot of chunk plot2dpoints_anova_ames" alt="plot of chunk plot2dpoints_anova_ames" style="display: block; margin: auto;" />
@@ -1259,8 +1400,7 @@ form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 
 durbinformnonlin <- ~ Fireplaces + Garage_Cars +
   pspl(lnLot_Area, nknots = 20) 
@@ -1279,44 +1419,52 @@ summary(sp2danovasdm)
 ##     type = "sdm", method = "Chebyshev", Durbin = durbinformnonlin)
 ## 
 ##  Parametric Terms 
-##                    Estimate Std. Error t value  Pr(>|t|)    
-## Intercept        8.9333341  0.2324145 38.4371 < 2.2e-16 ***
-## Fireplaces       0.0560704  0.0058649  9.5604 < 2.2e-16 ***
-## Garage_Cars      0.0616925  0.0057690 10.6938 < 2.2e-16 ***
-## Wlag.Fireplaces  0.0096170  0.0073191  1.3140  0.188970    
-## Wlag.Garage_Cars 0.0190964  0.0072931  2.6184  0.008884 ** 
-## rho              0.1793396  0.0149372 12.0063 < 2.2e-16 ***
+##                    Estimate Std. Error t value  Pr(>|t|)
+## Intercept        8.9922595  0.2326829 38.6460 < 2.2e-16
+## Fireplaces       0.0561448  0.0058888  9.5342 < 2.2e-16
+## Garage_Cars      0.0617895  0.0057924 10.6674 < 2.2e-16
+## Wlag.Fireplaces  0.0103328  0.0073488  1.4061  0.159823
+## Wlag.Garage_Cars 0.0198640  0.0073226  2.7127  0.006717
+## rho              0.1788981  0.0149778 11.9442 < 2.2e-16
+##                     
+## Intercept        ***
+## Fireplaces       ***
+## Garage_Cars      ***
+## Wlag.Fireplaces     
+## Wlag.Garage_Cars ** 
+## rho              ***
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                         EDF
-## pspl(lnLot_Area, nknots = 20)      15.9013
-## pspl(lnTotal_Bsmt_SF, nknots = 20)  8.3743
-## pspl(lnGr_Liv_Area, nknots = 20)   17.2355
-## pspl(Wlag.lnLot_Area, nknots = 20) 14.9278
+## pspl(lnLot_Area, nknots = 20)      14.8846
+## pspl(lnTotal_Bsmt_SF, nknots = 20)  7.3656
+## pspl(lnGr_Liv_Area, nknots = 20)   16.2196
+## pspl(Wlag.lnLot_Area, nknots = 20) 13.8968
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##        EDF
-## f1   0.002
-## f2   6.914
-## f12 36.931
+## f1   0.116
+## f2   6.937
+## f12 60.128
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 109.285 
-##  Sigma: 0.161594 
-##  AIC:  -6813.57 
-##  BIC:  -6165.6
+##  EDF Total: 128.548 
+##  Sigma: 0.180651 
+##  AIC:  -6774.94 
+##  BIC:  -6012.77
 ```
 
 ```r
-anova(sp2danovasdm, sp2danovasar, lrtest=FALSE)
+anova(sp2danovasdm, sp2danovasar, lrtest = FALSE)
 ```
 
 ```
-##              logLik rlogLik     edf     AIC     BIC
-## sp2danovasdm 3516.1  3486.0 109.285 -6813.6 -6109.8
-## sp2danovasar 3526.1  3507.5  94.679 -6862.9 -6267.5
+##              logLik rlogLik    edf     AIC     BIC
+## sp2danovasdm   3516  3486.0 128.55 -6774.9 -5958.8
+## sp2danovasar   3524  3505.9 130.99 -6786.1 -5979.4
 ```
 # References

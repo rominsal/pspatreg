@@ -26,11 +26,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FAL
 
 # Models for cross-sectional data
 
-We start our demo with an application of **`pspatreg`** to the analysis of cross-sectional data. In particular, we use Ames dataset (included in the package `AmesHousing`) which contains data on 2,930 properties in Ames, Iowa. The dataset includes information related to house characteristics (bedrooms, garages, fireplaces, pools, porches, etc.), location characteristics (neighborhood), lot information (zoning, shape, size, etc.), ratings of condition and quality and sale price (from 2006 to 2010). The section is organized as follows:
+We start our demo with an application of **pspatreg** to the analysis of cross-sectional data. In particular, we use Ames dataset (included in the package **AmesHousing**) which contains data on 2,930 properties in Ames, Iowa. The dataset includes information related to house characteristics (bedrooms, garages, fireplaces, pools, porches, etc.), location characteristics (neighborhood), lot information (zoning, shape, size, etc.), ratings of condition and quality and sale price (from 2006 to 2010). The section is organized as follows:
 
 -   Description of dataset, spatial weights matrix and model specifications;
 
--   Estimation results of linear spatial models and comparison with the results obtained with the package `spatialreg`;
+-   Estimation results of linear spatial models and comparison with the results obtained with the package **spatialreg**;
 
 -   Estimation results of semiparametric spatial models.
 
@@ -45,24 +45,23 @@ library(ggplot2)
 library(dplyr)
 library(dbscan)
 ames <- AmesHousing::make_ames()# Raw Ames Housing Data
-ames_sf <- st_as_sf(ames, 
-                    coords = c("Longitude", "Latitude"))
+ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
 ames_sf$Latitude <- ames$Latitude
 ```
-The dependent variable in the regression analysis is **`Sale_Price`**, while we selected the following variables as covariates:
+The dependent variable in the regression analysis is *Sale_Price*, while we selected the following variables as covariates:
 
-\- **`Lot_Area`**: Lot size in square feet
+\- *Lot_Area*: Lot size in square feet
 
-\- **`Total_Bsmt_SF`**: Total square feet of basement area
+\- *Total_Bsmt_SF*: Total square feet of basement area
 
-\- **`Garage_Cars`**: Size of garage in car capacity
+\- *Garage_Cars*: Size of garage in car capacity
 
-\- **`Gr_Liv_Area`**: Above grade (ground) living area square feet
+\- *Gr_Liv_Area*: Above grade (ground) living area square feet
 
-\- **`Fireplaces`**: Number of fireplaces
+\- *Fireplaces*: Number of fireplaces
 
-Due to the skewed distribution of the dependent variable **`Sale_Price`**, we use the log-transformation:
+Due to the skewed distribution of the dependent variable *Sale_Price*, we use the log-transformation:
 
 ```{r, fig.align = 'center'}
 ggplot(data = ames_sf) + geom_histogram(mapping = aes(x = Sale_Price))
@@ -93,9 +92,9 @@ is.symmetric.nb(soi_nb,verbose = TRUE, force = FALSE)
 listW <- nb2listw(soi_nb, style = "W", zero.policy = FALSE)
 ```
 
-## Defining **`formula`** for parametric and semiparametric models
+## Defining *formula* for parametric and semiparametric models
 
-We define different **`formula`** for linear and nonlinear (semiparametric) models with and without a spatial trend. The Durbin **`formula`** is used for type "sdm", "slx" or "sdem".
+We define different *formula* for linear and nonlinear (semiparametric) models with and without a spatial trend. The Durbin *formula* is used for types "sdm", "slx" or "sdem".
 
 In the case of semiparametric terms, in 3d or in 2d (as it is the case of spatial trend), the number of knots used to construct the B-splines basis needs to be specified.
 
@@ -120,8 +119,7 @@ form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
   pspl(lnLot_Area, nknots = 20) + 
   pspl(lnTotal_Bsmt_SF, nknots = 20) +
   pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = FALSE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = FALSE)
 
 # Semiparametric model with PS-ANOVA spatial trend in 2d
 
@@ -129,19 +127,17 @@ form2d <- lnSale_Price ~ Fireplaces + Garage_Cars +
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+    pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 
-  durbinformnonlin <- ~ Fireplaces + Garage_Cars +
-  pspl(lnLot_Area, nknots = 20) 
+  durbinformnonlin <- ~ Fireplaces + Garage_Cars + pspl(lnLot_Area, nknots = 20) 
 
 ```
 
 ## Estimating parametric linear models
 
-We first estimate standard spatial linear autoregressive models using the function **`pspatfit()`** included in the library **`pspatreg`** (based on the REML estimator) and compare them with the results obtained using the functions provided by the library **`spatialreg`** (based on the ML estimator).
+We first estimate standard spatial linear autoregressive models using the function `pspatfit()` included in the package **pspatreg** (based, in the default, on the REML estimators) and compare them with the results obtained using the functions provided by the package **spatialreg** (based on the ML estimators).
 
-### Spatial Lag (SAR) model. REML estimates using **`pspatfit()`**
+### Spatial Lag (SAR) model. REML estimates using `pspatfit()`
 
 The SAR model for cross-sectional data can be specified as:
 $$y_{i}=\rho \sum_{j=1}^N w_{ij,N} y_{j} + 
@@ -178,7 +174,7 @@ logLik(linsar)
 logLik(linsar, REML = TRUE)
 ```
 
-Extract the covariance matrix of estimated coefficients. Argument **`bayesian`** allows to get frequentist (default) or bayesian covariances:
+Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get frequentist (default) or bayesian covariances:
 
 ```{r}
 vcov(linsar)
@@ -198,12 +194,10 @@ imp_parvar_sar <- impactspar(linsar, list_varpar)
 summary(imp_parvar_sar)
 ```
 
-As expected, all marginal impacts are strongly significant and spillover impacts are rather high. We compare these results with those obtained using ML estimates with **`lagsarlm()`** (package **`spatialreg`**):
+As expected, all marginal impacts are strongly significant and spillover impacts are rather high. We compare these results with those obtained using ML estimates with `lagsarlm()` (package **spatialreg**):
 
 ```{r}
-spatregsar <- spatialreg::lagsarlm(formlin, data = ames_sf1,
-                                   listw = listW, 
-                                   method = "eigen") 
+spatregsar <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, method = "eigen") 
 summary(spatregsar)
 W <- as(listW, "CsparseMatrix")
 trMatc <- spatialreg::trW(W, type="mult")
@@ -214,37 +208,41 @@ list_varpar <- as.character(names(summary(linsar)$bfixed[-1]))
 imp_parvar <- impactspar(linsar, list_varpar)
 summary(imp_parvar)
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$direct, sptpreg_direct = summary(imp_parvar_sar)$dir_table[,1]), 3)
+round(data.frame(spatialreg_direct = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$direct, 
+sptpreg_direct = summary(imp_parvar_sar)$dir_table[,1]), 3)
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$indirect, sptpreg_indirect = summary(imp_parvar_sar)$ind_table[,1]),3)
+round(data.frame(spatialreg_indirect = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$indirect, 
+sptpreg_indirect = summary(imp_parvar_sar)$ind_table[,1]),3)
 # Let's compare total impacts
-round(data.frame(spatialreg_total = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$total, sptpreg_total = summary(imp_parvar_sar)$tot_table[,1]), 3)
+round(data.frame(spatialreg_total = summary(SAR.impact, zstats = TRUE, short = TRUE)$res$total, 
+sptpreg_total = summary(imp_parvar_sar)$tot_table[,1]), 3)
 
 ```
 
-### Spatial Lag in X variables (SLX) model. REML estimates using **`pspatfit()`**
+### Spatial Lag in X variables (SLX) model. REML estimates using `pspatfit()`
 
 We now estimate the SLX model that only captures local spatial spillovers through the spatial lags of the explanatory variables:
 
 $$y_{i}= \sum_{k=1}^K \beta_k x_{k,i} +\sum_{k=1}^K \delta_k \sum_{j=1}^N w_{ij,N}x_{k,j}+ \epsilon_{i}$$ 
 $$\epsilon_{i} \sim i.i.d.(0,\sigma^2_\epsilon)$$
-This model is estimated with the function **`pspatfit()`** using the option `type = "slx"` and specifying the set of spatial lags through `Durbin = durbinformlin`:
+This model is estimated with the function `pspatfit()` using the option `type = "slx"` and specifying the set of spatial lags through `Durbin = durbinformlin`:
 
 ```{r}
-linslx <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", type = "slx", Durbin = durbinformlin)
+linslx <- pspatfit(formlin, data = ames_sf1, listw = listW, method = "eigen", 
+                   type = "slx", Durbin = durbinformlin)
 summary(linslx)
 ```
 
 Now we compute impacts for the SLX model. In this case, contrary to the case of the SAR and SDM models, we do not need simulations to make inference on these marginal impacts. We only need to properly compute the variance of total impact using this formula:  
 
-$$ Var(\hat{\beta_k}\_{tot}) = Var(\hat{\beta}) + Var(\hat{\delta}) + 2* Cov(\hat{\beta}, \hat{\delta}) $$
+$$ Var(\hat{\beta_k})\_{tot} = Var(\hat{\beta_k}) + Var(\hat{\delta_k}) + 2* Cov(\hat{\beta_k}, \hat{\delta_k}) $$
 
 ```{r}
 imp_parvar_slx <- impactspar(linslx, listw = listW)
 summary(imp_parvar_slx)
 ```
 
-We compare the non-nested models **`linsar`** and **`linslx`** using the function **`anova`** with the argument `lrtest = FALSE`:
+We compare the non-nested models `linsar` and `linslx` using the function `anova()` with the argument `lrtest = FALSE`:
 
 ```{r}
 anova(linsar, linslx, lrtest = FALSE)
@@ -252,21 +250,24 @@ anova(linsar, linslx, lrtest = FALSE)
 
 It emerges that, from a statistical point of view, the SAR model outperforms the SLX model, suggesting a global spatial diffusion of idiosyncratic shocks. 
 
-Now, we compare the results obtained with **pspatfit()**  with those obtained using ML estimates with **`lmSLX()`** (library **`satialreg`**):
+Now, we compare the results obtained with `pspatfit()`  with those obtained using ML estimates with `lmSLX()` (package **spatialreg**):
 
 ```{r}
 spatregslx <- spatialreg::lmSLX(formlin, data = ames_sf1,
                                 listw = listW) 
 SLX.impact <- spatialreg::impacts(spatregslx)
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SLX.impact)$impacts$direct, sptpreg_direct = summary(imp_parvar_slx)$mimpacts[,1]), 3)
+round(data.frame(spatialreg_direct = summary(SLX.impact)$impacts$direct, 
+sptpreg_direct = summary(imp_parvar_slx)$mimpacts[,1]), 3)
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SLX.impact)$impacts$indirect, sptpreg_indirect = summary(imp_parvar_slx)$mimpacts[,2]), 3)
-# Let's compare indirect impacts
-round(data.frame(spatialreg_total = summary(SLX.impact)$impacts$total,                 sptpreg_total = summary(imp_parvar_slx)$mimpacts[,3]), 3)
+round(data.frame(spatialreg_indirect = summary(SLX.impact)$impacts$indirect, 
+sptpreg_indirect = summary(imp_parvar_slx)$mimpacts[,2]), 3)
+# Let's compare total impacts
+round(data.frame(spatialreg_total = summary(SLX.impact)$impacts$total, 
+sptpreg_total = summary(imp_parvar_slx)$mimpacts[,3]), 3)
 ```
 
-### Spatial Durbin model (SDM). REML estimates using the function **`pspatfit()`**:
+### Spatial Durbin model (SDM). REML estimates using the function `pspatfit()`:
 
 The SDM specification encompasses both SAR and SLX:
 $$y_{i}=\rho \sum_{j=1}^N w_{ij,N} y_{j} + 
@@ -296,23 +297,27 @@ imp_parvar_sdm <- impactspar(linsdm, list_varpar)
 summary(imp_parvar_sdm)
 ```
 
-Comparing the results with those obtained using ML estimates with **`lagsalm()`** (library **`satialreg`**):
+Comparing the results with those obtained using ML estimates with `lagsarlm()` function of package **spatialreg**:
 
 ```{r}
-spatregsdm <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, method = "eigen", Durbin = TRUE)
+spatregsdm <- spatialreg::lagsarlm(formlin, data = ames_sf1, listw = listW, 
+                                   method = "eigen", Durbin = TRUE)
 W <- as(listW, "CsparseMatrix")
 trMatc <- spatialreg::trW(W, type = "mult")
 set.seed(1)
 SDM.impact <- spatialreg::impacts(spatregsdm, tr = trMatc, R = 200)
 # Let's compare direct impacts
-round(data.frame(spatialreg_direct = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$direct, sptpreg_direct = summary(imp_parvar_sdm)$dir_table[,1]),3)
+round(data.frame(spatialreg_direct = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$direct, 
+sptpreg_direct = summary(imp_parvar_sdm)$dir_table[,1]),3)
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$indirect, sptpreg_indirect = summary(imp_parvar_sdm)$ind_table[,1]), 3)
+round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats = TRUE, short = TRUE)$res$indirect, 
+sptpreg_indirect = summary(imp_parvar_sdm)$ind_table[,1]), 3)
 # Let's compare indirect impacts
-round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats=TRUE, short = TRUE)$res$total, sptpreg_indirect = summary(imp_parvar_sdm)$tot_table[,1]), 3)
+round(data.frame(spatialreg_indirect = summary(SDM.impact, zstats=TRUE, short = TRUE)$res$total, 
+sptpreg_indirect = summary(imp_parvar_sdm)$tot_table[,1]), 3)
 ```
 
-### Spatial Error model (SEM). REML estimates using **`pspatfit()`**
+### Spatial Error model (SEM). REML estimates using `pspatfit()`
 
 The last parametric specification considered here is the SEM. This model that spatial spillovers occurs only for the unobserved random shocks:  
 
@@ -326,7 +331,7 @@ anova(linsem,linsdm, lrtest = TRUE)
 
 The spatial spillover parameter $\delta$ is rather high (0.45) and statistically significant. As well known,  the SEM is also nested in the SDM, so we can use a LR test to compare the two models. The results suggest again that the SDM is the best parametric specification.
 
-Comparing the results with those obtained using ML estimates with **`errorsarlm()`** (library **`spatialreg`**):
+Comparing the results with those obtained using ML estimates with `errorsarlm()` function of package **spatialreg**:
 
 ```{r}
 spatregsem <- spatialreg::errorsarlm(formlin, data = ames_sf1, listw = listW, method = "eigen") 
@@ -342,7 +347,7 @@ round(data.frame(sptpsar = summary(linsem)$bfixed, spatregsem = summary(spatregs
 We now provide examples of the estimation of semiparametric models. Let's start with a simple semiparametric model without spatial trends and without spatially lagged terms: $$y_{i}=\sum_{k=1}^K \beta^*_k x^*_{k,it} +\sum_{\delta=1}^\Delta g_\delta(x_{\delta, it}) + \epsilon_{i}$$
 
 $$\epsilon_{i}\sim i.i.d.(0,\sigma^2_\epsilon)$$
-In particular, we introduce the discrete variables `Fireplaces` and `Garage_Cars` as linear terms and the continuous variables `lnLot_Area`, `lnTotal_Bsmt_SF`, and `lnGr_Liv_Area` as smooth terms, using the function `pspl()` with 20 knots:  
+In particular, we introduce the discrete variables *Fireplaces* and *Garage_Cars* as linear terms and the continuous variables *lnLot_Area*, *lnTotal_Bsmt_SF*, and *lnGr_Liv_Area* as smooth terms, using the function `pspl()` with 20 knots:  
 
 ```{r}
 formgam <- lnSale_Price ~ Fireplaces + Garage_Cars +
@@ -364,11 +369,9 @@ Now, we introduce the spatial lag of the dependent variable, thus specifying a s
 $$\epsilon_{i}\sim i.i.d.(0,\sigma^2_\epsilon)$$
 
 ```{r}
-gamsar <- pspatfit(formgam, data = ames_sf1,
-                   listw = listW,
-                   method = "eigen", type = "sar")
+gamsar <- pspatfit(formgam, data = ames_sf1, listw = listW, method = "eigen", type = "sar")
 summary(gamsar)
-anova(linsar,gamsar,lrtest = TRUE)
+anova(linsar, gamsar, lrtest = TRUE)
 ```
 
 The spatial spillover parameter is now 0.34, a bit lower than the one estimated with the linear SAR (0.38) and SDM (0.37), confirming the trade off between nonlinearities and spatial dependence [@basdurminmonmur14]. The log-likelihood of the semiparametric SAR is higher than that of the linear SAR, and the LR test also suggests that this difference is statistically significant (notice that the linear SAR model is nested in the semiparametric SAR). Moreover, the AIC value of the semiparametric model is lower than that of the linear SAR, confirming that the goodness of fit of the semiparametric model is higher that that of the linear model. However, the BIC value works in favor of the linear specification. This is because the BIC  penalizes more strongly more complex models than the AIC.
@@ -384,15 +387,13 @@ $$\epsilon_{i}\sim i.i.d.(0,\sigma^2_\epsilon)$$
 To speed up the computational time, we compute the spatial Jacobian using the Chebyshev transformation.
 
 ```{r}
-sp2dsar <- pspatfit(form2d, data = ames_sf1, 
-                    listw = listW, method = "Chebyshev", 
-                    type = "sar")
+sp2dsar <- pspatfit(form2d, data = ames_sf1, listw = listW, method = "Chebyshev", type = "sar")
 summary(sp2dsar)
 anova(gamsar, sp2dsar, lrtest=TRUE)
 ```
 The estimated spatial spillover parameter $\rho$ (0.19) is much lower than the one estimated above, suggesting that the SAR model without spatial trend (both linear and nonlinear) actually captures spatial autocorrelated unobserved heterogeneity.    
 
-The marginal (direct, indirect and total) impacts for parametric terms are computed as usual with the function `impactspar`:
+The marginal (direct, indirect and total) impacts for parametric terms are computed as usual with the function `impactspar()`:
 
 ```{r}
 list_varpar <- c("Fireplaces", "Garage_Cars")
@@ -426,13 +427,13 @@ This model is estimated using the option `psanova = TRUE` within the function `p
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 
 ```
 
 ```{r}
-sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, method = "Chebyshev", type = "sar")
+sp2danovasar <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, 
+                         method = "Chebyshev", type = "sar")
 summary(sp2danovasar)
 anova(sp2dsar, sp2danovasar, lrtest=FALSE)
 ```
@@ -454,7 +455,7 @@ summary(imp_parvar)
 
 ## Examples of plotting spatial trends for spatial point coordinates
 
-Now, we show how to plot spatial trends using spatial coordinates. Notice, that the database is an **`sf`** object and excludes duplicated spatial points. For the model without the ANOVA decomposition, we can only plot the 2d smooth interaction effect of latitude and longitude:
+Now, we show how to plot spatial trends using spatial coordinates. Notice, that the database is an `sf` object and excludes duplicated spatial points. For the model without the ANOVA decomposition, we can only plot the 2d smooth interaction effect of latitude and longitude:
 
 ```{r plot2dpoints_noanova_ames,fig.align='center'}
 plot_sp2d(sp2dsar, data = ames_sf1)
@@ -463,8 +464,7 @@ plot_sp2d(sp2dsar, data = ames_sf1)
 For the model with the ANOVA decomposition, we plot either the 2d spatial trend or its decomposition in main effects and interaction effect:
 
 ```{r plot2dpoints_anova_ames,fig.align='center'}
-plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, 
-          addint = TRUE)
+plot_sp2d(sp2danovasar, data = ames_sf1, addmain = TRUE, addint = TRUE)
 ```
 
 Finally, we estimate a semiparametric Spatial Durbin Model with spatial trend, selecting the spatial lag covariates. The results, however, are in favor of the SAR model with spatial trend. 
@@ -475,8 +475,7 @@ form2d_psanova <- lnSale_Price ~ Fireplaces + Garage_Cars +
     pspl(lnLot_Area, nknots = 20) + 
     pspl(lnTotal_Bsmt_SF, nknots = 20) +
     pspl(lnGr_Liv_Area, nknots = 20) +
-  pspt(Longitude,Latitude, nknots = c(10, 10), 
-       psanova = TRUE)
+  pspt(Longitude,Latitude, nknots = c(10, 10), psanova = TRUE)
 
 durbinformnonlin <- ~ Fireplaces + Garage_Cars +
   pspl(lnLot_Area, nknots = 20) 
@@ -486,6 +485,6 @@ durbinformnonlin <- ~ Fireplaces + Garage_Cars +
 ```{r}
 sp2danovasdm <- pspatfit(form2d_psanova, data = ames_sf1, listw = listW, method = "Chebyshev", type = "sdm", Durbin = durbinformnonlin)
 summary(sp2danovasdm)
-anova(sp2danovasdm, sp2danovasar, lrtest=FALSE)
+anova(sp2danovasdm, sp2danovasar, lrtest = FALSE)
 ```
 # References

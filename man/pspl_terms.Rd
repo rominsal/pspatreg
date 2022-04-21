@@ -220,8 +220,7 @@ summary(gampure)
                         nest_sp1 = c(1, 2, 2), 
                         nest_sp2 = c(1, 2, 2),
                         nest_time = c(1, 2, 2))
- sptanova <- pspatfit(form2, data = unemp_it,
-                      control = list(tol = 1e-2))
+ sptanova <- pspatfit(form2, data = unemp_it)
  summary(sptanova)
  
 
@@ -237,8 +236,7 @@ summary(gampure)
                         nest_sp2 = c(1, 2, 3),
                         nest_time = c(1, 2, 2), 
                         f1t_int = FALSE)
- sptanova2 <- pspatfit(form3, data = unemp_it,
-                       control = list(tol = 1e-1))
+ sptanova2 <- pspatfit(form3, data = unemp_it)
  summary(sptanova2)
  }
 }
