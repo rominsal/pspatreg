@@ -34,9 +34,12 @@ llikc <- function(param, env) {
   X <- env$Xfull
   if (!is.null(env$Zfull)) {
     Z <- env$Zfull
-  } else Z <- matrix(0, nrow = length(y), ncol = 1)
+  } else Z <- matrix(0, nrow = length(y), 
+                     ncol = 1)
   D <- env$D
   sig2u <- env$sig2u
+  np <- env$np
+  np_eff <- env$np_eff
   Wsp <- env$Wsp
   Ifull <- Diagonal(nfull)
   Isp <- Diagonal(nsp)
@@ -80,6 +83,12 @@ llikc <- function(param, env) {
     Zstar <- A2 %*% Z    
   }
   mat <- construct_matrices(Xstar, Zstar, ystar)
+  ####################################################
+  # VIP: We will use formula (5.1), and (5.2) from 
+  # paper Harville (pp. 326).
+  # Then, we DON'T NEED THE COMPUTATION OF P MATRIX.
+  # to evaluate ML function.
+  ####################################################
   if (env$nvarspt > 0 || env$nvarnopar > 0) {
     # MATRIX C IN (12). PAPER SAP
     C <- Matrix( construct_block(
@@ -89,26 +98,33 @@ llikc <- function(param, env) {
       t(mat$ZtZ*env$G_eff)))
     H <- (1/sig2u)*C + D
     Hinv <- solve(H)
-    G <- Diagonal(length(env$G_eff), x = env$G_eff)
-    ## Formulae to compute P, ldetV and ldetV.plus.ldetXtVinvX
-    ## from paper Harville (1977) pp. 326
-    P <- (1/sig2u)*Ifull - 
-      (1/sig2u^2)*cbind(Xstar, Zstar %*% G) %*% Hinv %*% 
-      t(cbind(Xstar, Zstar))
+    b <- as.vector((1/sig2u)*Hinv %*% mat$u)  
+    bfixed <- b[1:np_eff[1]]
+    brandom <- env$G_eff*b[-(1:np_eff[1])]
+    #G <- Diagonal(length(env$G_eff), x = env$G_eff)
+    # P <- (1/sig2u)*Ifull - 
+    #   (1/sig2u^2)*cbind(Xstar, Zstar %*% G) %*% Hinv %*% 
+    #   t(cbind(Xstar, Zstar))
     ldetV <- nfull*log(sig2u) + 
       determinant(Diagonal(length(env$G_eff)) + 
-                            (1/sig2u)*mat$ZtZ*env$G_eff)$modulus    
+              (1/sig2u)*mat$ZtZ*env$G_eff)$modulus    
   }  else { # Only fixed effects
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C 
     Hinv <- solve(H)
-    P <- (1/sig2u)*Ifull - 
-      (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
+    b <- as.vector((1/sig2u)*Hinv %*% mat$u[1:np_eff[1]])   
+    bfixed <- b[1:np_eff[1]]
+    brandom <- 0
+    # P <- (1/sig2u)*Ifull - 
+    #   (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
     ldetV <- nfull*log(sig2u)
   }
-  ystar_P_ystar <- t(ystar) %*% (P %*% ystar)
+  #ystar_P_ystar <- t(ystar) %*% (P %*% ystar)
+  ystar_P_ystar <- t(ystar) %*% 
+    ((1/sig2u*Ifull) %*% 
+       (ystar - Xstar %*% bfixed - Zstar %*% brandom))
   log_likc <- -0.5*(ldetV + ystar_P_ystar) + 
-    nt*ldetA1 + nt*ldetA2
+              nt*ldetA1 + nt*ldetA2
   return(as.numeric(-log_likc))
 }
 ##########################################################
@@ -141,6 +157,8 @@ llikc_reml <- function(param, env) {
   nfull <- env$nfull
   nsp <- env$nsp
   nt <- env$nt
+  np <- env$np
+  np_eff <- env$np_eff
   if ((is.null(nfull) || is.null(nsp)) || is.null(nt))
     stop("nfull or nsp or nt is NULL")
   y <- env$y
@@ -192,36 +210,48 @@ llikc_reml <- function(param, env) {
     Xstar <- A2 %*% X
     Zstar <- A2 %*% Z    
   }
-  mat <- construct_matrices(Xstar, Zstar, ystar) 
+  ####################################################
+  # VIP: We will use formula (5.1), and (5.2) from 
+  # paper Harville (pp. 326).
+  # Then, we DON'T NEED THE COMPUTATION OF P OR V MATRICES.
+  # to evaluate REML function.
+  ####################################################
+  mat <- construct_matrices(Xstar, Zstar, ystar)
   if (env$nvarspt > 0 || env$nvarnopar > 0) {
     # MATRIX C IN (12). PAPER SAP
-    C <- Matrix( 
-      construct_block(mat$XtX, 
-                      t(mat$ZtX*env$G_eff), 
-                      mat$ZtX, 
+    C <- Matrix(
+      construct_block(mat$XtX,
+                      t(mat$ZtX*env$G_eff),
+                      mat$ZtX,
                       t(mat$ZtZ*env$G_eff)))
     H <- (1/sig2u)*C + D
     Hinv <- try(solve(H))
-    if (inherits(Hinv, "try-error")) 
+    if (inherits(Hinv, "try-error"))
       Hinv <- ginv(as.matrix(H))
-    G <- Diagonal(length(env$G_eff), x = env$G_eff)
-    ## Formulae to compute P, ldetV and ldetV.plus.ldetXtVinvX
-    ## from paper Harville (1977) pp. 326
-    P <- (1/sig2u)*Ifull - 
-      (1/sig2u^2)*cbind(Xstar, Zstar %*% G) %*% Hinv %*% 
-      t(cbind(Xstar, Zstar))
+    b <- as.vector((1/sig2u)*Hinv %*% mat$u)  
+    bfixed <- b[1:np_eff[1]]
+    brandom <- env$G_eff*b[-(1:np_eff[1])]
+    #G <- Diagonal(length(env$G_eff), x = env$G_eff)
+    # P <- (1/sig2u)*Ifull -
+    #   (1/sig2u^2)*cbind(Xstar, Zstar %*% G) %*% Hinv %*%
+    #   t(cbind(Xstar, Zstar))
   } else { # Only fixed effects
     C <- Matrix(mat$XtX)
-    H <- (1/sig2u)*C 
+    H <- (1/sig2u)*C
     Hinv <- solve(H)
-    P <- (1/sig2u)*Ifull - 
-      (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
+    # P <- (1/sig2u)*Ifull -
+    #   (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
+    b <- as.vector((1/sig2u)*Hinv %*% mat$u[1:np_eff[1]])   
+    bfixed <- b[1:np_eff[1]]
+    brandom <- 0
   }
   ldetV.plus.ldetXtVinvX <- nfull*log(sig2u) + 
     determinant(H)$modulus
-  ystar_P_ystar <- t(ystar) %*% (P %*% ystar)
+  ystar_P_ystar <- t(ystar) %*% 
+                  ((1/sig2u*Ifull) %*% 
+                   (ystar - Xstar %*% bfixed - Zstar %*% brandom))
   log_likc_reml <- -0.5*(ldetV.plus.ldetXtVinvX + 
-                           ystar_P_ystar) + 
+                           ystar_P_ystar) +  
                     nt*ldetA1 + nt*ldetA2
   return(as.numeric(-log_likc_reml))
 }

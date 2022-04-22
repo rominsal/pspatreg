@@ -28,6 +28,8 @@ fit_pspat <- function(env, con) {
   # Number of parameters
   np <- var_comp$np
   np_eff <- var_comp$np_eff
+  assign("np", np, envir = env)
+  assign("np_eff", np_eff, envir = env)
   # Vector of parameters
   la <- var_comp$la
   if (env$nvarspt > 0) {
@@ -66,6 +68,7 @@ fit_pspat <- function(env, con) {
   # 0 I
   D <- Matrix(diag(c(rep(0, np_eff[1]), 
                              rep(1, sum(np_eff[-1])))))
+  assign("D", D, envir = env)
   env$D <- D
   ## initialize rho,  delta and phi
   if (env$type %in% c("sar", "sdm", "sarar")) 
@@ -144,12 +147,13 @@ fit_pspat <- function(env, con) {
           Ginv <- lG$Ginv
           G_eff <- lG$G_eff
           Ginv_eff <- lG$Ginv_eff
-          env$G <- G
-          env$Ginv <- Ginv
-          env$G_eff <- G_eff
-          env$Ginv_eff <- Ginv_eff
+          assign("G", G, envir = env)
+          assign("Ginv", Ginv, envir = env)
+          assign("G_eff", G_eff, envir = env)
+          assign("Ginv_eff", Ginv_eff, envir = env)
           rm(lG)
           sig2u <- la["sig2u"]
+          assign("sig2u", sig2u, envir = env)
           #if (is.null(weights)) {
           #    w <- as.vector(matrix(1,nrow=length(y))) } else { w <- weights }
           mat <- construct_matrices(Xstar, Zstar, ystar)
@@ -168,10 +172,12 @@ fit_pspat <- function(env, con) {
           names(bfixed) <- gsub("X_", "", colnames(X))
           names(bfixed) <- paste("fixed_", 
                                  names(bfixed), sep = "")
+          assign("bfixed", bfixed, envir = env)
           brandom <- G_eff*b[-(1:np_eff[1])]
           names(brandom) <- gsub("Z_", "", colnames(Z))
           names(brandom) <- paste("random_", 
                                   names(brandom), sep = "")
+          assign("brandom", brandom, envir = env)
           # Compute effective dimensions and variances
           # Only the diagonal of ZtPZ
           dZtPZ <- 1/la[1] * apply((t(Hinv[-(1:np_eff[1]), ]) * 
@@ -298,6 +304,7 @@ fit_pspat <- function(env, con) {
           tauspt <- taunopar <- NULL
           edfspt <- edfnopar <- NULL
           sig2u <- la["sig2u"]
+          assign("sig2u", sig2u, envir = env)
           mat <- construct_matrices(Xstar, Zstar, ystar)
           # MATRIX C IN (12). PAPER SAP
           C <- Matrix(mat$XtX)
@@ -310,7 +317,9 @@ fit_pspat <- function(env, con) {
           names(bfixed) <- gsub("X_", "", colnames(X))
           names(bfixed) <- paste("fixed_", 
                                  names(bfixed), sep = "")
+          assign("bfixed", bfixed, envir = env)
           brandom <- 0
+          assign("brandom", brandom, envir = env)
           ssr <- as.numeric(mat$yty - t(c(bfixed)) %*% 
                               (2*mat$u[1:np_eff[1]] - C %*% b))
           lanew <- c(sig2u)
@@ -321,6 +330,7 @@ fit_pspat <- function(env, con) {
 	      sig2u <- as.numeric((ssr/(length(y) - edftot)))
 	      # Update first component of la with new sig2u
 	      lanew["sig2u"] <- sig2u
+	      assign("sig2u", sig2u, envir = env)
 	      # Update rho and delta
 	      dla <- mean(abs(la - lanew))
 	      la <- lanew
@@ -343,7 +353,6 @@ fit_pspat <- function(env, con) {
 	        if (dla < con$tol1) break
 	      } 
 	  } # end for (it in 1:maxit)
-    env$sig2u <- sig2u
     if (!(env$type %in% c("sim", "slx")) || env$cor == "ar1") { 
       # Optimize using spatial and/or correlation parameters
       param <- namesparam <- NULL
@@ -420,16 +429,13 @@ fit_pspat <- function(env, con) {
 	  eta <- X %*% bfixed + Z %*% brandom #+ offset
 	} else eta <- X %*% bfixed # Only fixed effects
 #  FINAL ESTIMATES OF PARAMETERS
-  sig2u <- la["sig2u"]
-  env$sig2u <- sig2u
-  env$tauspt <- tauspt
-  env$taunopar <- taunopar
-  env$edfspt <- edfspt
-  env$edfnopar <- edfnopar
-  env$edftot <- edftot
-  env$edftot <- edftot
-  env$bfixed <- bfixed
-  env$brandom <- brandom
+  #sig2u <- la["sig2u"]
+  #assign("sig2u", sig2u, envir = env)
+  assign("tauspt", tauspt, envir = env)
+  assign("taunopar", taunopar, envir = env)
+  assign("edfspt", edfspt, envir = env)
+  assign("edfnopar", edfnopar, envir = env)
+  assign("edftot", edftot, envir = env)
   # Valor de log.lik y log.lik.reml en el óptimo
   llikc_reml_optim <- -llikc_reml(param_optim, env)
   llikc_optim <- -llikc(param_optim, env)

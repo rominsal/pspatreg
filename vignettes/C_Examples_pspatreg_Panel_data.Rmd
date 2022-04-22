@@ -1,7 +1,7 @@
 ---
 title: "Using pspatreg with spatial panel data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
-date: "2022-04-20"
+date: "2022-04-22"
 output: 
   rmarkdown::html_vignette:
     number_sections: yes
@@ -121,13 +121,20 @@ summary(Linear_WITHIN_sar_REML)
 ##         "year"))
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)    
-## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16 ***
-## partrate   0.393087   0.023315 16.8595 < 2.2e-16 ***
-## agri      -0.036052   0.027267 -1.3222 0.1862167    
-## cons      -0.166196   0.044510 -3.7339 0.0001928 ***
-## serv       0.012378   0.020597  0.6009 0.5479300    
-## rho        0.265671   0.018858 14.0880 < 2.2e-16 ***
+##             Estimate Std. Error t value  Pr(>|t|)
+## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16
+## partrate   0.393087   0.023315 16.8595 < 2.2e-16
+## agri      -0.036052   0.027267 -1.3222 0.1862167
+## cons      -0.166196   0.044510 -3.7339 0.0001928
+## serv       0.012378   0.020597  0.6009 0.5479300
+## rho        0.265671   0.018858 14.0880 < 2.2e-16
+##              
+## empgrowth ***
+## partrate  ***
+## agri         
+## cons      ***
+## serv         
+## rho       ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -286,13 +293,20 @@ summary(Linear_WITHIN_sar_REML)
 ##         "year"))
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)    
-## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16 ***
-## partrate   0.393087   0.023315 16.8595 < 2.2e-16 ***
-## agri      -0.036052   0.027267 -1.3222 0.1862167    
-## cons      -0.166196   0.044510 -3.7339 0.0001928 ***
-## serv       0.012378   0.020597  0.6009 0.5479300    
-## rho        0.265671   0.018858 14.0880 < 2.2e-16 ***
+##             Estimate Std. Error t value  Pr(>|t|)
+## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16
+## partrate   0.393087   0.023315 16.8595 < 2.2e-16
+## agri      -0.036052   0.027267 -1.3222 0.1862167
+## cons      -0.166196   0.044510 -3.7339 0.0001928
+## serv       0.012378   0.020597  0.6009 0.5479300
+## rho        0.265671   0.018858 14.0880 < 2.2e-16
+##              
+## empgrowth ***
+## partrate  ***
+## agri         
+## cons      ***
+## serv         
+## rho       ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -327,12 +341,18 @@ summary(Linear_WITHIN_sar_ML)
 ## lambda 0.266004   0.020636   12.89 < 2.2e-16 ***
 ## 
 ## Coefficients:
-##            Estimate Std. Error t-value  Pr(>|t|)    
-## empgrowth -0.129530   0.014078 -9.2009 < 2.2e-16 ***
-## partrate   0.391597   0.023464 16.6894 < 2.2e-16 ***
-## agri      -0.036771   0.027219 -1.3510 0.1767102    
-## cons      -0.166896   0.044420 -3.7572 0.0001718 ***
-## serv       0.012191   0.020559  0.5930 0.5532105    
+##            Estimate Std. Error t-value  Pr(>|t|)
+## empgrowth -0.129530   0.014078 -9.2009 < 2.2e-16
+## partrate   0.391597   0.023464 16.6894 < 2.2e-16
+## agri      -0.036771   0.027219 -1.3510 0.1767102
+## cons      -0.166896   0.044420 -3.7572 0.0001718
+## serv       0.012191   0.020559  0.5930 0.5532105
+##              
+## empgrowth ***
+## partrate  ***
+## agri         
+## cons      ***
+## serv         
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -349,27 +369,27 @@ summary(imp_parvar_sar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##            Estimate Std. Error   t value Pr(>|t|)
-## empgrowth -0.177647   0.018747 -9.476139   0.0000
-## partrate   0.536324   0.034517 15.537976   0.0000
-## agri      -0.049446   0.038098 -1.297852   0.1943
-## cons      -0.224605   0.060875 -3.689593   0.0002
-## serv       0.018060   0.028347  0.637128   0.5240
+## empgrowth -0.177719   0.018771 -9.467653   0.0000
+## partrate   0.536770   0.035194 15.251545   0.0000
+## agri      -0.050101   0.038688 -1.294982   0.1953
+## cons      -0.228133   0.060288 -3.784020   0.0002
+## serv       0.017414   0.028546  0.610017   0.5419
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##            Estimate Std. Error   t value Pr(>|t|)
-## empgrowth -0.133674   0.013674 -9.775695   0.0000
-## partrate   0.403553   0.023602 17.098458   0.0000
-## agri      -0.037201   0.028663 -1.297862   0.1943
-## cons      -0.169028   0.045745 -3.695026   0.0002
-## serv       0.013595   0.021346  0.636871   0.5242
+## empgrowth -0.133728   0.013692 -9.767018   0.0000
+## partrate   0.403884   0.024104 16.755808   0.0000
+## agri      -0.037687   0.029077 -1.296127   0.1949
+## cons      -0.171646   0.045167 -3.800262   0.0001
+## serv       0.013115   0.021507  0.609788   0.5420
 ## 
 ##  Indirect Parametric Impacts (sar) 
 ##             Estimate Std. Error    t value Pr(>|t|)
-## empgrowth -0.0439721  0.0061546 -7.1445419   0.0000
-## partrate   0.1327714  0.0149574  8.8766046   0.0000
-## agri      -0.0122448  0.0095139 -1.2870437   0.1981
-## cons      -0.0555776  0.0158241 -3.5122181   0.0004
-## serv       0.0044656  0.0070336  0.6348952   0.5255
+## empgrowth -0.0439908  0.0061601 -7.1412957   0.0000
+## partrate   0.1328863  0.0150841  8.8097216   0.0000
+## agri      -0.0124135  0.0096898 -1.2810961   0.2002
+## cons      -0.0564868  0.0158098 -3.5728936   0.0004
+## serv       0.0042989  0.0070732  0.6077681   0.5433
 ```
 
 
@@ -447,11 +467,16 @@ summary(gam)
 ## pspatfit(formula = formgam, data = unemp_it)
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value  Pr(>|t|)    
-## (Intercept) 27.146139   1.350986  20.0936 < 2.2e-16 ***
-## partrate    -0.376095   0.018216 -20.6461 < 2.2e-16 ***
-## agri         0.346387   0.020058  17.2691 < 2.2e-16 ***
-## cons        -0.183073   0.055345  -3.3079 0.0009536 ***
+##               Estimate Std. Error  t value  Pr(>|t|)
+## (Intercept) 27.146139   1.350986  20.0936 < 2.2e-16
+## partrate    -0.376095   0.018216 -20.6461 < 2.2e-16
+## agri         0.346387   0.020058  17.2691 < 2.2e-16
+## cons        -0.183073   0.055345  -3.3079 0.0009536
+##                
+## (Intercept) ***
+## partrate    ***
+## agri        ***
+## cons        ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -486,12 +511,18 @@ summary(gamsar)
 ##     type = "sar", method = "eigen")
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value  Pr(>|t|)    
-## (Intercept) 10.896654   0.940776  11.5826 < 2.2e-16 ***
-## partrate    -0.164349   0.011958 -13.7440 < 2.2e-16 ***
-## agri         0.093816   0.013100   7.1613 1.051e-12 ***
-## cons        -0.092744   0.036110  -2.5684   0.01028 *  
-## rho          0.658605   0.011280  58.3864 < 2.2e-16 ***
+##               Estimate Std. Error  t value  Pr(>|t|)
+## (Intercept) 10.896654   0.940776  11.5826 < 2.2e-16
+## partrate    -0.164349   0.011958 -13.7440 < 2.2e-16
+## agri         0.093816   0.013100   7.1613 1.051e-12
+## cons        -0.092744   0.036110  -2.5684   0.01028
+## rho          0.658605   0.011280  58.3864 < 2.2e-16
+##                
+## (Intercept) ***
+## partrate    ***
+## agri        ***
+## cons        *  
+## rho         ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -540,12 +571,18 @@ summary(gamsem)
 ##     type = "sem", method = "eigen")
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value Pr(>|t|)    
-## (Intercept) 19.242400   1.161474  16.5672  < 2e-16 ***
-## partrate    -0.216734   0.021048 -10.2971  < 2e-16 ***
-## agri         0.020094   0.015038   1.3362  0.18160    
-## cons        -0.080241   0.039193  -2.0473  0.04073 *  
-## delta        0.751408   0.010967  68.5127  < 2e-16 ***
+##               Estimate Std. Error  t value Pr(>|t|)
+## (Intercept) 19.242400   1.161474  16.5672  < 2e-16
+## partrate    -0.216734   0.021048 -10.2971  < 2e-16
+## agri         0.020094   0.015038   1.3362  0.18160
+## cons        -0.080241   0.039193  -2.0473  0.04073
+## delta        0.751408   0.010967  68.5128  < 2e-16
+##                
+## (Intercept) ***
+## partrate    ***
+## agri           
+## cons        *  
+## delta       ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -594,11 +631,16 @@ summary(sp3danova)
 ##     method = "Chebyshev")
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)    
-## Intercept  4.016850   3.015789  1.3319    0.1830    
-## partrate   0.152599   0.021014  7.2617 5.232e-13 ***
-## agri      -0.018676   0.017880 -1.0445    0.2964    
-## cons      -0.041459   0.038782 -1.0690    0.2852    
+##             Estimate Std. Error t value  Pr(>|t|)
+## Intercept  4.016850   3.015789  1.3319    0.1830
+## partrate   0.152599   0.021014  7.2617 5.232e-13
+## agri      -0.018676   0.017880 -1.0445    0.2964
+## cons      -0.041459   0.038782 -1.0690    0.2852
+##              
+## Intercept    
+## partrate  ***
+## agri         
+## cons         
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -653,11 +695,16 @@ summary(sp3danova_restr)
 ##     method = "Chebyshev")
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)    
-## Intercept  4.640481   3.012467  1.5404    0.1236    
-## partrate   0.152941   0.020992  7.2856 4.404e-13 ***
-## agri      -0.025368   0.017801 -1.4251    0.1543    
-## cons      -0.024259   0.038929 -0.6232    0.5332    
+##             Estimate Std. Error t value  Pr(>|t|)
+## Intercept  4.640481   3.012467  1.5404    0.1236
+## partrate   0.152941   0.020992  7.2856 4.404e-13
+## agri      -0.025368   0.017801 -1.4251    0.1543
+## cons      -0.024259   0.038929 -0.6232    0.5332
+##              
+## Intercept    
+## partrate  ***
+## agri         
+## cons         
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -707,13 +754,20 @@ summary(sp3danovasarar1)
 ##     type = "sar", method = "Chebyshev", cor = "ar1")
 ## 
 ##  Parametric Terms 
-##              Estimate Std. Error t value  Pr(>|t|)    
-## Intercept  5.0675604  3.0611609  1.6554   0.09797 .  
-## partrate   0.1485791  0.0205497  7.2302 6.555e-13 ***
-## agri      -0.0349064  0.0201957 -1.7284   0.08405 .  
-## cons      -0.0092443  0.0411775 -0.2245   0.82239    
-## rho        0.0454491  0.0218250  2.0824   0.03741 *  
-## phi        0.3149484  0.0138865 22.6802 < 2.2e-16 ***
+##              Estimate Std. Error t value  Pr(>|t|)
+## Intercept  5.0678900  3.0611564  1.6555   0.09795
+## partrate   0.1485784  0.0205497  7.2302 6.557e-13
+## agri      -0.0349079  0.0201957 -1.7285   0.08404
+## cons      -0.0092429  0.0411776 -0.2245   0.82242
+## rho        0.0453863  0.0217972  2.0822   0.03744
+## phi        0.3149515  0.0138863 22.6807 < 2.2e-16
+##              
+## Intercept .  
+## partrate  ***
+## agri      .  
+## cons         
+## rho       *  
+## phi       ***
 ## ---
 ## Signif. codes:  
 ## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -728,7 +782,7 @@ summary(sp3danovasarar1)
 ## f1    10.202
 ## f2     9.522
 ## ft     7.855
-## f12   43.122
+## f12   43.121
 ## f1t    0.000
 ## f2t    0.000
 ## f12t 102.109
@@ -736,7 +790,7 @@ summary(sp3danovasarar1)
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total: 197.532 
-##  Sigma: 1.56499 
+##  Sigma: 1.56498 
 ##  AIC:  5582.27 
 ##  BIC:  6730.48
 ```
@@ -749,9 +803,12 @@ anova(gam, gamsar, lrtest = TRUE)
 ```
 
 ```
-##         logLik rlogLik    edf    AIC    BIC LRtest p.val
-## gam    -4719.1 -4728.3 13.196 9464.6 9559.7             
-## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685     0
+##         logLik rlogLik    edf    AIC    BIC LRtest
+## gam    -4719.1 -4728.3 13.196 9464.6 9559.7       
+## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685
+##        p.val
+## gam         
+## gamsar     0
 ```
 
 ```r
@@ -759,9 +816,12 @@ anova(gam, gamsar, lrtest = TRUE)
 ```
 
 ```
-##         logLik rlogLik    edf    AIC    BIC LRtest p.val
-## gam    -4719.1 -4728.3 13.196 9464.6 9559.7             
-## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685     0
+##         logLik rlogLik    edf    AIC    BIC LRtest
+## gam    -4719.1 -4728.3 13.196 9464.6 9559.7       
+## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685
+##        p.val
+## gam         
+## gamsar     0
 ```
 
 ```r
@@ -779,12 +839,12 @@ anova(gam, sp3danova_restr, lrtest = TRUE)
 ```
 
 ```
-##                  logLik rlogLik     edf    AIC    BIC
-## gam             -4719.1 -4728.3  13.196 9464.6 9559.7
-## sp3danova_restr -2809.0 -2808.1 211.915 6041.8 7252.9
-##                 LRtest p.val
-## gam                         
-## sp3danova_restr 3840.4     0
+##                  logLik rlogLik     edf    AIC
+## gam             -4719.1 -4728.3  13.196 9464.6
+## sp3danova_restr -2809.0 -2808.1 211.915 6041.8
+##                    BIC LRtest p.val
+## gam             9559.7             
+## sp3danova_restr 7252.9 3840.4     0
 ```
 
 ```r
@@ -792,9 +852,12 @@ anova(sp3danova_restr, sp3danovasarar1, lrtest = FALSE)
 ```
 
 ```
-##                  logLik rlogLik    edf    AIC    BIC
-## sp3danova_restr -2809.0 -2808.1 211.91 6041.8 7252.9
-## sp3danovasarar1 -2593.6 -2593.1 197.53 5582.3 6713.1
+##                  logLik rlogLik    edf    AIC
+## sp3danova_restr -2809.0 -2808.1 211.91 6041.8
+## sp3danovasarar1 -2593.6 -2593.1 197.53 5582.3
+##                    BIC
+## sp3danova_restr 7252.9
+## sp3danovasarar1 6713.1
 ```
 
 Plot of non-parametric terms
@@ -807,9 +870,12 @@ names(terms_nopar)
 ```
 
 ```
-## [1] "fitted_terms"           "se_fitted_terms"       
-## [3] "fitted_terms_fixed"     "se_fitted_terms_fixed" 
-## [5] "fitted_terms_random"    "se_fitted_terms_random"
+## [1] "fitted_terms"          
+## [2] "se_fitted_terms"       
+## [3] "fitted_terms_fixed"    
+## [4] "se_fitted_terms_fixed" 
+## [5] "fitted_terms_random"   
+## [6] "se_fitted_terms_random"
 ```
 
 ```r
@@ -831,21 +897,25 @@ summary(imp_nparvar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##           Estimate Std. Error   t value Pr(>|t|)
-## partrate  0.156344   0.022278  7.017783   0.0000
-## agri     -0.035473   0.021603 -1.642025   0.1006
-## cons     -0.010993   0.043013 -0.255582   0.7983
+## partrate  0.156332   0.022276  7.017959   0.0000
+## agri     -0.035473   0.021602 -1.642095   0.1006
+## cons     -0.010991   0.043010 -0.255546   0.7983
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##           Estimate Std. Error   t value Pr(>|t|)
-## partrate  0.149230   0.021038  7.093247   0.0000
-## agri     -0.033847   0.020609 -1.642382   0.1005
-## cons     -0.010499   0.041051 -0.255759   0.7981
+## partrate  0.149229   0.021038  7.093211   0.0000
+## agri     -0.033849   0.020609 -1.642450   0.1005
+## cons     -0.010498   0.041051 -0.255723   0.7982
 ## 
 ##  Indirect Parametric Impacts (sar) 
-##             Estimate  Std. Error     t value Pr(>|t|)
-## partrate  0.00711368  0.00349444  2.03571345   0.0418
-## agri     -0.00162614  0.00131286 -1.23862636   0.2155
-## cons     -0.00049413  0.00216195 -0.22855802   0.8192
+##             Estimate  Std. Error     t value
+## partrate  0.00710342  0.00348963  2.03558132
+## agri     -0.00162388  0.00131103 -1.23862314
+## cons     -0.00049335  0.00215887 -0.22852314
+##          Pr(>|t|)
+## partrate   0.0418
+## agri       0.2155
+## cons       0.8192
 ```
 
 
