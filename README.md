@@ -61,4 +61,4 @@ The package includes three vignettes:
 
 - Vignette A: Introduction to the use of the package and the statistical theory behind the models.
 - Vignette B: Includes several examples using the well-known AMES database for pure spatial data. The examples include both spatial trends and spatial lags (as usual in spatial econometric specifications). The vignette B also compare results of **pspatreg** with the well-kown **spatialreg** package for parametric specifications. 
-- Vignette C: Include examples with spatial panel data (spatio-temporal data). The examples include spatio-temporal trends, non-parametric covariates and spatial lags. The vignette C also compare results of **pspatreg** with **spml** package for parametric specifications.  
+- Vignette C: Include examples with spatial panel data (spatio-temporal data). The examples include spatio-temporal trends, non-parametric covariates and spatial lags. The vignette C also compare results of **pspatreg** with **splm** package for parametric specifications.  
