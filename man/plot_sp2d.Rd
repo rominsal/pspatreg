@@ -81,7 +81,6 @@ plot_sp2d(geospit2d, data = unemp_it_sf_short)
 ######## EXAMPLE 2D WITH AMES DATA 
 ######## getting and preparing the data
 library(spdep)
-library(dbscan)
 ames <- AmesHousing::make_ames() # Raw Ames Housing Data
 ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
 ames_sf$Longitude <- ames$Longitude
@@ -90,7 +89,6 @@ ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
 ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
 ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
 ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
-
 ########### Constructing the spatial weights matrix
 ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
 coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
