@@ -34,21 +34,20 @@ And the development version from [GitHub](https://github.com/) with:
 
 In recent times there is a growing interest en the development of flexible semiparametric models
 espacially for the modelling of spatial and spatio-temporal data. The package **pspatreg** is intended 
-to provide some tools, based on P-Splines methodology, for the estimation and inference with these type of 
+to provide some tools, based on P-Splines methodology, for the estimation and inference of these type of 
 models from a spatial econometrics perspective. 
 
 In this sense, the type of spatial econometric models included are ps-sar, ps-sem, 
-ps.sarar, ps-slx, or ps-Durbin. All the specifications can include parametric and non-parametric covariates, 
+ps-sarar, ps-slx, or ps-Durbin. All the specifications can include parametric and non-parametric covariates, 
 spatial or spatio-temporal non-parametric trends and spatial lags of the dependent variable and/or 
 the noise of the model. 
 
 The non-parametric terms (either trends or covariates) are modeled using P-Splines. Furthermore, 
 the non-parametric trend can be decomposed in an ANOVA way including main and interactions 
-effects of 2nd and 3rd order (for spatio-temporal trends). 
+effects of 2nd and 3rd order (for spatio-temporal trends). For every model, the estimation method 
+can be Restricted Maximum Likelihood (REML) or Maximum Likelihood (ML).
 
-For every model, the estimation method can be Restricted Maximum Likelihood (REML) or Maximum Likelihood (ML).
-
-In addition to estimation and inference procedures, he package also provides functions to compute:
+In addition to estimation and inference procedures, the package also provides functions to compute:
 
 - Non-parametric and parametric impacts (including inference about them).
 - Plots of non-parametric impacts and non-parametric terms. 
