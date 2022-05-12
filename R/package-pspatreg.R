@@ -235,7 +235,7 @@
 #' @importFrom methods as
 #' @importFrom minqa bobyqa
 #' @importFrom numDeriv hessian
-#' @importFrom plm plm pdata.frame Within
+#' @importFrom plm plm pdata.frame Between Within index
 #' @importFrom Rdpack reprompt
 #' @importFrom sf st_as_sf st_drop_geometry st_coordinates
 #' @importFrom sf st_geometry_type

@@ -97,7 +97,8 @@
 #'    a similar argument.
 #' @param cor Type of temporal correlation for temporal data. Possible values 
 #'   are \code{"none"} (default) or \code{"ar1"}.
-#' @param demean Logical value to include a demeaning 
+#' @
+#' param demean Logical value to include a demeaning 
 #'   for panel data. Default = `FALSE`. 
 #'   The demeaning is done previously to the estimation for
 #'   both parametric and nonparametric terms. It is not possible
@@ -954,12 +955,12 @@ pspatfit <- function(formula, data, na.action,
   cl <- match.call()
   if (any(grepl("pspt", formula))) 
     formula <- update(formula, . ~ . - 1)
-  if (demean) {
-    if (any(grepl("pspt", formula))) 
-      stop("pspt terms are not allowed with demeaning")
-    if (is.null(index))
-      stop("index argument must be provided with demeaning")
-    formula <- update(formula, . ~ . - 1)
+  if (!is.null(index)) {
+    if (demean) {
+      if (any(grepl("pspt", formula))) 
+        stop("pspt terms are not allowed with demeaning")
+      formula <- update(formula, . ~ . - 1)
+    }
     var_form <- all.vars(formula)
     lhs <- var_form[1]
     rhs <- paste(var_form[2:length(var_form)],
@@ -967,16 +968,36 @@ pspatfit <- function(formula, data, na.action,
     pformula <- as.formula(paste(lhs, rhs, 
                                  sep = " ~ "))
     pmodel <- plm::plm(formula = pformula,
-                    data = data, 
-                    index = index,
-                    effect = eff_demean,
-                    model = "within")
+                       data = data, 
+                       index = index,
+                       effect = eff_demean,
+                       model = "within")
     pdata <- pmodel$model
-    for (i in 1:ncol(pdata)) {
-      pdata[[i]] <- plm::Within(pdata[[i]],
-                              effect = eff_demean)
+    if (demean) {
+      for (i in 1:ncol(pdata)) {
+        if (!dynamic) {
+          vector_meansi <- plm::Between(pdata[[i]], 
+                                        effect = eff_demean)
+        } else {
+          if (eff_demean == "individual") {
+            vector_meansi <- plm::Between(lag(pdata[[i]]), 
+                                          na.rm = TRUE, 
+                                          effect = eff_demean)
+            # Impute NA
+            vector_meansi[which(is.na(vector_meansi))] <- 
+              vector_meansi[which(is.na(vector_meansi)) + 1]
+          }
+          else if (eff_demean == "time") {
+            vector_meansi <- plm::Between(pdata[[i]], 
+                                          effect = eff_demean)
+          } else {
+            stop("In dynamic models with demeaning, the value of 
+                 argument eff_demean must be individual or time")
+          } 
+        }
+        pdata[[i]] <- pdata[[i]] - vector_meansi
+      }
     }
-    pdata <- cbind(attr(pdata, "index"), pdata)
   }
   mf <- match.call(expand.dots = TRUE)
   m <- match(c("formula", "data", "offset"), 
@@ -984,11 +1005,10 @@ pspatfit <- function(formula, data, na.action,
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(model.frame)
-  if (!demean)  
+  if (is.null(index))  
     mf <- eval(mf, envir = parent.frame())
   else {
-    mf$data <- as.name("pdata")
-    mf <- eval(mf, envir = pdata)
+    mf <- pdata
   }
   na.act <- attr(mf, "na.action")
   y <- as.numeric(model.response(mf, "numeric"))
@@ -1121,13 +1141,18 @@ pspatfit <- function(formula, data, na.action,
     Xspt <- Zspt <- dsptlist <- cspt <- NULL
     nknotsspt <- pordspt <- bdegspt <- decomspt <- NULL
   } # if (!is.null(names_varspt))
-  if (!is.null(Wsp)) nsp <- nrow(Wsp) 
-  else if (!is.null(sp1)) {
+  if (inherits(mf, "pdata.frame")) {
+    # It is a panel...
+    nsp <- length(unique(plm::index(mf)[, 1]))
+    nt <- length(unique(plm::index(mf)[, 2]))
+  } else if (!is.null(Wsp)) {
+    nsp <- nrow(Wsp)
+  } else if (!is.null(sp1)) {
     if (!is.null(time)) #3d case
       nsp <- length(unique(sp1)) 
     else nsp <- length(sp1) #2d case
   } else nsp <- nfull
-  if (!is.null(time)) 
+  if (!is.null(time) && (!inherits(mf, "pdata.frame"))) 
     nt <- length(unique(time))  
   else if (nfull > nsp) {
     ##  spatio-temporal data but working in 2d...
