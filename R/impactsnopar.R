@@ -17,8 +17,8 @@
 #' @param obj \emph{pspatfit} object fitted using \code{\link{pspatfit}} function. 
 #' @param listw should be a spatial neighbours list object created for example by \code{nb2listw} from \code{spdep} package. 
 #' It can also be a spatial weighting matrix of order (NxN) instead of a listw neighbours list object.
-#' @param conflevel numerical value for the confidence interval of the
-#'    impact functions. Default 0.95.
+#' @param alpha numerical value for the significance level of the pointwise 
+#'   confidence interval of the impact functions. Default 0.05.
 #' @param viewplot Default `TRUE` to plot impacts. If FALSE use \code{\link{plot_impactsnopar}} to plot impacts
 #' @param smooth Default `TRUE`. Whether to smooth fitted impacts or not.
 #' @param span span for the kernel of the smoothing (see \code{\link{loess}} 
@@ -171,7 +171,7 @@
 #'                              viewplot = TRUE)
 #'
 #' @export
-impactsnopar <- function(obj, listw = NULL, conflevel = 0.95, 
+impactsnopar <- function(obj, listw = NULL, alpha = 0.05, 
                          viewplot = TRUE, smooth = TRUE, 
                          span = c(0.1, 0.1, 0.2)) {
   type <- obj$type
@@ -202,7 +202,7 @@ impactsnopar <- function(obj, listw = NULL, conflevel = 0.95,
   fitsall <- fit_terms(obj, variables)
   fits <- fitsall$fitted_terms
   sefits <- fitsall$se_fitted_terms
-  crval <- qnorm((1 - conflevel)/2, mean = 0, 
+  crval <- qnorm(alpha/2, mean = 0, 
                  sd = 1, lower.tail = FALSE)
   fitsup <- fits + crval*sefits
   fitslow <- fits - crval*sefits
