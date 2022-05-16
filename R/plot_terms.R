@@ -10,8 +10,8 @@
 #'
 #' @param fitterms object returned from \code{\link{fit_terms}} function.
 #' @param data dataframe or sf with the data. 
-#' @param conflevel numerical value for the confidence interval of the
-#'   term. Default 0.95.
+#' @param alpha numerical value for the significance level of the pointwise 
+#'   confidence intervals of the nonlinear terms. Default 0.05.
 #' @param listw used to compute spatial lags for Durbin specifications. 
 #'   Default =  `NULL`
 #' @param dynamic Logical value to set a dynamic model.
@@ -69,7 +69,7 @@
 #' plot_terms(terms_nopar, unemp_it_short)
 #'  
 #' @export
-plot_terms <- function(fitterms, data, conflevel = 0.95, 
+plot_terms <- function(fitterms, data, alpha = 0.05, 
                        listw = NULL,  
                        dynamic = FALSE, 
                        nt = NULL) {
@@ -89,7 +89,7 @@ plot_terms <- function(fitterms, data, conflevel = 0.95,
   fit_random <- fitterms$fitted_terms_random
   se_fit_random <- fitterms$se_fitted_terms_random
   variables <- colnames(fit)
-  crval <- qnorm((1 - conflevel)/2, mean = 0, 
+  crval <- qnorm(alpha/2, mean = 0, 
                  sd = 1, lower.tail = FALSE)
   for (i in 1:length(variables)) {
     name_var <- variables[i]

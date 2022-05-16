@@ -114,7 +114,7 @@ fit_terms <- function(object, variables){
   se_fitted_terms <- se_fitted_terms_fixed <- se_fitted_terms_random <- NULL
   for (i in 1:length(variables)) {
     var_name <- variables[i]
-    if (grepl("spttrend",var_name)) {
+    if (grepl("spttrend", var_name)) {
        time <- object$time
        if (psanova) {# psanova=TRUE
          if (!is.null(time)) { # 3d
