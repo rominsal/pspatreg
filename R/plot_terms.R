@@ -20,6 +20,8 @@
 #'   Default = `FALSE`.
 #' @param nt  Number of temporal periods. It is needed
 #'   for dynamic models.  
+#' @param decomposition Plot the decomposition of term in
+#'   random and fixed effects.   
 #'
 #' @return list with the plots of the terms for each non-parametric 
 #'   covariate included in the object returned from \code{\link{fit_terms}}.
@@ -69,10 +71,13 @@
 #' plot_terms(terms_nopar, unemp_it_short)
 #'  
 #' @export
-plot_terms <- function(fitterms, data, alpha = 0.05, 
+plot_terms <- function(fitterms, 
+                       data, 
+                       alpha = 0.05, 
                        listw = NULL,  
                        dynamic = FALSE, 
-                       nt = NULL) {
+                       nt = NULL,
+                       decomposition = FALSE) {
   if (inherits(data, "sf"))
     data <- st_drop_geometry(data)
   nfull <- nrow(data)
@@ -138,7 +143,7 @@ plot_terms <- function(fitterms, data, alpha = 0.05,
     ord <- order(var)
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
-    par(mfrow = c(2, 1))
+    if (decomposition) par(mfrow = c(2, 1))
     plot(var[ord], fit_var[ord], 
          type = "l",
          ylab = paste("f(", name_var, ")"), 
@@ -151,14 +156,18 @@ plot_terms <- function(fitterms, data, alpha = 0.05,
          cex.main = 1.0,
          main = paste("Term: ", paste("f(",name_var,")")),
          sub = "Pointwise confidence intervals in dashed lines")
-    lines(var[ord], up_fit_var[ord], 
-          xlab = "", 
+    lines(var[ord], 
+          up_fit_var[ord],
+          ylim = c(min(low_fit_var), max(up_fit_var)),          
+          xlab = "",
           ylab = "", 
           type = "l", 
           col = 2, 
           lty = 2, 
           lwd = 1.5)
-    lines(var[ord], low_fit_var[ord], 
+    lines(var[ord], 
+          low_fit_var[ord], 
+          ylim = c(min(low_fit_var), max(up_fit_var)),
           xlab = "",  
           ylab = "", 
           type = "l", 
@@ -166,34 +175,40 @@ plot_terms <- function(fitterms, data, alpha = 0.05,
           lty = 2, 
           lwd = 1.5)
     abline(a = 0, b = 0)
-    plot(var[ord], fit_var[ord], 
-         type = "l",
-         ylab = paste("f(",name_var,")"), 
-         xlab = name_var,
-         ylim = c(min(low_fit_var), max(up_fit_var)), 
-         cex.lab = 1.0, 
-         col = 2, 
-         lty = 1, 
-         lwd = 2,
-         cex.main = 1.0,
-         main = paste("Decomposition of ", 
-                      paste("f(",name_var,")")),
-         sub = paste("Global (red), Fixed (green) and Random (blue) Terms"))
-    lines(var[ord], fit_var_fixed[ord], 
-          xlab = "", 
-          ylab = "", 
-          type = "l", 
-          col = 3, 
-          lty = 2, 
-          lwd = 2)
-    lines(var[ord], fit_var_random[ord], 
-          xlab = "", 
-          ylab = "", 
-          type = "l", 
-          col = 4, 
-          lty = 3, 
-          lwd = 2)
-    abline(a = 0, b = 0)
+    if (decomposition) {
+      plot(var[ord], 
+           fit_var[ord], 
+           type = "l",
+           ylab = paste("f(",name_var,")"), 
+           xlab = name_var,
+           ylim = c(min(low_fit_var), max(up_fit_var)), 
+           cex.lab = 1.0, 
+           col = 2, 
+           lty = 1, 
+           lwd = 2,
+           cex.main = 1.0,
+           main = paste("Decomposition of ", 
+                        paste("f(",name_var,")")),
+           sub = paste("Global (red), Fixed (green) and Random (blue) Terms"))
+      lines(var[ord], 
+            fit_var_fixed[ord], 
+            ylim = c(min(low_fit_var), max(up_fit_var)), 
+            xlab = "", 
+            ylab = "", 
+            type = "l", 
+            col = 3, 
+            lty = 2, 
+            lwd = 2)
+      lines(var[ord], 
+            fit_var_random[ord], 
+            xlab = "", 
+            ylab = "", 
+            type = "l", 
+            col = 4, 
+            lty = 3, 
+            lwd = 2)
+      abline(a = 0, b = 0)
+    }
     readline(prompt = "Press [enter] to continue")
   }
 }

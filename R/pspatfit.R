@@ -1063,7 +1063,7 @@ pspatfit <- function(formula, data, na.action,
                                    !grepl("pspt", colnames(Xpar))]
     Xpar <- Xpar[, names_varpar, drop = FALSE]
     nvarpar <- length(names_varpar)
-  }
+  } else Xpar <- NULL
   if (nvarspt > 0) {
     varspt <- names_varspt
     Bi <- mf[, c(varspt)]

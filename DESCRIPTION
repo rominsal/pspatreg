@@ -55,7 +55,7 @@ Imports:
 Suggests:
     knitr (>= 1.37),
     rmarkdown (>= 2.12)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 RdMacros: Rdpack
 URL: https://github.com/rominsal/pspatreg

@@ -119,13 +119,6 @@ Dynamic models include a temporal lag of the dependent
 variable in the right-hand side of the equation.
 Default = `FALSE`.}
 
-\item{demean}{Logical value to include a demeaning 
-for panel data. Default = `FALSE`. 
-The demeaning is done previously to the estimation for
-both parametric and nonparametric terms. It is not possible
-to set \code{demean = TRUE} when spatio-temporal trends
-are included.}
-
 \item{eff_demean}{Type of demeaning for panel data.
 Possible values are \code{"individual"} (default),
 \code{"time"} and \code{"twoways"}.}

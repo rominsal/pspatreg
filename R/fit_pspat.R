@@ -495,6 +495,7 @@ fit_pspat <- function(env, con) {
     XZstar <- XZstar[, 1:np_eff]
     DG <- 0
   }
+  #browser()
   XZt_Rinv_XZ <- (1/sig2u)*crossprod(XZstar)
   Var_By <- as(solve(XZt_Rinv_XZ + DG, tol = 1e-30),
                "dpoMatrix")
@@ -509,6 +510,7 @@ fit_pspat <- function(env, con) {
     names(seby_brandom) <- names(brandom)
   } else seby_brandom <- NULL
   ## Frequentist Covariance Matrix
+  #browser()
   Var_Fr <- Var_By %*% XZt_Rinv_XZ %*% Var_By
   rownames(Var_Fr) <- colnames(Var_Fr) <- c(names(bfixed), 
                                             names(brandom))

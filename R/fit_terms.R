@@ -283,6 +283,7 @@ fit_terms <- function(object, variables){
         colnames(se_fitted_terms_random)[1] <- "spttrend"
       }
     } else { # No spttrend
+      # browser()
       Xi <- X[, grepl(var_name, colnames(X)), drop = FALSE]
       bfixed_i <- bfixed[grepl(var_name, 
                                names(bfixed))]
@@ -330,6 +331,11 @@ fit_terms <- function(object, variables){
         se_term_i <- as.matrix( rowSums((cbind(Xi, Zi) %*% cov_b_i)
                              * cbind(Xi, Zi))^0.5 )
         colnames(se_term_i) <- var_name
+        ## checking of computation of se_term_i
+        # browser()
+        # cov_term_i <- cbind(Xi, Zi) %*% cov_b_i %*% t(cbind(Xi, Zi))
+        # se_term_i2 <- sqrt(diag(cov_term_i))
+        # range(se_term_i - se_term_i2)
         se_fitted_terms <- cbind(se_fitted_terms, se_term_i)
         cov_b_i_fixed <- cov_b_fixed[names(bfixed_i), 
                                      names(bfixed_i)]

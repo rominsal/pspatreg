@@ -9,7 +9,7 @@
 impactsnopar(
   obj,
   listw = NULL,
-  conflevel = 0.95,
+  alpha = 0.05,
   viewplot = TRUE,
   smooth = TRUE,
   span = c(0.1, 0.1, 0.2)
@@ -21,8 +21,8 @@ impactsnopar(
 \item{listw}{should be a spatial neighbours list object created for example by \code{nb2listw} from \code{spdep} package. 
 It can also be a spatial weighting matrix of order (NxN) instead of a listw neighbours list object.}
 
-\item{conflevel}{numerical value for the confidence interval of the
-impact functions. Default 0.95.}
+\item{alpha}{numerical value for the significance level of the pointwise 
+confidence interval of the impact functions. Default 0.05.}
 
 \item{viewplot}{Default `TRUE` to plot impacts. If FALSE use \code{\link{plot_impactsnopar}} to plot impacts}
 

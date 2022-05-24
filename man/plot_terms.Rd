@@ -8,10 +8,11 @@
 plot_terms(
   fitterms,
   data,
-  conflevel = 0.95,
+  alpha = 0.05,
   listw = NULL,
   dynamic = FALSE,
-  nt = NULL
+  nt = NULL,
+  decomposition = FALSE
 )
 }
 \arguments{
@@ -19,8 +20,8 @@ plot_terms(
 
 \item{data}{dataframe or sf with the data.}
 
-\item{conflevel}{numerical value for the confidence interval of the
-term. Default 0.95.}
+\item{alpha}{numerical value for the significance level of the pointwise 
+confidence intervals of the nonlinear terms. Default 0.05.}
 
 \item{listw}{used to compute spatial lags for Durbin specifications. 
 Default =  `NULL`}
@@ -32,6 +33,9 @@ Default = `FALSE`.}
 
 \item{nt}{Number of temporal periods. It is needed
 for dynamic models.}
+
+\item{decomposition}{Plot the decomposition of term in
+random and fixed effects.}
 }
 \value{
 list with the plots of the terms for each non-parametric 
