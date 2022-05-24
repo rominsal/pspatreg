@@ -97,7 +97,9 @@ llikc <- function(param, env) {
       mat$ZtX, 
       t(mat$ZtZ*env$G_eff)))
     H <- (1/sig2u)*C + D
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     b <- as.vector((1/sig2u)*Hinv %*% mat$u)  
     bfixed <- b[1:np_eff[1]]
     brandom <- env$G_eff*b[-(1:np_eff[1])]
@@ -111,7 +113,9 @@ llikc <- function(param, env) {
   }  else { # Only fixed effects
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C 
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     b <- as.vector((1/sig2u)*Hinv %*% mat$u[1:np_eff[1]])   
     bfixed <- b[1:np_eff[1]]
     brandom <- 0
@@ -238,7 +242,9 @@ llikc_reml <- function(param, env) {
   } else { # Only fixed effects
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     # P <- (1/sig2u)*Ifull -
     #   (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
     b <- as.vector((1/sig2u)*Hinv %*% mat$u[1:np_eff[1]])   
@@ -310,7 +316,9 @@ ansco_llikc_reml_2d <- function(param, env) {
                       mat$ZtX, 
                       t(mat$ZtZ*env$G_eff)))
     H <- (1/sig2u)*C + D
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     G <- Diagonal(length(env$G_eff), x = env$G_eff)
     ## Formulae to compute P, ldetV and ldetV.plus.ldetXtVinvX
     ## from paper Harville (1977) pp. 326
@@ -320,7 +328,9 @@ ansco_llikc_reml_2d <- function(param, env) {
   } else {  # Only fixed effects
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C 
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     P <- (1/sig2u)*In - 
       (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
   }
@@ -385,7 +395,9 @@ anhess_llikc_reml_2d <- function(param, env) {
                       mat$ZtX, 
                       t(mat$ZtZ*env$G_eff)))
     H <- (1/sig2u)*C + D
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     G <- Diagonal(length(env$G_eff), x = env$G_eff)
     ## Formulae to compute P, ldetV and ldetV.plus.ldetXtVinvX
     ## from paper Harville (1977) pp. 326
@@ -395,7 +407,9 @@ anhess_llikc_reml_2d <- function(param, env) {
   } else { # Only fixed effects
     C <- Matrix(mat$XtX)
     H <- (1/sig2u)*C
-    Hinv <- solve(H)
+    Hinv <- try(solve(H))
+    if (inherits(Hinv, "try-error"))
+      Hinv <- ginv(as.matrix(H))
     P <- (1/sig2u)*In - 
       (1/sig2u^2)*(Xstar %*% Hinv) %*% t(Xstar)
   }
