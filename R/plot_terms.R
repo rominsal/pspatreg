@@ -124,8 +124,8 @@ plot_terms <- function(fitterms,
     colnames(low_fit_var_random) <- name_var
     # Check for Wlag.var
     if (grepl("Wlag", name_var)) {
-      idx_name_var <- str_detect(name_var, colnames(data))
-      var <- as.matrix(data[, idx_name_var])
+      new_name_var <- str_replace(name_var,"Wlag.","")
+      var <- as.matrix(data[, c(new_name_var)])
       Wsp <- listw2mat(listw)
       # spatio-temporal data 
       if (nrow(var) > nrow(Wsp)) {

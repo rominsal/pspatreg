@@ -196,8 +196,26 @@ impactsnopar <- function(obj, listw = NULL, alpha = 0.05,
   # Build list of nonparametric variables
   variables <- varnopar
   for (i in 1:length(varnopar)) {
-    idx_varnopari <- str_detect(varnopar[i], colnames(obj$data))
-    variables[i] <- colnames(obj$data)[idx_varnopari]
+    varnopar_i <- stringr::str_extract(varnopar[i], colnames(obj$data))
+    varnopar_i <- varnopar_i[!is.na(varnopar_i)]
+    if (length(varnopar_i) > 1) {
+      # Variables with similar names in database 
+      # Compare from the longest to lowest names 
+      order_varnopar_i <- order(stringr::str_length(varnopar_i), 
+                                decreasing = TRUE)
+      for (j in 1:length(order_varnopar_i)) {
+        varnopar_ij <- varnopar_i[order_varnopar_i[j]]
+        idx_varnopar_ij <- str_detect(colnames(obj$data), varnopar_ij)
+        if (sum(idx_varnopar_ij) > 0) {
+          if (sum(idx_varnopar_ij) > 1) 
+            stop("Some variables share the same name in the database")
+          else {
+            variables[i] <- varnopar_ij
+            break
+          }
+        }
+      }
+    }
   }
   fitsall <- fit_terms(obj, variables)
   fits <- fitsall$fitted_terms

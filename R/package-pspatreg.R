@@ -252,5 +252,5 @@
 #' @importFrom stats model.frame model.matrix terms
 #' @importFrom stats anova coef formula logLik AIC BIC
 #' @importFrom stats na.action napredict update
-#' @importFrom stringr str_detect str_replace str_split
+#' @importFrom stringr str_detect str_replace str_split str_extract str_length
 NULL
