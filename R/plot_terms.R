@@ -161,8 +161,8 @@ plot_terms <- function(fitterms,
       up_termplot <- up_fit_var_random
     } else stop("type must be: \"global\", \"fixed\" or \"random\" ")
     # Set maximum and minimum
-    miny <- min(low_termplot) - 0.1*abs(min(low_termplot))
-    maxy <- max(up_termplot) + 0.1*abs(max(up_termplot))
+    miny <- min(low_termplot)
+    maxy <- max(up_termplot)
     plot(var[ord], termplot[ord], 
          type = "l",
          ylab = paste("f(", name_var, ")"), 
@@ -197,8 +197,8 @@ plot_terms <- function(fitterms,
       # Set maximum and minimum
       miny <- min(c(fit_var, fit_var_fixed, fit_var_random))
       maxy <- max(c(fit_var, fit_var_fixed, fit_var_random))
-      miny <- miny - 0.1*abs(miny)
-      maxy <- maxy + 0.1*abs(maxy)
+      miny <- miny 
+      maxy <- maxy 
       plot(var[ord], 
            fit_var[ord], 
            type = "l",
