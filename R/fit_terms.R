@@ -269,6 +269,10 @@ fit_terms <- function(object, variables){
     } else { # No spttrend
       Xi <- X[, grepl(var_name, colnames(X)), drop = FALSE]
       bfixed_i <- bfixed[grepl(var_name, names(bfixed))]
+      if (any(grepl("Intercept", names(bfixed)))) {
+        Xi <- cbind(1, Xi)
+        bfixed_i <- c( bfixed[grepl("Intercept", names(bfixed))], bfixed_i)
+      }
       Zi <- Z[, grepl(var_name, colnames(Z)), drop = FALSE]
       brandom_i <- brandom[grepl(var_name, names(brandom))]
       # Divide var and Wlag_var in Durbin case
@@ -310,7 +314,7 @@ fit_terms <- function(object, variables){
                              * cbind(Xi, Zi))^0.5 ) 
         colnames(se_term_i) <- var_name
         ## checking of computation of se_term_i
-        # cov_term_i <- cbind(Xi, Zi) %*% cov_b_i %*% t(cbind(Xi, Zi))
+        # cov_term_i <- cbind(Xi, Zi) %*% (cov_b_i %*% t(cbind(Xi, Zi))
         # se_term_i2 <- sqrt(diag(cov_term_i))
         # range(se_term_i - se_term_i2)
         se_fitted_terms <- cbind(se_fitted_terms, se_term_i)
