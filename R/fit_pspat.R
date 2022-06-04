@@ -63,13 +63,6 @@ fit_pspat <- function(env, con) {
     namesla <- c(namesla, namestaunopar)
   }
   names(la) <- namesla
-  # Do not remove var_comp, it is used in the next loop...
-  # 0 0
-  # 0 I
-  D <- Matrix(diag(c(rep(0, np_eff[1]), 
-                             rep(1, sum(np_eff[-1])))))
-  assign("D", D, envir = env)
-  env$D <- D
   ## initialize rho,  delta and phi
   if (env$type %in% c("sar", "sdm", "sarar")) 
     rho <- con$rho_init  
@@ -86,6 +79,13 @@ fit_pspat <- function(env, con) {
     eta <- X %*% bold[1:np_eff[1]] + 
       Z %*% bold[-(1:np_eff[1])] #+ offset
   } else eta <- X %*% bold[1:np_eff[1]] # Only fixed effects
+  # Do not remove var_comp, it is used in the next loop...
+  # 0 0
+  # 0 I
+  D <- Matrix(diag(c(rep(0, np_eff[1]), 
+                     rep(1, sum(np_eff[-1])))))
+  assign("D", D, envir = env)
+  env$D <- D
   start <- proc.time()[3]
   for (iq in 1:con$maxit) {
     # Nested loops for spatial parameters and SAP
@@ -114,18 +114,7 @@ fit_pspat <- function(env, con) {
       #                                 LcholOmegainv) %*% y, 
       #                       ncol = 1)
       #range(ystar - ystar_check)
-      ## COMPROBAR SI Xstar Y Zstar PUEDEN CALCULARSE ASÍ...
-      # Xstar <- apply(aperm(RH(Isp, RH(LcholOmegainv,
-      #                               array(X, 
-      #                    dim=c(ncol(LcholOmegainv), 
-      #                          ncol(Isp), ncol(X))))),
-      #                    perm=c(2, 1, 3)), 2, rbind)
-      # Zstar <- apply(aperm(RH(Isp, RH(LcholOmegainv,
-      #                              array(Z, 
-      #                    dim=c(ncol(LcholOmegainv), 
-      #                              ncol(Isp), ncol(Z))))),
-      #                    perm=c(2, 1, 3)), 2, rbind)
-      Xstar <- kronecker(A2, LcholOmegainv) %*% X
+     Xstar <- kronecker(A2, LcholOmegainv) %*% X
       Zstar <- kronecker(A2, LcholOmegainv) %*% Z
     } else { 
       Omega <- Omegainv <- LcholOmegainv <- It
@@ -151,7 +140,6 @@ fit_pspat <- function(env, con) {
           assign("Ginv", Ginv, envir = env)
           assign("G_eff", G_eff, envir = env)
           assign("Ginv_eff", Ginv_eff, envir = env)
-          rm(lG)
           sig2u <- la["sig2u"]
           assign("sig2u", sig2u, envir = env)
           #if (is.null(weights)) {
@@ -274,8 +262,6 @@ fit_pspat <- function(env, con) {
             # Add 1 for fixed effects of each nonparametric variable
             # edfnopar <- ltau_edf$edfnopar + 1
             edfnopar <- ltau_edf$edfnopar
-            names(edfnopar) <- paste("edfnopar", 1:env$nvarnopar, 
-                                     sep = "")
           } else {
             taunopar <- NULL
             edfnopar <- NULL
@@ -291,7 +277,8 @@ fit_pspat <- function(env, con) {
           namesX <- colnames(X)
           namesX.nopar <- namesX[grepl("pspl", namesX)]
           # Fixed effects of X.nopar has been added to edfnopar.
-          edftot <- length(namesX) - length(namesX.nopar)
+          #edftot <- length(namesX) - length(namesX.nopar)
+          edftot <- length(namesX)
           if (env$nvarspt > 0) {
             lanew <- c(lanew, tauspt)
             edftot <- edftot + sum(edfspt) 
@@ -424,18 +411,94 @@ fit_pspat <- function(env, con) {
   end <- proc.time()[3]
 	message(paste("\n Time to fit the model: ", round(end - start, 2), 
 	    "seconds \n"))
+	#  FINAL ESTIMATES OF PARAMETERS
+	assign("sig2u", sig2u, envir = env)
+	assign("tauspt", tauspt, envir = env)
+	assign("taunopar", taunopar, envir = env)
+	assign("edfspt", edfspt, envir = env)
+	assign("edfnopar", edfnopar, envir = env)
+	assign("edftot", edftot, envir = env)
+	# Update matrices in the optimum
+	if (!is.null(rho)) {
+	  A1 <- Isp - rho*Wsp } else { A1 <- Isp } 
+	if (!is.null(delta)) {
+	  A2 <- Isp - delta*Wsp } else { A2 <- Isp }
+	if (!is.null(time) || nt > 1) {
+	  if (!is.null(phi)) {
+	    call_Omega <- build_Omega_ar1(phi, nt)
+	    Omega <- call_Omega$Omega
+	    Omegainv <- call_Omega$Omegainv
+	    LcholOmegainv <- chol(Omegainv)
+	  } else { # phi <- NULL
+	    Omega <- Omegainv <- LcholOmegainv <- It
+	  }
+	  # fast index nt, slow index nsp
+	  ystar <- matrix(RH(A2 %*% A1, 
+	                     RH(LcholOmegainv, 
+	                        array(y, dim = c(ncol(LcholOmegainv), 
+	                                         ncol(A1))))), 
+	                  ncol = 1)
+	  Xstar <- kronecker(A2, LcholOmegainv) %*% X
+	  Zstar <- kronecker(A2, LcholOmegainv) %*% Z
+	} else { 
+	  Omega <- Omegainv <- LcholOmegainv <- It
+	  ystar <- Matrix(A2 %*% (A1 %*% y))
+	  Xstar <- Matrix(A2 %*% X)
+	  Zstar <- Matrix(A2 %*% Z)
+	}
+	if (length(np_eff) > 1) { # Random Effects 
+	  if (is.null(time)) {
+	    lG <- build_G2d(la = la, lg = var_comp, env)
+	  } else {
+	    lG <- build_G3d(la = la, lg = var_comp, env)
+	  }
+	  G <- lG$G
+	  Ginv <- lG$Ginv
+	  G_eff <- lG$G_eff
+	  Ginv_eff <- lG$Ginv_eff
+	  assign("G", G, envir = env)
+	  assign("Ginv", Ginv, envir = env)
+	  assign("G_eff", G_eff, envir = env)
+	  assign("Ginv_eff", Ginv_eff, envir = env)
+	  mat <- construct_matrices(Xstar, Zstar, ystar)
+	  C <- construct_block(mat$XtX, 
+	                    t(mat$ZtX*G_eff), 
+	                    mat$ZtX, 
+	                    t(mat$ZtZ*G_eff))
+	  H <- (1/sig2u)*C + D
+	  Hinv <- try(solve(H))
+	  if (inherits(Hinv, "try-error"))
+	    Hinv <- ginv(as.matrix(H))
+	  bfixed <- b[1:np_eff[1]]
+	  names(bfixed) <- gsub("X_", "", colnames(X))
+	  names(bfixed) <- paste("fixed_", 
+	                         names(bfixed), sep = "")
+	  assign("bfixed", bfixed, envir = env)
+	  brandom <- G_eff*b[-(1:np_eff[1])]
+	  names(brandom) <- gsub("Z_", "", colnames(Z))
+	  names(brandom) <- paste("random_", 
+	                          names(brandom), sep = "")
+	  assign("brandom", brandom, envir = env)
+	  eta <- X %*% bfixed + Z %*% brandom
+	} else { # Only fixed effects
+	  mat <- construct_matrices(Xstar, Zstar, ystar)
+	  # MATRIX C IN (12). PAPER SAP
+	  C <- mat$XtX
+	  H <- (1/sig2u)*C 
+	  Hinv <- try(solve(H))
+	  if (inherits(Hinv, "try-error"))
+	    Hinv <- ginv(as.matrix(H))
+	  b <- as.vector((1/sig2u)*Hinv %*% mat$u[1:np_eff[1]])
+	  bfixed <- b[1:np_eff[1]]
+	  names(bfixed) <- gsub("X_", "", colnames(X))
+	  names(bfixed) <- paste("fixed_", 
+	                         names(bfixed), sep = "")
+	  assign("bfixed", bfixed, envir = env)
+	  brandom <- 0
+	  assign("brandom", brandom, envir = env)
+	  eta <- X %*% bfixed
+	  }
 	param_optim <- param
-	if (length(np_eff) > 1) {
-	  eta <- X %*% bfixed + Z %*% brandom #+ offset
-	} else eta <- X %*% bfixed # Only fixed effects
-#  FINAL ESTIMATES OF PARAMETERS
-  #sig2u <- la["sig2u"]
-  #assign("sig2u", sig2u, envir = env)
-  assign("tauspt", tauspt, envir = env)
-  assign("taunopar", taunopar, envir = env)
-  assign("edfspt", edfspt, envir = env)
-  assign("edfnopar", edfnopar, envir = env)
-  assign("edftot", edftot, envir = env)
   # Valor de log.lik y log.lik.reml en el óptimo
   llikc_reml_optim <- -llikc_reml(param_optim, env)
   llikc_optim <- -llikc(param_optim, env)
@@ -456,49 +519,28 @@ fit_pspat <- function(env, con) {
   se_rho <- se_num["rho"]
   se_delta <- se_num["delta"]
   se_phi <- se_num["phi"]
-  
   ########## COVARIANCE MATRICES FIXED AND RANDOM EFFECTS
   ## pp.375 Fahrmeir et al.
-  ## Bayesian Covariance Matrix
-  if (con$trace) start <- proc.time()[3]
-  if (!is.null(rho)) {
-    A1 <- Isp - rho*Wsp } else { A1 <- Isp } 
-  if (!is.null(delta)) {
-    A2 <- Isp - delta*Wsp } else { A2 <- Isp }
-  if (!is.null(time) || nt > 1) {
-    if (!is.null(phi)) {
-      call_Omega <- build_Omega_ar1(phi, nt)
-      Omega <- call_Omega$Omega
-      Omegainv <- call_Omega$Omegainv
-      LcholOmegainv <- chol(Omegainv)
-    } else { # phi <- NULL
-      Omega <- Omegainv <- LcholOmegainv <- It
-    }
-    # fast index nt, slow index nsp
-    ystar <- matrix(RH(A2 %*% A1, 
-                       RH(LcholOmegainv, 
-                          array(y, dim = c(ncol(LcholOmegainv), 
-                                           ncol(A1))))), 
-                    ncol = 1)
-    Xstar <- kronecker(A2, LcholOmegainv) %*% X
-    Zstar <- kronecker(A2, LcholOmegainv) %*% Z
-  } else { 
-    Omega <- Omegainv <- LcholOmegainv <- It
-    ystar <- Matrix(A2 %*% (A1 %*% y))
-    Xstar <- Matrix(A2 %*% X)
-    Zstar <- Matrix(A2 %*% Z)
+  ## Bayesian Covariance Matrix using matrices equal than SOP 
+  ## (see sop.fit code, lines 121-132 )
+  mat <- construct_matrices(Xstar, Zstar, ystar)
+  if (length(np_eff) > 1) { 
+    if (is.null(time)) {
+      lG <- build_G2d(la = la, lg = var_comp, env)
+    } else {
+      lG <- build_G3d(la = la, lg = var_comp, env)
+    }    
+    Ginv <- lG$Ginv
+    V2 <- construct_block(mat$XtX, mat$XtZ, mat$ZtX, mat$ZtZ)
+    D2 <- diag(c(rep(0, np_eff[1]), Ginv))
+    H2 <- (1/sig2u) * V2 + D2
+    Hinv2 <- try(solve(H2))
+  } else {
+    V2 <- mat$XtX
+    H2 <- (1/sig2u)*V2 
+    Hinv2 <- try(solve(H2))
   }
-  XZstar <- cbind(Xstar, Zstar)
-  if (length(np_eff) > 1) {
-    DG <- Matrix(diag(c(rep(0, np_eff[1]), Ginv_eff)))
-  } else { # Only random effects
-    XZstar <- XZstar[, 1:np_eff]
-    DG <- 0
-  }
-  #browser()
-  XZt_Rinv_XZ <- (1/sig2u)*crossprod(XZstar)
-  Var_By <- as(solve(XZt_Rinv_XZ + DG, tol = 1e-30),
-               "dpoMatrix")
+  Var_By <- Hinv2
   rownames(Var_By) <- colnames(Var_By) <- c(names(bfixed), 
                                             names(brandom))
   seby_bfixed <- sqrt(diag(as.matrix(Var_By[names(bfixed), 
@@ -510,7 +552,8 @@ fit_pspat <- function(env, con) {
     names(seby_brandom) <- names(brandom)
   } else seby_brandom <- NULL
   ## Frequentist Covariance Matrix
-  #browser()
+  XZstar <- cbind(Xstar, Zstar)
+  XZt_Rinv_XZ <- (1/sig2u)*crossprod(XZstar)
   Var_Fr <- Var_By %*% XZt_Rinv_XZ %*% Var_By
   rownames(Var_Fr) <- colnames(Var_Fr) <- c(names(bfixed), 
                                             names(brandom))

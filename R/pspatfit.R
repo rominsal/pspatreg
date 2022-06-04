@@ -436,11 +436,11 @@
 #'     Default = \emph{FALSE}. \cr
 #'   \code{tol1} \tab Numerical value for the tolerance of convergence
 #'     of penalization parameters during the estimation process. 
-#'     Default 1e-3. This tolerance is only used 
+#'     Default 1e-6. This tolerance is only used 
 #'     for small samples (<= 500 observations). \cr
 #'   \code{tol2} \tab Numerical value for the tolerance of convergence
 #'     of total estimated degrees of freedom ("edftot") during the 
-#'     estimation process. Default 5e-1. This tolerance is used for 
+#'     estimation process. Default 5e-3. This tolerance is used for 
 #'     medium or big samples (> 500 observations). \cr
 #'   \code{tol3} \tab Numerical value for the tolerance of convergence
 #'     of spatial and correlation parameters during the 
@@ -911,7 +911,7 @@ pspatfit <- function(formula, data, na.action,
                      eff_demean = "individual",
                      index = NULL,
                      control = list()) {
-  con <- list(tol1 = 1e-3, tol2 = 5e-1, tol3 = 1e-2, 
+  con <- list(tol1 = 1e-6, tol2 = 5e-3, tol3 = 1e-2, 
               maxit = 200, trace = FALSE,
               optim = "llik_reml", 
               typese = "sandwich", 
@@ -953,8 +953,6 @@ pspatfit <- function(formula, data, na.action,
     can.sim <- can.be.simmed(listw)
   }
   cl <- match.call()
-  if (any(grepl("pspt", formula))) 
-    formula <- update(formula, . ~ . - 1)
   if (!is.null(index)) {
     if (demean) {
       if (any(grepl("pspt", formula))) 
@@ -1049,21 +1047,30 @@ pspatfit <- function(formula, data, na.action,
   assign("Wsp", Wsp, envir = env)
   mt <- terms(formula, specials = c("pspl", "pspt"))
   names_var <- labels(mt)
+  # Careful: The dataset could include factors...
+  Xmodel <- model.matrix(mt, mf)
+  if (attr(mt, "intercept") == 1) {
+    Xpar <- Xmodel[, c("(Intercept)"), drop = FALSE]
+    names_varpar <- c("(Intercept)")
+  } else {
+    Xpar <- NULL
+    names_varpar <- NULL
+  }
+  
   names_varspt <- names_var[grepl("pspt", names_var)]
   nvarspt <- length(names_varspt)
   names_varnopar <- names_var[grepl("pspl", names_var)]
   nvarnopar <- length(names_varnopar)
-  names_varpar <- names_var[!grepl("pspl", names_var) & 
+  names_varpar_nointercept <- names_var[!grepl("pspl", names_var) & 
                               !grepl("pspt", names_var)]
-  nvarpar <- length(names_varpar)
-  if (nvarpar > 0) {
-    # Careful: The dataset could include factors...
-    Xpar <- model.matrix(mt, mf)
-    names_varpar <- colnames(Xpar)[!grepl("pspl", colnames(Xpar)) & 
-                                   !grepl("pspt", colnames(Xpar))]
-    Xpar <- Xpar[, names_varpar, drop = FALSE]
+  if (length(names_varpar_nointercept) > 0) {
+    names_varpar <- c(names_varpar, names_varpar_nointercept)
     nvarpar <- length(names_varpar)
-  } else Xpar <- NULL
+    Xpar <- Xmodel[, c(names_varpar), drop = FALSE]
+    colnames(Xpar) <- names_varpar
+  } 
+  nvarpar <- length(names_varpar)
+  Xfull <- Xpar
   if (nvarspt > 0) {
     varspt <- names_varspt
     Bi <- mf[, c(varspt)]
@@ -1129,6 +1136,8 @@ pspatfit <- function(formula, data, na.action,
                           f12t_int = f12t_int,
                           Bsptlist = Bsptlist)
     Xspt <- XZsptlist$Xspt
+    if (attr(mt, "intercept") == 1) 
+      Xspt <- Xspt[, -c(1), drop = FALSE] # Remove intercept
     Zspt <- XZsptlist$Zspt
     dsptlist <- XZsptlist$dsptlist
     cspt <- unlist(XZsptlist$csptlist)
@@ -1248,7 +1257,7 @@ pspatfit <- function(formula, data, na.action,
     idxnatlagy <- !is.na(tlagy[, 1])
     Xpar <- cbind(Xpar, tlagy)
   }
-  if (!is.null(Xpar)) Xfull <- cbind(Xfull, Xpar)
+  #if (!is.null(Xpar)) Xfull <- cbind(Xfull, Xpar)
   if (nvarnopar > 0) {
     Xnopar <- Znopar <-  cnopar <- NULL
     nknotsnopar <- bdegnopar <- pordnopar <- decomnopar <- NULL
@@ -1262,14 +1271,18 @@ pspatfit <- function(formula, data, na.action,
       pord_i <- attr(Bi, "pord")
       bdeg_i <- attr(Bi, "bdeg")
       decom_i <- attr(Bi, "decom")
+      x_i <- attr(Bi, "x")
       names(nknots_i) <- names(pord_i) <- varnopar
       names(bdeg_i) <- names(decom_i) <- varnopar
       nknotsnopar <- c(nknotsnopar, nknots_i)
       pordnopar <- c(pordnopar, pord_i)
       bdegnopar <- c(bdegnopar, bdeg_i)
       decomnopar <- c(decomnopar, decom_i)
-      BtoXZ <- B_XZ(Bi)
-      Xi <- as.matrix(BtoXZ$X[, -c(1)]) # Remove intercept
+      BtoXZ <- B_XZ(Bi, x = x_i, pord = pord_i, 
+                    decom = decom_i)
+      Xi <- as.matrix(BtoXZ$X) 
+      if (attr(mt, "intercept") == 1) 
+        Xi <- BtoXZ$X[, -c(1), drop = FALSE] # Remove intercept
       colnames(Xi) <- paste(names_varnopar[i], 1:ncol(Xi), sep = ".")
       Zi <- BtoXZ$Z
       colnames(Zi) <- paste(names_varnopar[i], 1:ncol(Zi), sep = ".")

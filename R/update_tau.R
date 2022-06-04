@@ -1,6 +1,6 @@
 ###############################################################################
 # Function to update tau's in each iteration of the loop.
-update_tau2d <- function (la, lg, G, 
+update_tau2d <- function(la, lg, G, 
                           dZtPZ_wide, brandom_wide, 
                           env) {
   np <- lg$np
@@ -20,20 +20,13 @@ update_tau2d <- function (la, lg, G,
       # Expressions (7) and (8) paper SAP
       # Tau 1
       G1inv.d <- (1/la["tausp1"])*G1inv.n
-      # Omega_1 = G1inv.n
-      # G1inv.d = (1/tau_1)*Omega_1 
-      # ed1 = trace{[ZtPZ]*[G*(1/tau_1)*Omega_1*G]}
       ed1 <- sum(dZtPZ_wide*(G1inv.d*G^2))
       ed1 <- ifelse(ed1 == 0, 1e-50, ed1)
       tau1 <- ifelse(!tau_fixed[1],
                      sum(brandom_wide^2*G1inv.n)/ed1, 
                      tau_init[1])
-      #tau1 = t(brandom)*Omega_1*brandom/ed1
       # Tau 2
       G2inv.d <- (1/la["tausp2"])*G2inv.n
-      # Omega_2 = G1inv.n
-      # G2inv.d = (1/tau_2)*Omega_2 
-      # ed2 = trace{[ZtPZ]*[G*(1/tau_2)*Omega_2*G]}
       ed2 <- sum(dZtPZ_wide*(G2inv.d*G^2))
       ed2 <- ifelse(ed2 == 0, 1e-50, ed2)
       tau2 <- ifelse(!tau_fixed[2],
@@ -107,30 +100,29 @@ update_tau2d <- function (la, lg, G,
                     nrow = sum(np[2:length(np)]),
                     ncol = env$nvarnopar)
     names_taunopar <- grepl("taunopar", names(la))
-    taunopar <- la[names_taunopar]
-    edfnopar <- vector(mode = "numeric", 
-                       length = env$nvarnopar)
+    taunopar <- vector(mode = "numeric", length = env$nvarnopar)
+    names(taunopar) <- paste("taunopar", 1:env$nvarnopar, sep = "")
+    edfnopar <- vector(mode = "numeric", length = env$nvarnopar)
+    names(edfnopar) <- paste("edfnopar", 1:env$nvarnopar, sep = "")
     for (k in 1:env$nvarnopar) {
       if (env$nvarspt > 0) {
         if (!env$psanova) {# no psanova
           Ginv_dnopar[(sum(np[2:(4 + k - 1)]) + 1):
-                        sum(np[2:(4 + k)]), k] <-
-            (1/taunopar[k])*env$dnoparlist[[k]]
+                        sum(np[2:(4 + k)]), k] <- env$dnoparlist[[k]]
         } else { # psanova
           Ginv_dnopar[(sum(np[2:(6 + k - 1)]) + 1):
-                        sum(np[2:(6 + k)]), k] <-
-            (1/taunopar[k])*env$dnoparlist[[k]]
+                        sum(np[2:(6 + k)]), k] <- env$dnoparlist[[k]]
         }
       } else { # no spatial trend
         if (k == 1) {
-          Ginv_dnopar[1:np[2], k] <-
-            (1/taunopar[k])*env$dnoparlist[[k]]
+          Ginv_dnopar[1:np[2], k] <- env$dnoparlist[[k]]
         } else {
           Ginv_dnopar[(sum(np[2:k]) + 1):(sum(np[2:(k + 1)])), k] <-
-            (1/taunopar[k])*env$dnoparlist[[k]] 
+            env$dnoparlist[[k]]
         }
-      }  
-      edfnopar[k] <- sum(dZtPZ_wide*(Ginv_dnopar[, k]*G^2))
+      }
+      Ginv_dnopark.d <- (1/la[names_taunopar][k])*Ginv_dnopar[, k]
+      edfnopar[k] <- sum(dZtPZ_wide*(Ginv_dnopark.d*G^2))
       edfnopar[k] <- ifelse(edfnopar[k] == 0, 1e-50, edfnopar[k])
       taunopar[k] <- ifelse(!taunopar_fixed[k],
                             sum(brandom_wide^2*Ginv_dnopar[, k]) /
@@ -306,24 +298,24 @@ update_tau3d <- function (la, lg, G, dZtPZ_wide,
       Ginv_dnopar <- matrix(0, nrow = sum(np[2:length(np)]),
                                ncol = env$nvarnopar)
       names_taunopar <- grepl("taunopar", names(la))
-      taunopar <- la[names_taunopar]
-      edfnopar <- vector(mode = "numeric", 
-                         length = env$nvarnopar)
+      taunopar <- vector(mode = "numeric", length = env$nvarnopar)
+      names(taunopar) <- paste("taunopar", 1:env$nvarnopar, sep = "")
+      edfnopar <- vector(mode = "numeric", length = env$nvarnopar)
+      names(edfnopar) <- paste("edfnopar", 1:env$nvarnopar, sep = "")
       for (k in 1:env$nvarnopar) {
         if (!env$psanova) {
             Ginv_dnopar[(sum(np[2:(8 + k - 1)]) + 1) : 
-                          sum(np[2:(8 + k)]), k] <-
-              (1/taunopar[k])*env$dnoparlist[[k]]
+                          sum(np[2:(8 + k)]), k] <- env$dnoparlist[[k]]
         } else {
             Ginv_dnopar[(sum(np[2:(20 + k - 1)]) + 1) : 
-                          sum(np[2:(20 + k)]), k] <-
-              (1/taunopar[k])*env$dnoparlist[[k]]
+                          sum(np[2:(20 + k)]), k] <- env$dnoparlist[[k]]
         }
-        edfnopar[k] <- sum(dZtPZ_wide*(Ginv_dnopar[, k]*G^2))
+        Ginv_dnopark.d <- (1/la[names_taunopar][k])*Ginv_dnopar[, k]
+        edfnopar[k] <- sum(dZtPZ_wide*(Ginv_dnopark.d*G^2))
         edfnopar[k] <- ifelse(edfnopar[k] == 0, 1e-50, edfnopar[k])
         taunopar[k] <- ifelse(!taunopar_fixed[k],
-                               sum(brandom_wide^2*Ginv_dnopar[, k]) /
-                                   edfnopar[k], taunopar_init[k])
+                              sum(brandom_wide^2*Ginv_dnopar[, k]) /
+                                edfnopar[k], taunopar_init[k])
         taunopar[k] <- ifelse(taunopar[k] == 0, 1e-50, taunopar[k])
       }
       # end for (k in 1:nvarnopar)

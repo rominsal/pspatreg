@@ -48,7 +48,7 @@ build_G2d <- function(la, lg, env) {
                               env$dnoparlist[[k]])
     } 
   }
-  G <- ifelse(Ginv!=0, 1/Ginv, 0) # Keep zeros in same positions
+  G <- ifelse(Ginv != 0, 1/Ginv, 0) # Keep zeros in same positions
   G_eff <- 1/Ginv_eff
   res <- list(G = G, Ginv = Ginv, G_eff = G_eff, 
               Ginv_eff = Ginv_eff) }

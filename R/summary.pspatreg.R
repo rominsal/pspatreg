@@ -44,38 +44,41 @@ summary.pspatreg <- function(object,...) {
  names_var <- labels(z$terms)
  names_varspt <- names_var[grepl("pspt", names_var)]
  nvarspt <- length(names_varspt)
- names_varpar <- names(z$bfixed) # To include intercept (if there is...)
+ names_varnopar <- names_var[grepl("pspl", names_var)]
+ names(z$bfixed) <- gsub("fixed_", "", names(z$bfixed))
+ names(z$se_bfixed) <- gsub("fixed_", "", names(z$se_bfixed))
+ names_varpar <- names(z$bfixed) 
  names_varpar <- names_varpar[!grepl("pspl", names_varpar) & 
                               !grepl("pspt", names_varpar)]
- nvarpar <- length(names_varpar)
- names_varnopar <- names(z$bfixed)
- names_varnopar <- names_varnopar[grepl("pspl", names_varnopar)]
- names_varnopar <- gsub("fixed_", "", names_varnopar)
- names_varnopar <- gsub(").1", ")", names_varnopar)
+ # nvarpar <- length(names_varpar)
+ # names_varnopar <- names(z$bfixed)
+ # names_varnopar <- names_varnopar[grepl("pspl", names_varnopar)]
+ # names_varnopar <- gsub("fixed_", "", names_varnopar)
+ # names_varnopar <- gsub(").1", ")", names_varnopar)
  rdf <- z$df.residual
  r <- z$residuals
  f <- z$fitted.values
  rss <- sum(r^2)
  resvar <- rss/rdf
- names_varpar <- gsub("fixed_", "", names_varpar)
- match_names_varpar <- unique(grep(paste(c("spt", "_main", 
-                                           "_int"),
-                                   collapse = "|"),
-                              names_varpar, value = TRUE))
- names_varpar <- names_varpar[ !(names_varpar %in% 
-                                    match_names_varpar)]
- if ("Intercept" %in% names_varpar)
-   names_varpar <- c("Intercept", names_varpar[!(names_varpar 
-                                                %in% "Intercept")])
- names(z$bfixed) <- gsub("fixed_", "", names(z$bfixed))
- names(z$se_bfixed) <- gsub("fixed_", "", names(z$se_bfixed))
- est_par <- z$bfixed[names_varpar]
- se_par <- z$se_bfixed[names_varpar]
+ #names_varpar <- gsub("fixed_", "", names_varpar)
+ # match_names_varpar <- unique(grep(paste(c("spt", "_main", 
+ #                                           "_int"),
+ #                                   collapse = "|"),
+ #                              names_varpar, value = TRUE))
+ # names_varpar <- names_varpar[ !(names_varpar %in% 
+ #                                    match_names_varpar)]
+ # if ("Intercept" %in% names_varpar)
+ #   names_varpar <- c("Intercept", names_varpar[!(names_varpar 
+ #                                                %in% "Intercept")])
+ # est_par <- z$bfixed[names_varpar]
+ # se_par <- z$se_bfixed[names_varpar]
+ est_par <- z$bfixed
+ se_par <- z$se_bfixed
  tval_par <- est_par/se_par
  z$coef_par_table <- cbind(est_par, se_par, tval_par,
                       2 * pt(abs(tval_par),rdf, lower.tail = FALSE))
  colnames(z$coef_par_table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
- rownames(z$coef_par_table) <- names_varpar
+ #rownames(z$coef_par_table) <- names_varpar
  if(!(is.null(z$rho))) {
    t_rho <- z$rho / z$se_rho
    pval_rho <- 2 * pt(abs(t_rho), rdf, lower.tail = FALSE)

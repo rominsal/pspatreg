@@ -10,6 +10,8 @@
 #'
 #' @param fitterms object returned from \code{\link{fit_terms}} function.
 #' @param data dataframe or sf with the data. 
+#' @param type type of term plotted between "global" (Default), 
+#'   "fixed" or "random".
 #' @param alpha numerical value for the significance level of the pointwise 
 #'   confidence intervals of the nonlinear terms. Default 0.05.
 #' @param listw used to compute spatial lags for Durbin specifications. 
@@ -73,6 +75,7 @@
 #' @export
 plot_terms <- function(fitterms, 
                        data, 
+                       type = "global",
                        alpha = 0.05, 
                        listw = NULL,  
                        dynamic = FALSE, 
@@ -144,30 +147,45 @@ plot_terms <- function(fitterms,
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
     if (decomposition) par(mfrow = c(2, 1))
-    plot(var[ord], fit_var[ord], 
+    if (type == "global") {
+      termplot <- fit_var
+      low_termplot <- low_fit_var
+      up_termplot <- up_fit_var
+    } else if (type == "fixed") {
+      termplot <- fit_var_fixed
+      low_termplot <- low_fit_var_fixed
+      up_termplot <- up_fit_var_fixed
+    } else if (type == "random") {
+      termplot <- fit_var_random
+      low_termplot <- low_fit_var_random
+      up_termplot <- up_fit_var_random
+    } else stop("type must be: \"global\", \"fixed\" or \"random\" ")
+    # Set maximum and minimum
+    miny <- min(low_termplot) - 0.1*abs(min(low_termplot))
+    maxy <- max(up_termplot) + 0.1*abs(max(up_termplot))
+    plot(var[ord], termplot[ord], 
          type = "l",
          ylab = paste("f(", name_var, ")"), 
          xlab = name_var,
-         ylim = c(min(low_fit_var), max(up_fit_var)), 
+         ylim = c(miny, maxy), 
          cex.lab = 1.0, 
          col = 2, 
          lty = 1, 
          lwd = 2, 
          cex.main = 1.0,
-         main = paste("Term: ", paste("f(",name_var,")")),
+         main = paste("Term: ", paste("f(",name_var,")"), 
+                                      paste(" type = ", type)),
          sub = "Pointwise confidence intervals in dashed lines")
-    lines(var[ord], 
-          up_fit_var[ord],
-          ylim = c(min(low_fit_var), max(up_fit_var)),          
+    lines(var[ord], low_termplot[ord],
+          ylim = c(miny, maxy),          
           xlab = "",
           ylab = "", 
           type = "l", 
           col = 2, 
           lty = 2, 
           lwd = 1.5)
-    lines(var[ord], 
-          low_fit_var[ord], 
-          ylim = c(min(low_fit_var), max(up_fit_var)),
+    lines(var[ord], up_termplot[ord], 
+          ylim = c(miny, maxy),
           xlab = "",  
           ylab = "", 
           type = "l", 
@@ -176,12 +194,17 @@ plot_terms <- function(fitterms,
           lwd = 1.5)
     abline(a = 0, b = 0)
     if (decomposition) {
+      # Set maximum and minimum
+      miny <- min(c(fit_var, fit_var_fixed, fit_var_random))
+      maxy <- max(c(fit_var, fit_var_fixed, fit_var_random))
+      miny <- miny - 0.1*abs(miny)
+      maxy <- maxy + 0.1*abs(maxy)
       plot(var[ord], 
            fit_var[ord], 
            type = "l",
            ylab = paste("f(",name_var,")"), 
            xlab = name_var,
-           ylim = c(min(low_fit_var), max(up_fit_var)), 
+           ylim = c(miny, maxy), 
            cex.lab = 1.0, 
            col = 2, 
            lty = 1, 
@@ -192,7 +215,7 @@ plot_terms <- function(fitterms,
            sub = paste("Global (red), Fixed (green) and Random (blue) Terms"))
       lines(var[ord], 
             fit_var_fixed[ord], 
-            ylim = c(min(low_fit_var), max(up_fit_var)), 
+            ylim = c(miny, maxy), 
             xlab = "", 
             ylab = "", 
             type = "l", 
@@ -201,6 +224,7 @@ plot_terms <- function(fitterms,
             lwd = 2)
       lines(var[ord], 
             fit_var_random[ord], 
+            ylim = c(miny, maxy),
             xlab = "", 
             ylab = "", 
             type = "l", 
