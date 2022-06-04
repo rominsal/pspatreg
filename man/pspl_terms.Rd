@@ -33,7 +33,7 @@ pspt(
   nknots = c(10, 10, 5),
   bdeg = c(3, 3, 3),
   pord = c(2, 2, 2),
-  decom = 1,
+  decom = 2,
   psanova = FALSE,
   nest_sp1 = 1,
   nest_sp2 = 1,

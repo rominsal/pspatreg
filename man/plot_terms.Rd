@@ -8,6 +8,7 @@
 plot_terms(
   fitterms,
   data,
+  type = "global",
   alpha = 0.05,
   listw = NULL,
   dynamic = FALSE,
@@ -19,6 +20,9 @@ plot_terms(
 \item{fitterms}{object returned from \code{\link{fit_terms}} function.}
 
 \item{data}{dataframe or sf with the data.}
+
+\item{type}{type of term plotted between "global" (Default), 
+"fixed" or "random".}
 
 \item{alpha}{numerical value for the significance level of the pointwise 
 confidence intervals of the nonlinear terms. Default 0.05.}

@@ -138,7 +138,7 @@ Some functionalities that have been included in \pkg{pspatreg}
   \item \code{\link{residuals}} extractor function of the residuals.
   \item \code{\link{vcov}} extractor function of the covariance matrix
   of the estimated parameters. The argument \code{bayesian} 
-  (default = `FALSE`) allows to choose between sandwhich 
+  (default = `TRUE`) allows to choose between sandwich 
   (frequentist) or bayesian method to compute the variances and 
   covariances. See Fahrmeir et al. (2021) for details.
   }

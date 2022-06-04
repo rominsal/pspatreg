@@ -28,7 +28,7 @@
 
 \method{residuals}{pspatreg}(object, ...)
 
-\method{vcov}{pspatreg}(object, ..., bayesian = FALSE)
+\method{vcov}{pspatreg}(object, ..., bayesian = TRUE)
 
 \method{print}{pspatreg}(x, digits = max(3L, getOption("digits") - 3L), ...)
 }
@@ -81,11 +81,11 @@ Default: max(3L, getOption("digits") - 3L).}
 
 \code{vcov:} A matrix including the covariance matrix for the
   estimated parameters.
-  If argument \code{bayesian = FALSE} (default), the 
-  covariance matrix is computed using sandwich (frequentist)
+  If argument \code{bayesian = TRUE} (default), the 
+  covariance matrix is computed using bayesian
   method. 
-  If argument \code{bayesian = TRUE} , the 
-  covariance matrix is computed using bayesian method. 
+  If argument \code{bayesian = FALSE} , the 
+  covariance matrix is computed using sandwich method. 
   See Fahrmeir et al. (2021) for details.
 
 \code{print:} No return value

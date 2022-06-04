@@ -1,4 +1,4 @@
-MM_basis <- function (x, xl, xr, ndx, bdeg, pord, decom = 1) {
+MM_basis <- function (x, xl, xr, ndx, bdeg, pord, decom = 2) {
 	Bb <- bspline(x,xl,xr,ndx,bdeg)
 	knots <- Bb$knots
 	B <- Bb$B

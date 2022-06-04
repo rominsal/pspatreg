@@ -211,7 +211,7 @@ plot_sp2d <- function(object, data,
                                  extend = TRUE)$xyz
       fields::image.plot(interp_trend2d,
                         breaks = breaks_i,
-                        col = heat.colors(
+                        col = hcl.colors( palette = "Viridis",
                         n = (length(breaks_i)-1)))
       if (addcontour)
         graphics::contour(interp_trend2d, add = TRUE)
@@ -232,7 +232,7 @@ plot_sp2d <- function(object, data,
                                  extend = TRUE)$xyz      
       fields::image.plot(interp_trend2d,
                         breaks = breaks_i,
-                        col = heat.colors(
+                        col = hcl.colors( palette = "Viridis",
                         n = (length(breaks_i)-1)))
       if (addcontour)
         contour(interp_trend2d, add = TRUE)
@@ -265,7 +265,7 @@ plot_sp2d <- function(object, data,
                                    extend = TRUE)$xyz
         fields::image.plot(interp_f12_int,
                            breaks = breaks_i,
-                           col = heat.colors(
+                           col = hcl.colors( palette = "Viridis",
                              n = (length(breaks_i)-1)))
         if (addcontour)
           contour(interp_f12_int, add = TRUE)

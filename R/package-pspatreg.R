@@ -130,7 +130,7 @@
 #'   \item \code{\link{residuals}} extractor function of the residuals.
 #'   \item \code{\link{vcov}} extractor function of the covariance matrix
 #'   of the estimated parameters. The argument \code{bayesian} 
-#'   (default = `FALSE`) allows to choose between sandwhich 
+#'   (default = `TRUE`) allows to choose between sandwich 
 #'   (frequentist) or bayesian method to compute the variances and 
 #'   covariances. See Fahrmeir et al. (2021) for details.
 #'   }
@@ -226,7 +226,7 @@
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom graphics image contour matplot title points
 #' @importFrom graphics par abline lines
-#' @importFrom grDevices heat.colors
+#' @importFrom grDevices heat.colors hcl.colors
 #' @importFrom MBA mba.surf
 #' @importFrom MASS ginv mvrnorm
 #' @importFrom Matrix bandSparse bdiag crossprod determinant

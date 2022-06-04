@@ -458,7 +458,7 @@ Function to estimate the model:
   \code{optim} \tab method of estimation: \code{"llik_reml"} (default) or
     \code{"llik"}. \cr
   \code{typese} \tab method to compute 
-    standard errors. \code{"sandwich"} (default) or \code{"bayesian"}.
+    standard errors. \code{"sandwich"}  or \code{"bayesian"} (default).
     See Fahrmeir et al, pp. 375 for details of computations. \cr   
   \code{vary_init} \tab Initial value of the noise variance in the model.
     Default = `NULL`. \cr
@@ -467,11 +467,11 @@ Function to estimate the model:
     Default = \emph{FALSE}. \cr
   \code{tol1} \tab Numerical value for the tolerance of convergence
     of penalization parameters during the estimation process. 
-    Default 1e-3. This tolerance is only used 
+    Default 1e-6. This tolerance is only used 
     for small samples (<= 500 observations). \cr
   \code{tol2} \tab Numerical value for the tolerance of convergence
     of total estimated degrees of freedom ("edftot") during the 
-    estimation process. Default 5e-1. This tolerance is used for 
+    estimation process. Default 5e-3. This tolerance is used for 
     medium or big samples (> 500 observations). \cr
   \code{tol3} \tab Numerical value for the tolerance of convergence
     of spatial and correlation parameters during the 

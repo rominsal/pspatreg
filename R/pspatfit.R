@@ -427,7 +427,7 @@
 #'   \code{optim} \tab method of estimation: \code{"llik_reml"} (default) or
 #'     \code{"llik"}. \cr
 #'   \code{typese} \tab method to compute 
-#'     standard errors. \code{"sandwich"} (default) or \code{"bayesian"}.
+#'     standard errors. \code{"sandwich"}  or \code{"bayesian"} (default).
 #'     See Fahrmeir et al, pp. 375 for details of computations. \cr   
 #'   \code{vary_init} \tab Initial value of the noise variance in the model.
 #'     Default = `NULL`. \cr
@@ -1391,7 +1391,7 @@ pspatfit <- function(formula, data, na.action,
   model_fit$df.residual <- length(y) - model_fit$edftot
   model_fit$fitted.values_Ay <- model_fit$fit_A1y
   model_fit$fit_A1y <- NULL
-  if (con$typese == "sandwich") {
+  if (con$typese == "bayesian") {
     model_fit$se_bfixed <- model_fit$sefr_bfixed
     model_fit$se_brandom <- model_fit$sefr_brandom
     model_fit$se_fitted.values <- model_fit$sefr_fitted.values
