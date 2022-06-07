@@ -249,7 +249,7 @@
 #' @importFrom stats model.response as.formula .getXlevels
 #' @importFrom stats pchisq pnorm pt rnorm qnorm
 #' @importFrom stats coefficients fitted residuals printCoefmat
-#' @importFrom stats model.frame model.matrix terms
+#' @importFrom stats model.frame model.matrix terms lag
 #' @importFrom stats anova coef formula logLik AIC BIC
 #' @importFrom stats na.action napredict update
 #' @importFrom stringr str_detect str_replace str_split str_extract str_length

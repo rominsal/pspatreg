@@ -93,22 +93,20 @@
 #'
 #' @examples
 #' ################################################
-#'  ###################### Examples using a panel data of rate of
-#'  ###################### unemployment for 103 Italian provinces in period 1996-2014.
+#' #### Examples using a panel data of rate of
+#' ##### unemployment for 103 Italian provinces in period 1996-2014.
 #' library(pspatreg)
 #' data(unemp_it, package = "pspatreg")
 #' ## Wsp_it is a matrix. Create a neighboord list 
 #' lwsp_it <- spdep::mat2listw(Wsp_it)
 #' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]  
 #' ########  No Spatial Trend: PSAR including a spatial 
 #' ########  lag of the dependent variable
-#' form1 <- unrate ~ partrate + agri + cons +
-#'                  pspl(serv, nknots = 15) +
-#'                  pspl(empgrowth, nknots = 20)
+#' form1 <- unrate ~ partrate + agri + cons + empgrowth +
+#'                  pspl(serv, nknots = 15) 
 #' ### example with type = "sar"                   
 #' gamsar <- pspatfit(form1, 
-#'                    data = unemp_it_short, 
+#'                    data = unemp_it, 
 #'                    type = "sar", 
 #'                    listw = lwsp_it)
 #' summary(gamsar)
@@ -119,7 +117,7 @@
 #' ### example with type = "slx"                   
 #' 
 #' gamslx <- pspatfit(form1, 
-#'                    data = unemp_it_short, 
+#'                    data = unemp_it, 
 #'                    type = "slx", 
 #'                    listw = lwsp_it)
 #'                    

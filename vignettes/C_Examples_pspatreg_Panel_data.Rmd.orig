@@ -25,7 +25,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r}
-library(pspatreg)
+#library(pspatreg)
+devtools::load_all()
 library(spatialreg)
 library(spdep)
 library(sf)
@@ -125,11 +126,11 @@ logLik(Linear_WITHIN_sar_REML)
 logLik(Linear_WITHIN_sar_REML, REML = TRUE)
 ```
 
-Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get frequentist (default) or bayesian covariances:
+Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get bayesian (default) or frequentist covariances:
 
 ```{r}
 vcov(Linear_WITHIN_sar_REML)
-vcov(Linear_WITHIN_sar_REML, bayesian = TRUE)
+vcov(Linear_WITHIN_sar_REML, bayesian = FALSE)
 ```
 
 A print method to get printed coefficients, standard errors and p-values of parametric terms:
@@ -288,7 +289,7 @@ Plot of non-parametric terms
 list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(sp3danova_restr, list_varnopar)
 names(terms_nopar)
-plot_terms(terms_nopar, unemp_it, conflevel = 0.95)
+plot_terms(terms_nopar, unemp_it, alpha = 0.05)
 ```
 
 ### Parametric and nonparametric direct, indirect and total impacts

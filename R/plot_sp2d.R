@@ -43,40 +43,6 @@
 #'  
 #'@examples
 #' library(pspatreg, package = "pspatreg")
-#' ##### EXAMPLE 2D WITH UNEMPLOYMENT IN ITALIAN PROVINCES
-#' ## 103 Italian provinces. Period 1996-2019
-#' data(unemp_it, package = "pspatreg")
-#' ## Wsp_it is a matrix. Create a neighboord list 
-#' lwsp_it <- spdep::mat2listw(Wsp_it)
-#' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-#' ## Spatial trend with anova decomposition
-#' formit2d_anova <- unrate ~ partrate + agri + cons +
-#'                            pspl(serv, nknots = 15) + 
-#'                            pspl(empgrowth, nknots = 20) +
-#'                            pspt(long, lat, nknots = c(20, 20), 
-#'                            psanova = TRUE)
-#' \donttest{
-#' geospit2d_anova <- pspatfit(formit2d_anova, 
-#'                             data = unemp_it_short)
-#' summary(geospit2d_anova)                             
-#' ### Create sf object to make the plot 
-#' library(sf)
-#' unemp_it_sf_short <- st_as_sf(dplyr::left_join(
-#'                               unemp_it_short, 
-#'                               map_it,  
-#'                         by = c("prov" = "COD_PRO")))
-#' plot_sp2d(geospit2d_anova, data = unemp_it_sf_short, 
-#'           addmain = TRUE, addint = TRUE)
-#' ## Spatial trend without anova decomposition
-#' formit2d <- unrate ~ partrate + agri + cons +
-#'                      pspl(serv, nknots = 15) + 
-#'                      pspl(empgrowth, nknots = 20) +
-#'                      pspt(long, lat, nknots = c(20, 20))
-#' geospit2d <- pspatfit(formit2d, 
-#'                       data = unemp_it_short)
-#' summary(geospit2d_anova) 
-#' plot_sp2d(geospit2d, data = unemp_it_sf_short)
 #' ######## EXAMPLE 2D WITH AMES DATA 
 #' ######## getting and preparing the data
 #' library(spdep)
@@ -107,7 +73,7 @@
 #'           pspt(Longitude, Latitude, 
 #'                nknots = c(10, 10), 
 #'                psanova = FALSE)
-#' 
+#' \donttest{
 #' ######## fit the model
 #' sp2dsar <- pspatfit(form2d, data = ames_sf1, 
 #'                     listw = lw_ames, 
@@ -152,8 +118,6 @@ plot_sp2d <- function(object, data,
   # 2. A database that could be an sf object or a dataframe.
   # 3. In the last case (dataframe) the names of the
   ##   spatial coordinates need to be supplied.
-  ## THE FUNCTION NEED TO BE DOCUMENTED IN THE USUAL WAY INCLUDING EXAMPLES.
-  ## THE EXAMPLES CAN BE EXTRACTED FROM "Examples_plots_maps_spatialtrends.Rmd"
   ######################################################################
   if (!(inherits(object, "pspatreg"))) 
     stop("object must be of class pspatreg")
@@ -212,7 +176,7 @@ plot_sp2d <- function(object, data,
       fields::image.plot(interp_trend2d,
                         breaks = breaks_i,
                         col = hcl.colors( palette = "Viridis",
-                        n = (length(breaks_i)-1)))
+                        n = (length(breaks_i) - 1)))
       if (addcontour)
         graphics::contour(interp_trend2d, add = TRUE)
       if (addpoints)
@@ -233,7 +197,7 @@ plot_sp2d <- function(object, data,
       fields::image.plot(interp_trend2d,
                         breaks = breaks_i,
                         col = hcl.colors( palette = "Viridis",
-                        n = (length(breaks_i)-1)))
+                        n = (length(breaks_i) - 1)))
       if (addcontour)
         contour(interp_trend2d, add = TRUE)
       if (addpoints)

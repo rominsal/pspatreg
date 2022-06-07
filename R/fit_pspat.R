@@ -529,16 +529,22 @@ fit_pspat <- function(env, con) {
       lG <- build_G2d(la = la, lg = var_comp, env)
     } else {
       lG <- build_G3d(la = la, lg = var_comp, env)
-    }    
-    Ginv <- lG$Ginv
+    }
+    Ginv_eff <- lG$Ginv_eff
     V2 <- construct_block(mat$XtX, mat$XtZ, mat$ZtX, mat$ZtZ)
-    D2 <- diag(c(rep(0, np_eff[1]), Ginv))
+    D2 <- diag(c(rep(0, np_eff[1]), Ginv_eff))
     H2 <- (1/sig2u) * V2 + D2
     Hinv2 <- try(solve(H2))
+    if (inherits(Hinv2, "try-error")) {
+      message("Problems to compute covariance matrix. Near singular matrix")
+      Hinv2 <- ginv(as.matrix(H2))
+    }
   } else {
     V2 <- mat$XtX
     H2 <- (1/sig2u)*V2 
     Hinv2 <- try(solve(H2))
+    if (inherits(Hinv2, "try-error"))
+      Hinv2 <- ginv(as.matrix(H2))
   }
   Var_By <- Hinv2
   rownames(Var_By) <- colnames(Var_By) <- c(names(bfixed), 
@@ -552,8 +558,10 @@ fit_pspat <- function(env, con) {
     names(seby_brandom) <- names(brandom)
   } else seby_brandom <- NULL
   ## Frequentist Covariance Matrix
-  XZstar <- cbind(Xstar, Zstar)
-  XZt_Rinv_XZ <- (1/sig2u)*crossprod(XZstar)
+  if (length(np_eff) > 1) {
+    XZstar <- cbind(Xstar, Zstar)
+    XZt_Rinv_XZ <- (1/sig2u)*crossprod(XZstar)
+  } else XZt_Rinv_XZ <- (1/sig2u)*crossprod(Xstar)
   Var_Fr <- Var_By %*% XZt_Rinv_XZ %*% Var_By
   rownames(Var_Fr) <- colnames(Var_Fr) <- c(names(bfixed), 
                                             names(brandom))

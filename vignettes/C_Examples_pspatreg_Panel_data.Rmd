@@ -1,7 +1,7 @@
 ---
 title: "Using pspatreg with spatial panel data"
 author: "Román Mínguez (UCLM), Roberto Basile (UNIVAQ), María Durbán (UC3M)"
-date: "2022-04-22"
+date: "2022-06-07"
 output: 
   rmarkdown::html_vignette:
     number_sections: yes
@@ -121,28 +121,20 @@ summary(Linear_WITHIN_sar_REML)
 ##         "year"))
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)
-## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16
-## partrate   0.393087   0.023315 16.8595 < 2.2e-16
-## agri      -0.036052   0.027267 -1.3222 0.1862167
-## cons      -0.166196   0.044510 -3.7339 0.0001928
-## serv       0.012378   0.020597  0.6009 0.5479300
-## rho        0.265671   0.018858 14.0880 < 2.2e-16
-##              
-## empgrowth ***
-## partrate  ***
-## agri         
-## cons      ***
-## serv         
-## rho       ***
+##             Estimate Std. Error t value  Pr(>|t|)    
+## empgrowth -0.129538   0.014091 -9.1932 < 2.2e-16 ***
+## partrate   0.391656   0.023315 16.7981 < 2.2e-16 ***
+## agri      -0.036743   0.027267 -1.3475 0.1779308    
+## cons      -0.166868   0.044510 -3.7490 0.0001816 ***
+## serv       0.012198   0.020597  0.5922 0.5537490    
+## rho        0.265671   0.018858 14.0880 < 2.2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total:      6 
-##  Sigma: 1.86929 
+##  Sigma: 1.86934 
 ##  AIC:  5396.53 
 ##  BIC:  5431.41
 ```
@@ -165,20 +157,13 @@ round(data.frame(Linear_WITHIN_sar_REML = c(Linear_WITHIN_sar_REML$rho,
 ```
 
 ```
-##                 Linear_WITHIN_sar_REML
-## rho                              0.266
-## fixed_empgrowth                 -0.130
-## fixed_partrate                   0.393
-## fixed_agri                      -0.036
-## fixed_cons                      -0.166
-## fixed_serv                       0.012
-##                 Linear_WITHIN_sar_ML
-## rho                            0.266
-## fixed_empgrowth               -0.130
-## fixed_partrate                 0.392
-## fixed_agri                    -0.037
-## fixed_cons                    -0.167
-## fixed_serv                     0.012
+##                 Linear_WITHIN_sar_REML Linear_WITHIN_sar_ML
+## rho                              0.266                0.266
+## fixed_empgrowth                 -0.130               -0.130
+## fixed_partrate                   0.392                0.392
+## fixed_agri                      -0.037               -0.037
+## fixed_cons                      -0.167               -0.167
+## fixed_serv                       0.012                0.012
 ```
 Clearly, both methods give exactly the same results, at least at the third digit level.
 
@@ -190,10 +175,8 @@ coef(Linear_WITHIN_sar_REML)
 ```
 
 ```
-##         rho   empgrowth    partrate        agri 
-##  0.26567078 -0.12973894  0.39308715 -0.03605243 
-##        cons        serv 
-## -0.16619608  0.01237770
+##        rho  empgrowth   partrate       agri       cons       serv 
+##  0.2656708 -0.1295384  0.3916562 -0.0367427 -0.1668684  0.0121982
 ```
 
 Extract fitted values and residuals:
@@ -223,7 +206,7 @@ logLik(Linear_WITHIN_sar_REML, REML = TRUE)
 ## 'log Lik.' -2711.112 (df=6)
 ```
 
-Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get frequentist (default) or bayesian covariances:
+Extract the covariance matrix of estimated coefficients. Argument `bayesian` allows to get bayesian (default) or frequentist covariances:
 
 
 ```r
@@ -231,37 +214,25 @@ vcov(Linear_WITHIN_sar_REML)
 ```
 
 ```
-##               empgrowth      partrate          agri
-## empgrowth  1.985464e-04 -8.106848e-05 -3.050359e-06
-## partrate  -8.106848e-05  5.436097e-04 -7.233434e-05
-## agri      -3.050359e-06 -7.233434e-05  7.434641e-04
-## cons       3.032827e-05 -1.649890e-04  1.891487e-04
-## serv      -6.861998e-06 -7.891185e-05  2.741340e-04
-##                    cons          serv
-## empgrowth  3.032827e-05 -6.861998e-06
-## partrate  -1.649890e-04 -7.891185e-05
-## agri       1.891487e-04  2.741340e-04
-## cons       1.981149e-03  2.432964e-04
-## serv       2.432964e-04  4.242353e-04
+##               empgrowth      partrate          agri          cons          serv
+## empgrowth  1.985464e-04 -8.106848e-05 -3.050359e-06  3.032827e-05 -6.861998e-06
+## partrate  -8.106848e-05  5.436097e-04 -7.233434e-05 -1.649890e-04 -7.891185e-05
+## agri      -3.050359e-06 -7.233434e-05  7.434641e-04  1.891487e-04  2.741340e-04
+## cons       3.032827e-05 -1.649890e-04  1.891487e-04  1.981149e-03  2.432964e-04
+## serv      -6.861998e-06 -7.891185e-05  2.741340e-04  2.432964e-04  4.242353e-04
 ```
 
 ```r
-vcov(Linear_WITHIN_sar_REML, bayesian = TRUE)
+vcov(Linear_WITHIN_sar_REML, bayesian = FALSE)
 ```
 
 ```
-##               empgrowth      partrate          agri
-## empgrowth  1.985464e-04 -8.106848e-05 -3.050359e-06
-## partrate  -8.106848e-05  5.436097e-04 -7.233434e-05
-## agri      -3.050359e-06 -7.233434e-05  7.434641e-04
-## cons       3.032827e-05 -1.649890e-04  1.891487e-04
-## serv      -6.861998e-06 -7.891185e-05  2.741340e-04
-##                    cons          serv
-## empgrowth  3.032827e-05 -6.861998e-06
-## partrate  -1.649890e-04 -7.891185e-05
-## agri       1.891487e-04  2.741340e-04
-## cons       1.981149e-03  2.432964e-04
-## serv       2.432964e-04  4.242353e-04
+##               empgrowth      partrate          agri          cons          serv
+## empgrowth  1.985464e-04 -8.106848e-05 -3.050359e-06  3.032827e-05 -6.861998e-06
+## partrate  -8.106848e-05  5.436097e-04 -7.233434e-05 -1.649890e-04 -7.891185e-05
+## agri      -3.050359e-06 -7.233434e-05  7.434641e-04  1.891487e-04  2.741340e-04
+## cons       3.032827e-05 -1.649890e-04  1.891487e-04  1.981149e-03  2.432964e-04
+## serv      -6.861998e-06 -7.891185e-05  2.741340e-04  2.432964e-04  4.242353e-04
 ```
 
 A print method to get printed coefficients, standard errors and p-values of parametric terms:
@@ -273,11 +244,11 @@ print(Linear_WITHIN_sar_REML)
 
 ```
 ##           Estimate Std. Error t value Pr(>|t|)
-## empgrowth  -0.1297     0.0141 -9.2074   0.0000
-## partrate    0.3931     0.0233 16.8595   0.0000
-## agri       -0.0361     0.0273 -1.3222   0.1862
-## cons       -0.1662     0.0445 -3.7339   0.0002
-## serv        0.0124     0.0206  0.6009   0.5479
+## empgrowth  -0.1295     0.0141 -9.1932   0.0000
+## partrate    0.3917     0.0233 16.7981   0.0000
+## agri       -0.0367     0.0273 -1.3475   0.1779
+## cons       -0.1669     0.0445 -3.7490   0.0002
+## serv        0.0122     0.0206  0.5922   0.5537
 ## rho         0.2657     0.0189 14.0880   0.0000
 ```
 
@@ -293,28 +264,20 @@ summary(Linear_WITHIN_sar_REML)
 ##         "year"))
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)
-## empgrowth -0.129739   0.014091 -9.2074 < 2.2e-16
-## partrate   0.393087   0.023315 16.8595 < 2.2e-16
-## agri      -0.036052   0.027267 -1.3222 0.1862167
-## cons      -0.166196   0.044510 -3.7339 0.0001928
-## serv       0.012378   0.020597  0.6009 0.5479300
-## rho        0.265671   0.018858 14.0880 < 2.2e-16
-##              
-## empgrowth ***
-## partrate  ***
-## agri         
-## cons      ***
-## serv         
-## rho       ***
+##             Estimate Std. Error t value  Pr(>|t|)    
+## empgrowth -0.129538   0.014091 -9.1932 < 2.2e-16 ***
+## partrate   0.391656   0.023315 16.7981 < 2.2e-16 ***
+## agri      -0.036743   0.027267 -1.3475 0.1779308    
+## cons      -0.166868   0.044510 -3.7490 0.0001816 ***
+## serv       0.012198   0.020597  0.5922 0.5537490    
+## rho        0.265671   0.018858 14.0880 < 2.2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Goodness-of-Fit 
 ##  
 ##  EDF Total:      6 
-##  Sigma: 1.86929 
+##  Sigma: 1.86934 
 ##  AIC:  5396.53 
 ##  BIC:  5431.41
 ```
@@ -341,21 +304,14 @@ summary(Linear_WITHIN_sar_ML)
 ## lambda 0.266004   0.020636   12.89 < 2.2e-16 ***
 ## 
 ## Coefficients:
-##            Estimate Std. Error t-value  Pr(>|t|)
-## empgrowth -0.129530   0.014078 -9.2009 < 2.2e-16
-## partrate   0.391597   0.023464 16.6894 < 2.2e-16
-## agri      -0.036771   0.027219 -1.3510 0.1767102
-## cons      -0.166896   0.044420 -3.7572 0.0001718
-## serv       0.012191   0.020559  0.5930 0.5532105
-##              
-## empgrowth ***
-## partrate  ***
-## agri         
-## cons      ***
-## serv         
+##            Estimate Std. Error t-value  Pr(>|t|)    
+## empgrowth -0.129530   0.014078 -9.2009 < 2.2e-16 ***
+## partrate   0.391597   0.023464 16.6894 < 2.2e-16 ***
+## agri      -0.036771   0.027219 -1.3510 0.1767102    
+## cons      -0.166896   0.044420 -3.7572 0.0001718 ***
+## serv       0.012191   0.020559  0.5930 0.5532105    
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 Computing average direct, indirect and total marginal impacts:
 
@@ -369,27 +325,27 @@ summary(imp_parvar_sar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##            Estimate Std. Error   t value Pr(>|t|)
-## empgrowth -0.177719   0.018771 -9.467653   0.0000
-## partrate   0.536770   0.035194 15.251545   0.0000
-## agri      -0.050101   0.038688 -1.294982   0.1953
-## cons      -0.228133   0.060288 -3.784020   0.0002
-## serv       0.017414   0.028546  0.610017   0.5419
+## empgrowth -0.176573   0.019656 -8.983384   0.0000
+## partrate   0.534058   0.034073 15.674062   0.0000
+## agri      -0.050685   0.038156 -1.328366   0.1841
+## cons      -0.230225   0.061790 -3.725926   0.0002
+## serv       0.017306   0.028278  0.611988   0.5405
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##            Estimate Std. Error   t value Pr(>|t|)
-## empgrowth -0.133728   0.013692 -9.767018   0.0000
-## partrate   0.403884   0.024104 16.755808   0.0000
-## agri      -0.037687   0.029077 -1.296127   0.1949
-## cons      -0.171646   0.045167 -3.800262   0.0001
-## serv       0.013115   0.021507  0.609788   0.5420
+## empgrowth -0.132763   0.014486 -9.164996   0.0000
+## partrate   0.401542   0.023991 16.737464   0.0000
+## agri      -0.038115   0.028685 -1.328747   0.1839
+## cons      -0.173082   0.046139 -3.751332   0.0002
+## serv       0.012996   0.021247  0.611659   0.5408
 ## 
 ##  Indirect Parametric Impacts (sar) 
 ##             Estimate Std. Error    t value Pr(>|t|)
-## empgrowth -0.0439908  0.0061601 -7.1412957   0.0000
-## partrate   0.1328863  0.0150841  8.8097216   0.0000
-## agri      -0.0124135  0.0096898 -1.2810961   0.2002
-## cons      -0.0564868  0.0158098 -3.5728936   0.0004
-## serv       0.0042989  0.0070732  0.6077681   0.5433
+## empgrowth -0.0438106  0.0061748 -7.0950827   0.0000
+## partrate   0.1325152  0.0142666  9.2884688   0.0000
+## agri      -0.0125704  0.0095534 -1.3158057   0.1882
+## cons      -0.0571431  0.0163081 -3.5039727   0.0005
+## serv       0.0043098  0.0070594  0.6105034   0.5415
 ```
 
 
@@ -428,20 +384,13 @@ round(data.frame(Linear_WITHIN_sem_REML = c(Linear_WITHIN_sem_REML$delta,
 ```
 
 ```
-##                 Linear_WITHIN_sem_REML
-## delta                            0.283
-## fixed_empgrowth                 -0.134
-## fixed_partrate                   0.400
-## fixed_agri                      -0.032
-## fixed_cons                      -0.186
-## fixed_serv                       0.030
-##                 Linear_WITHIN_sem_ML
-## delta                          0.283
-## fixed_empgrowth               -0.134
-## fixed_partrate                 0.399
-## fixed_agri                    -0.033
-## fixed_cons                    -0.188
-## fixed_serv                     0.031
+##                 Linear_WITHIN_sem_REML Linear_WITHIN_sem_ML
+## delta                            0.283                0.283
+## fixed_empgrowth                 -0.134               -0.134
+## fixed_partrate                   0.399                0.399
+## fixed_agri                      -0.033               -0.033
+## fixed_cons                      -0.188               -0.188
+## fixed_serv                       0.031                0.031
 ```
 
 
@@ -467,31 +416,27 @@ summary(gam)
 ## pspatfit(formula = formgam, data = unemp_it)
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value  Pr(>|t|)
-## (Intercept) 27.146139   1.350986  20.0936 < 2.2e-16
-## partrate    -0.376095   0.018216 -20.6461 < 2.2e-16
-## agri         0.346387   0.020058  17.2691 < 2.2e-16
-## cons        -0.183073   0.055345  -3.3079 0.0009536
-##                
-## (Intercept) ***
-## partrate    ***
-## agri        ***
-## cons        ***
+##                                  Estimate Std. Error  t value  Pr(>|t|)    
+## (Intercept)                    25.838300   1.188444  21.7413 < 2.2e-16 ***
+## partrate                       -0.376000   0.018302 -20.5441 < 2.2e-16 ***
+## agri                            0.346431   0.020116  17.2215 < 2.2e-16 ***
+## cons                           -0.182950   0.055461  -3.2987 0.0009852 ***
+## pspl(serv, nknots = 15).1      17.178586   2.682465   6.4040 1.807e-10 ***
+## pspl(empgrowth, nknots = 20).1  7.100932   2.766358   2.5669 0.0103203 *  
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                  EDF
-## pspl(serv, nknots = 15)      5.1556
-## pspl(empgrowth, nknots = 20) 4.0403
+## pspl(serv, nknots = 15)      5.0572
+## pspl(empgrowth, nknots = 20) 4.0149
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 13.1959 
-##  Sigma: 4.07109 
-##  AIC:  9464.61 
-##  BIC:  9541.32
+##  EDF Total: 15.0721 
+##  Sigma: 4.07535 
+##  AIC:  9467.19 
+##  BIC:  9554.8
 ```
 
 The same model, but with a spatial autoregressive term (SAR): $$y_{it}= \rho \sum_{j=1}^N w_{ij,N} y_{jt} +\sum_{k=1}^K \beta_k z_{k,it} + \sum_{\delta=1}^{\Delta} g_\delta(x_{\delta_{it}}) + \epsilon_{it}$$
@@ -511,33 +456,28 @@ summary(gamsar)
 ##     type = "sar", method = "eigen")
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value  Pr(>|t|)
-## (Intercept) 10.896654   0.940776  11.5826 < 2.2e-16
-## partrate    -0.164349   0.011958 -13.7440 < 2.2e-16
-## agri         0.093816   0.013100   7.1613 1.051e-12
-## cons        -0.092744   0.036110  -2.5684   0.01028
-## rho          0.658605   0.011280  58.3864 < 2.2e-16
-##                
-## (Intercept) ***
-## partrate    ***
-## agri        ***
-## cons        *  
-## rho         ***
+##                                  Estimate Std. Error  t value  Pr(>|t|)    
+## (Intercept)                    10.365069   0.749445  13.8303 < 2.2e-16 ***
+## partrate                       -0.162496   0.011712 -13.8740 < 2.2e-16 ***
+## agri                            0.094202   0.013111   7.1848 8.883e-13 ***
+## cons                           -0.094705   0.036083  -2.6246  0.008728 ** 
+## pspl(serv, nknots = 15).1       5.035216   2.011297   2.5035  0.012363 *  
+## pspl(empgrowth, nknots = 20).1  3.451821   0.875655   3.9420 8.307e-05 ***
+## rho                             0.658983   0.011264  58.5028 < 2.2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                  EDF
-## pspl(serv, nknots = 15)      7.1105
-## pspl(empgrowth, nknots = 20) 5.4779
+## pspl(serv, nknots = 15)      6.1815
+## pspl(empgrowth, nknots = 20) 0.3015
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 17.5884 
-##  Sigma: 3.56178 
-##  AIC:  7784.16 
-##  BIC:  7886.4
+##  EDF Total: 13.483 
+##  Sigma: 3.56041 
+##  AIC:  7762.85 
+##  BIC:  7841.22
 ```
 
 and a spatial error term: $$y_{it}= \sum_{k=1}^K \beta_k z_{k,it} + \sum_{\delta=1}^{\Delta} g_\delta(x_{\delta_{it}}) + \epsilon_{it}$$
@@ -553,11 +493,11 @@ gamsem <- pspatfit(formgam, data = unemp_it, listw = lwsp_it, method = "eigen", 
 
 ```
 ## Error in solve(H) : 
-##   Lapack dgecon(): system computationally singular, reciprocal condition number = 3.03277e-30
+##   Lapack dgecon(): system computationally singular, reciprocal condition number = 2.00943e-32
 ## Error in solve(H) : 
-##   Lapack dgecon(): system computationally singular, reciprocal condition number = 2.2863e-30
+##   Lapack dgecon(): system computationally singular, reciprocal condition number = 3.79993e-33
 ## Error in solve(H) : 
-##   Lapack dgecon(): system computationally singular, reciprocal condition number = 2.0192e-30
+##   Lapack dgecon(): system computationally singular, reciprocal condition number = 3.56974e-33
 ```
 
 ```r
@@ -571,33 +511,28 @@ summary(gamsem)
 ##     type = "sem", method = "eigen")
 ## 
 ##  Parametric Terms 
-##               Estimate Std. Error  t value Pr(>|t|)
-## (Intercept) 19.242400   1.161474  16.5672  < 2e-16
-## partrate    -0.216734   0.021048 -10.2971  < 2e-16
-## agri         0.020094   0.015038   1.3362  0.18160
-## cons        -0.080241   0.039193  -2.0473  0.04073
-## delta        0.751408   0.010967  68.5128  < 2e-16
-##                
-## (Intercept) ***
-## partrate    ***
-## agri           
-## cons        *  
-## delta       ***
+##                                  Estimate Std. Error  t value  Pr(>|t|)    
+## (Intercept)                    19.750896   1.093575  18.0609 < 2.2e-16 ***
+## partrate                       -0.218101   0.020990 -10.3908 < 2.2e-16 ***
+## agri                            0.020851   0.015059   1.3846  0.166289    
+## cons                           -0.088517   0.039019  -2.2686  0.023381 *  
+## pspl(serv, nknots = 15).1       5.069505   2.809307   1.8045  0.071269 .  
+## pspl(empgrowth, nknots = 20).1  2.242396   0.864930   2.5926  0.009583 ** 
+## delta                           0.751108   0.011003  68.2629 < 2.2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                  EDF
-## pspl(serv, nknots = 15)      7.8634
-## pspl(empgrowth, nknots = 20) 6.9949
+## pspl(serv, nknots = 15)      9.8505
+## pspl(empgrowth, nknots = 20) 0.0001
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 19.8583 
-##  Sigma: 4.86868 
-##  AIC:  8102.27 
-##  BIC:  8217.7
+##  EDF Total: 16.8506 
+##  Sigma: 4.85658 
+##  AIC:  8083.08 
+##  BIC:  8181.03
 ```
 
 We can control for spatio-temporal heterogeneity by including a PS-ANOVA spatial trend in 3d. The interaction terms (`f12`,`f1t`,`f2t` and `f12t`) with nested basis. Remark: `nest_sp1`, `nest_sp2` and `nest_time` must be divisors of `nknots`.
@@ -631,41 +566,44 @@ summary(sp3danova)
 ##     method = "Chebyshev")
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)
-## Intercept  4.016850   3.015789  1.3319    0.1830
-## partrate   0.152599   0.021014  7.2617 5.232e-13
-## agri      -0.018676   0.017880 -1.0445    0.2964
-## cons      -0.041459   0.038782 -1.0690    0.2852
-##              
-## Intercept    
-## partrate  ***
-## agri         
-## cons         
+##                                   Estimate Std. Error t value  Pr(>|t|)    
+## (Intercept)                      4.095250   8.439029  0.4853    0.6275    
+## partrate                         0.149554   0.021941  6.8162 1.194e-11 ***
+## agri                            -0.020493   0.019754 -1.0374    0.2997    
+## cons                            -0.038577   0.040441 -0.9539    0.3402    
+## f1_main.1                       -1.784476  13.258650 -0.1346    0.8929    
+## f2_main.1                      -15.501067  10.962662 -1.4140    0.1575    
+## ft_main.1                        2.417563   4.896167  0.4938    0.6215    
+## f12_int.1                       -8.775366  12.354467 -0.7103    0.4776    
+## f1t_int.1                        4.128181   6.471923  0.6379    0.5236    
+## f2t_int.1                       -2.087737   6.777911 -0.3080    0.7581    
+## f12t_int.1                       1.433789   7.658633  0.1872    0.8515    
+## pspl(serv, nknots = 15).1        0.730598   1.607166  0.4546    0.6494    
+## pspl(empgrowth, nknots = 20).1   4.515110   1.027497  4.3943 1.163e-05 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                  EDF
-## pspl(serv, nknots = 15)      7.8138
-## pspl(empgrowth, nknots = 20) 8.0551
+## pspl(serv, nknots = 15)      5.5662
+## pspl(empgrowth, nknots = 20) 2.6235
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##         EDF
-## f1   10.827
-## f2    9.756
-## ft    7.776
-## f12  45.218
-## f1t   4.282
-## f2t  22.811
-## f12t 77.915
+## f1   10.664
+## f2    9.732
+## ft    7.782
+## f12  45.426
+## f1t   4.241
+## f2t  21.454
+## f12t 82.117
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 205.454 
-##  Sigma: 1.53927 
-##  AIC:  5993.12 
-##  BIC:  7187.38
+##  EDF Total: 202.607 
+##  Sigma: 1.54011 
+##  AIC:  5975.9 
+##  BIC:  7153.61
 ```
 
 A semiparametric model with a PS-ANOVA spatial trend in 3d with the exclusion of some ANOVA components
@@ -695,41 +633,42 @@ summary(sp3danova_restr)
 ##     method = "Chebyshev")
 ## 
 ##  Parametric Terms 
-##             Estimate Std. Error t value  Pr(>|t|)
-## Intercept  4.640481   3.012467  1.5404    0.1236
-## partrate   0.152941   0.020992  7.2856 4.404e-13
-## agri      -0.025368   0.017801 -1.4251    0.1543
-## cons      -0.024259   0.038929 -0.6232    0.5332
-##              
-## Intercept    
-## partrate  ***
-## agri         
-## cons         
+##                                   Estimate Std. Error t value  Pr(>|t|)    
+## (Intercept)                      4.462162   8.440437  0.5287   0.59709    
+## partrate                         0.150991   0.021907  6.8925 7.080e-12 ***
+## agri                            -0.027567   0.019677 -1.4010   0.16135    
+## cons                            -0.022675   0.040534 -0.5594   0.57594    
+## f1_main.1                       -1.240456  13.261361 -0.0935   0.92548    
+## f2_main.1                      -15.908898  10.966372 -1.4507   0.14700    
+## ft_main.1                        4.177267   1.887587  2.2130   0.02700 *  
+## f12_int.1                       -8.204611  12.401659 -0.6616   0.50831    
+## f12t_int.1                      14.522959   6.279136  2.3129   0.02082 *  
+## pspl(serv, nknots = 15).1        0.483243   1.549567  0.3119   0.75518    
+## pspl(empgrowth, nknots = 20).1   4.671660   1.026827  4.5496 5.658e-06 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
 ##                                  EDF
-## pspl(serv, nknots = 15)      7.7381
-## pspl(empgrowth, nknots = 20) 8.0137
+## pspl(serv, nknots = 15)      5.3124
+## pspl(empgrowth, nknots = 20) 2.6184
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##          EDF
-## f1    10.775
-## f2     9.678
-## ft     7.755
-## f12   45.335
+## f1    10.589
+## f2     9.663
+## ft     7.765
+## f12   45.582
 ## f1t    0.000
 ## f2t    0.000
-## f12t 113.620
+## f12t 114.194
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 211.915 
-##  Sigma: 1.53573 
-##  AIC:  6041.81 
-##  BIC:  7273.63
+##  EDF Total: 206.724 
+##  Sigma: 1.54107 
+##  AIC:  6019.37 
+##  BIC:  7221.01
 ```
 
 Now we add a spatial lag (*sar*) and temporal correlation in the noise of PSANOVA 3d model.
@@ -754,45 +693,44 @@ summary(sp3danovasarar1)
 ##     type = "sar", method = "Chebyshev", cor = "ar1")
 ## 
 ##  Parametric Terms 
-##              Estimate Std. Error t value  Pr(>|t|)
-## Intercept  5.0678900  3.0611564  1.6555   0.09795
-## partrate   0.1485784  0.0205497  7.2302 6.557e-13
-## agri      -0.0349079  0.0201957 -1.7285   0.08404
-## cons      -0.0092429  0.0411776 -0.2245   0.82242
-## rho        0.0453863  0.0217972  2.0822   0.03744
-## phi        0.3149515  0.0138863 22.6807 < 2.2e-16
-##              
-## Intercept .  
-## partrate  ***
-## agri      .  
-## cons         
-## rho       *  
-## phi       ***
+##                                    Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept)                      4.4102526   7.9405349  0.5554   0.57867    
+## partrate                         0.1464218   0.0211985  6.9072 6.389e-12 ***
+## agri                            -0.0358110   0.0218811 -1.6366   0.10185    
+## cons                            -0.0088702   0.0425165 -0.2086   0.83476    
+## f1_main.1                       -0.2450048  12.3986588 -0.0198   0.98424    
+## f2_main.1                      -13.2751193  10.1719792 -1.3051   0.19200    
+## ft_main.1                        3.1757687   1.6375755  1.9393   0.05259 .  
+## f12_int.1                       -7.0317520  11.4496509 -0.6141   0.53918    
+## f12t_int.1                      10.8990908   5.4265178  2.0085   0.04471 *  
+## pspl(serv, nknots = 15).1        0.7822449   1.6126291  0.4851   0.62767    
+## pspl(empgrowth, nknots = 20).1   4.8928705   0.8550451  5.7224 1.189e-08 ***
+## rho                              0.0472547   0.0217937  2.1683   0.03024 *  
+## phi                              0.3154952   0.0138261 22.8188 < 2.2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ##  Non-Parametric Terms 
-##                                 EDF
-## pspl(serv, nknots = 15)      6.933
-## pspl(empgrowth, nknots = 20) 7.790
+##                                  EDF
+## pspl(serv, nknots = 15)      4.6292
+## pspl(empgrowth, nknots = 20) 2.7262
 ## 
 ##  Non-Parametric Spatio-Temporal Trend 
 ##          EDF
-## f1    10.202
-## f2     9.522
-## ft     7.855
-## f12   43.121
+## f1    10.017
+## f2     9.512
+## ft     7.863
+## f12   43.323
 ## f1t    0.000
 ## f2t    0.000
-## f12t 102.109
+## f12t 102.168
 ## 
 ##  Goodness-of-Fit 
 ##  
-##  EDF Total: 197.532 
-##  Sigma: 1.56498 
-##  AIC:  5582.27 
-##  BIC:  6730.48
+##  EDF Total: 192.238 
+##  Sigma: 2.56494 
+##  AIC:  5555.63 
+##  BIC:  6673.07
 ```
 
 Examples of LR test:
@@ -803,12 +741,9 @@ anova(gam, gamsar, lrtest = TRUE)
 ```
 
 ```
-##         logLik rlogLik    edf    AIC    BIC LRtest
-## gam    -4719.1 -4728.3 13.196 9464.6 9559.7       
-## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685
-##        p.val
-## gam         
-## gamsar     0
+##         logLik rlogLik    edf    AIC    BIC LRtest p.val
+## gam    -4718.5 -4728.2 15.072 9467.2 9574.0             
+## gamsar -3867.9 -3881.1 13.483 7762.8 7867.4 1694.2   NaN
 ```
 
 ```r
@@ -816,12 +751,9 @@ anova(gam, gamsar, lrtest = TRUE)
 ```
 
 ```
-##         logLik rlogLik    edf    AIC    BIC LRtest
-## gam    -4719.1 -4728.3 13.196 9464.6 9559.7       
-## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0   1685
-##        p.val
-## gam         
-## gamsar     0
+##         logLik rlogLik    edf    AIC    BIC LRtest p.val
+## gam    -4718.5 -4728.2 15.072 9467.2 9574.0             
+## gamsar -3867.9 -3881.1 13.483 7762.8 7867.4 1694.2   NaN
 ```
 
 ```r
@@ -830,8 +762,8 @@ anova(gamsar, gamsem, lrtest = FALSE)
 
 ```
 ##         logLik rlogLik    edf    AIC    BIC
-## gamsar -3874.5 -3885.9 17.588 7784.2 7909.0
-## gamsem -4031.3 -4041.6 19.858 8102.3 8238.2
+## gamsar -3867.9 -3881.1 13.483 7762.8 7867.4
+## gamsem -4024.7 -4036.0 16.851 8083.1 8203.6
 ```
 
 ```r
@@ -839,12 +771,9 @@ anova(gam, sp3danova_restr, lrtest = TRUE)
 ```
 
 ```
-##                  logLik rlogLik     edf    AIC
-## gam             -4719.1 -4728.3  13.196 9464.6
-## sp3danova_restr -2809.0 -2808.1 211.915 6041.8
-##                    BIC LRtest p.val
-## gam             9559.7             
-## sp3danova_restr 7252.9 3840.4     0
+##                  logLik rlogLik     edf    AIC    BIC LRtest p.val
+## gam             -4718.5 -4728.2  15.072 9467.2 9574.0             
+## sp3danova_restr -2803.0 -2802.9 206.724 6019.4 7202.8 3850.6     0
 ```
 
 ```r
@@ -852,12 +781,9 @@ anova(sp3danova_restr, sp3danovasarar1, lrtest = FALSE)
 ```
 
 ```
-##                  logLik rlogLik    edf    AIC
-## sp3danova_restr -2809.0 -2808.1 211.91 6041.8
-## sp3danovasarar1 -2593.6 -2593.1 197.53 5582.3
-##                    BIC
-## sp3danova_restr 7252.9
-## sp3danovasarar1 6713.1
+##                  logLik rlogLik    edf    AIC    BIC
+## sp3danova_restr -2803.0 -2802.9 206.72 6019.4 7202.8
+## sp3danovasarar1 -2585.6 -2586.1 192.24 5555.6 6658.6
 ```
 
 Plot of non-parametric terms
@@ -870,16 +796,12 @@ names(terms_nopar)
 ```
 
 ```
-## [1] "fitted_terms"          
-## [2] "se_fitted_terms"       
-## [3] "fitted_terms_fixed"    
-## [4] "se_fitted_terms_fixed" 
-## [5] "fitted_terms_random"   
-## [6] "se_fitted_terms_random"
+## [1] "fitted_terms"           "se_fitted_terms"        "fitted_terms_fixed"    
+## [4] "se_fitted_terms_fixed"  "fitted_terms_random"    "se_fitted_terms_random"
 ```
 
 ```r
-plot_terms(terms_nopar, unemp_it, conflevel = 0.95)
+plot_terms(terms_nopar, unemp_it, alpha = 0.05)
 ```
 
 ![](unnamed-chunk-19-1-vignetteC.png)
@@ -897,25 +819,21 @@ summary(imp_nparvar)
 ## 
 ##  Total Parametric Impacts (sar) 
 ##           Estimate Std. Error   t value Pr(>|t|)
-## partrate  0.156332   0.022276  7.017959   0.0000
-## agri     -0.035473   0.021602 -1.642095   0.1006
-## cons     -0.010991   0.043010 -0.255546   0.7983
+## partrate  0.153142   0.022658  6.758868   0.0000
+## agri     -0.037896   0.022871 -1.656943   0.0975
+## cons     -0.012391   0.044590 -0.277893   0.7811
 ## 
 ##  Direct Parametric Impacts (sar) 
 ##           Estimate Std. Error   t value Pr(>|t|)
-## partrate  0.149229   0.021038  7.093211   0.0000
-## agri     -0.033849   0.020609 -1.642450   0.1005
-## cons     -0.010498   0.041051 -0.255723   0.7982
+## partrate  0.146027   0.021483  6.797458   0.0000
+## agri     -0.036156   0.021841 -1.655381   0.0978
+## cons     -0.011843   0.042540 -0.278394   0.7807
 ## 
 ##  Indirect Parametric Impacts (sar) 
-##             Estimate  Std. Error     t value
-## partrate  0.00710342  0.00348963  2.03558132
-## agri     -0.00162388  0.00131103 -1.23862314
-## cons     -0.00049335  0.00215887 -0.22852314
-##          Pr(>|t|)
-## partrate   0.0418
-## agri       0.2155
-## cons       0.8192
+##             Estimate  Std. Error     t value Pr(>|t|)
+## partrate  0.00711462  0.00358871  1.98250003   0.0474
+## agri     -0.00174043  0.00140364 -1.23994188   0.2150
+## cons     -0.00054843  0.00227842 -0.24070396   0.8098
 ```
 
 

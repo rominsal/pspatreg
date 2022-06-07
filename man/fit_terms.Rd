@@ -5,7 +5,7 @@
 \title{Compute terms of the non-parametric covariates in the
   semiparametric regression models.}
 \usage{
-fit_terms(object, variables)
+fit_terms(object, variables, intercept = FALSE)
 }
 \arguments{
 \item{object}{object fitted using \code{\link{pspatfit}} function.}
@@ -14,6 +14,8 @@ fit_terms(object, variables)
 To fit the terms of non-parametric spatial (2d) or spatio-temporal 
 (3d) trend this argument must be set equal to `spttrend`. 
 See \code{examples} in this function.}
+
+\item{intercept}{add intercept to fitted term. Default = FALSE.}
 }
 \value{
 A list including:
@@ -52,13 +54,12 @@ The \code{fit_terms} function compute both:
 library(pspatreg)
 data(unemp_it, package = "pspatreg")
 lwsp_it <- spdep::mat2listw(Wsp_it)
-unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
 #######  No Spatial Trend: PSAR including a spatial 
 #######  lag of the dependent variable
-form1 <- unrate ~ partrate + agri + cons +
+form1 <- unrate ~ partrate + agri + cons + 
                   pspl(serv, nknots = 15) +
-                  pspl(empgrowth, nknots = 20) 
-gamsar <- pspatfit(form1, data = unemp_it_short, 
+                  pspl(empgrowth, nknots = 20)  
+gamsar <- pspatfit(form1, data = unemp_it, 
                    type = "sar", listw = lwsp_it)
 summary(gamsar)
 
@@ -68,7 +69,7 @@ list_varnopar <- c("serv", "empgrowth")
 terms_nopar <- fit_terms(gamsar, list_varnopar)
 
 ######################  Plot non-parametric terms
-plot_terms(terms_nopar, unemp_it_short)
+plot_terms(terms_nopar, unemp_it)
  
 }
 \references{

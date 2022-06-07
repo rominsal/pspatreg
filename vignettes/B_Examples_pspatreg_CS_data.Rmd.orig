@@ -382,7 +382,7 @@ sp2dsar <- pspatfit(form2d, data = ames_sf1, listw = listW, method = "Chebyshev"
 summary(sp2dsar)
 anova(gamsar, sp2dsar, lrtest=TRUE)
 ```
-The estimated spatial spillover parameter $\rho$ (0.19) is much lower than the one estimated above, suggesting that the SAR model without spatial trend (both linear and nonlinear) actually captures spatial autocorrelated unobserved heterogeneity.    
+The estimated spatial spillover parameter $\rho$ (0.18) is much lower than the one estimated above, suggesting that the SAR model without spatial trend (both linear and nonlinear) actually captures spatial autocorrelated unobserved heterogeneity.    
 
 The marginal (direct, indirect and total) impacts for parametric terms are computed as usual with the function `impactspar()`:
 

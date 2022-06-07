@@ -43,26 +43,86 @@
 #'
 #' @examples
 #' library(pspatreg)
-#' data(unemp_it)
-#' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
-#'  ######################  GAM pure
-#' form1 <- unrate ~ partrate + agri + cons +
-#'                  pspl(serv, nknots = 15) +
-#'                  pspl(empgrowth, nknots = 20)
-#' gampure <- pspatfit(form1, data = unemp_it_short)
-#' summary(gampure)
-#' #########  GAM pure with spatial non-parametric term
-#'  \donttest{
-#'  geosp1 <- pspatfit(form1, data = unemp_it_short)
-#'  summary(geosp1)
+#' ###############################################
+#' # Examples using spatial data of Ames Houses.
+#' ###############################################
+#' library(spdep)
+#' library(sf)
+#' ames <- AmesHousing::make_ames() # Raw Ames Housing Data
+#' ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
+#' ames_sf$Longitude <- ames$Longitude
+#' ames_sf$Latitude <- ames$Latitude
+#' ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
+#' ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
+#' ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
+#' ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
+#' ########### Constructing the spatial weights matrix
+#' ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
+#' coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
+#' ID <- row.names(as(ames_sf1, "sf"))
+#' col_tri_nb <- tri2nb(coord_sf1)
+#' soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+#'                             coord_sf1), 
+#'                    row.names = ID)
+#' lw_ames <- nb2listw(soi_nb, style = "W", 
+#'                     zero.policy = FALSE)
 #' 
+#' ####  GAM pure with pspatreg
+#' form1 <- lnSale_Price ~ Fireplaces + Garage_Cars +
+#'           pspl(lnLot_Area, nknots = 20) + 
+#'           pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'           pspl(lnGr_Liv_Area, nknots = 20)    
+#' gampure <- pspatfit(form1, data = ames_sf1)
+#' summary(gampure)
+#' #########  GAM pure with spatial trend (2d)
+#'  \donttest{
+#' #####################  GAM + SAR Model
+#' gamsar <- pspatfit(form1, data = ames_sf1, 
+#'                    type = "sar", listw = lw_ames,
+#'                    method = "Chebyshev")
+#' summary(gamsar)
+#' ### Models with 2d spatial trend
+#' form2 <- lnSale_Price ~ Fireplaces + Garage_Cars +
+#'           pspl(lnLot_Area, nknots = 20) + 
+#'           pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'           pspl(lnGr_Liv_Area, nknots = 20) +
+#'           pspt(Longitude, Latitude, 
+#'                nknots = c(10, 10), 
+#'                psanova = FALSE)
+#' #####################  GAM + GEO Model
+#' gamgeo2d <- pspatfit(form2, data = ames_sf1)
+#' summary(gamgeo2d)
+#' 
+#' gamgeo2dsar <- pspatfit(form2, data = ames_sf1,
+#'                         type = "sar", 
+#'                         listw = lw_ames, 
+#'                         method = "Chebyshev")
+#' summary(gamgeo2dsar)
+#' ### Models with psanova 2d spatial trend
+#' form3 <- lnSale_Price ~ Fireplaces + Garage_Cars +
+#'           pspl(lnLot_Area, nknots = 20) + 
+#'           pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'           pspl(lnGr_Liv_Area, nknots = 20) +
+#'           pspt(Longitude, Latitude, 
+#'                nknots = c(10, 10), 
+#'                psanova = TRUE)
+#' gamgeo2danovasar <- pspatfit(form3, data = ames_sf1,
+#'                         type = "sar", 
+#'                         listw = lw_ames, method = "Chebyshev")
+#' summary(gamgeo2danovasar)
 #'  ###############################################
+#' ###################### Examples using a panel data of rate of
+#' ###################### unemployment for 103 Italian provinces in 1996-2019.
+#'  ###############################################
+#' ## load spatial panel and Wsp_it
+#' ## 103 Italian provinces. Period 1996-2019
+#' data(unemp_it, package = "pspatreg")
+#' ## Wsp_it is a matrix. Create a neighboord list 
+#' lwsp_it <- spdep::mat2listw(Wsp_it)
 #'  ### Spatio-temporal semiparametric ANOVA model 
 #'  ### Interaction terms f12,f1t,f2t and f12t with nested basis
 #'  ### Remark: nest_sp1, nest_sp2 and nest_time must be divisors of nknots
-#'  
-#'  form2 <- unrate ~ partrate + agri + cons +
+#'  form4 <- unrate ~ partrate + agri + cons +
 #'                    pspl(serv, nknots = 15) + 
 #'                    pspl(empgrowth, nknots = 20) +
 #'                    pspt(long, lat, year, 
@@ -71,13 +131,13 @@
 #'                         nest_sp1 = c(1, 2, 2), 
 #'                         nest_sp2 = c(1, 2, 2),
 #'                         nest_time = c(1, 2, 2))
-#'  sptanova <- pspatfit(form2, data = unemp_it)
+#'  sptanova <- pspatfit(form4, data = unemp_it)
 #'  summary(sptanova)
 #'  
 #' 
 #'  ################################################  
 #'  ### Interaction terms f1t not included in ANOVA decomposition
-#'  form3 <- unrate ~ partrate + agri + cons +
+#'  form5 <- unrate ~ partrate + agri + cons +
 #'                    pspl(serv, nknots = 15) + 
 #'                    pspl(empgrowth, nknots=20) +
 #'                    pspt(long, lat, year, 
@@ -87,8 +147,12 @@
 #'                         nest_sp2 = c(1, 2, 3),
 #'                         nest_time = c(1, 2, 2), 
 #'                         f1t_int = FALSE)
-#'  sptanova2 <- pspatfit(form3, data = unemp_it)
-#'  summary(sptanova2)
+#'  ## Add sar specification and ar1 temporal correlation 
+#'  sptanova2_sar_ar1 <- pspatfit(form5, data = unemp_it, 
+#'                               listw = lwsp_it, 
+#'                               type = "sar",
+#'                               cor = "ar1")
+#' summary(sptanova2_sar_ar1)                                 
 #'  }
 NULL
 
@@ -97,9 +161,7 @@ NULL
 #'   
 #' @param x Name of the covariate.
 #' @param xl Minimum of the interval for the continuous covariate.
-#'   Default = min(x) - 0.01.
 #' @param xr Maximum of the interval for the continuous covariate.
-#'   Default = max(x) - 0.01.
 #' @param nknots Number of knots for spline basis. Default = 10.
 #' @param bdeg Order of the B-spline basis. Default = 3.
 #' @param pord Order of the penalty for the difference matrix 
@@ -109,7 +171,7 @@ NULL
 #'   fixed part is given by \eqn{X = B*U_n} where \emph{B} is the
 #'   B-spline basis matrix and \emph{U_n} is the nullspace basis of the 
 #'   penalty matrix. If \code{decom = 2} the fixed part is given by
-#'   \eqn{X = [1|x|...|x^(pord-1)] }. Default = 2.
+#'   \eqn{X = [1|x|...|x^(pord-1)] }. Default = 1.
 #'   
 #' @description 
 #'   \code{pspl()}: This function allows the inclusion of terms for
@@ -126,15 +188,17 @@ NULL
 #'  }
 #' 
 #' @export
-pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
-                nknots = 10, bdeg = 3, pord = 2, decom = 2){
+pspl <- function(x, xl = min(x) - 0.01*abs(min(x)), 
+                 xr = max(x) + 0.01*abs(max(x)),
+                nknots = 10, bdeg = 3, pord = 2, 
+                decom = 3){
   dx <- (xr - xl)/nknots
   knots <- seq(xl - bdeg*dx, xr + bdeg*dx, by = dx)
   B <- spline.des(knots, x, bdeg + 1, 0*x)$design
   a <- list(nknots = nknots, knots = knots, bdeg = bdeg, 
             pord = pord, decom = decom, x = x)
   attributes(B) <- c(attributes(B), a)
-  class(B) <- c("bs","basis","matrix")
+  class(B) <- c("bs", "basis", "matrix")
   B
 }
 
@@ -159,17 +223,11 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'   coordinates before the estimation of semiparametric model. 
 #'   Default = `TRUE`   
 #' @param xl_sp1 Minimum of the interval for the first spatial coordinate.
-#'   Default = min(sp1) - 0.01.    
 #' @param xr_sp1 Maximum of the interval for the first spatial coordinate.
-#'   Default = max(sp1) + 0.01.     
 #' @param xl_sp2 Minimum of the interval for the second spatial coordinate.
-#'   Default = min(sp2) - 0.01.    
 #' @param xr_sp2 Maximum of the interval for the second spatial coordinate.
-#'   Default = max(sp2) + 0.01.  
 #' @param xl_time Minimum of the interval for the temporal coordinate.
-#'   Default = min(time) - 0.01.    
 #' @param xr_time Maximum of the interval for the temporal coordinate.
-#'   Default = max(time) + 0.01.  
 #' @param nknots Vector including the number of knots of each 
 #'   coordinate for spline bases. Default = c(10,10,5). The order of the knots
 #'   in the vector follows the order of the specified spatio-temporal parameters 
@@ -236,11 +294,14 @@ pspl <- function(x, xl = min(x) - 0.01, xr = max(x) + 0.01,
 #'    
 #' @export
 pspt <- function(sp1, sp2, time = NULL, scale = TRUE, ntime = NULL,
-                xl_sp1 = min(sp1) - 0.01, xr_sp1 = max(sp1) + 0.01,
-                xl_sp2 = min(sp2) - 0.01, xr_sp2 = max(sp2) + 0.01,
-                xl_time = min(time)- 0.01, xr_time = max(time) + 0.01,
+                xl_sp1 = min(sp1) - 0.01*abs(min(sp1)), 
+                xr_sp1 = max(sp1) + 0.01*abs(max(sp1)),
+                xl_sp2 = min(sp2) - 0.01*abs(min(sp2)), 
+                xr_sp2 = max(sp2) + 0.01*abs(max(sp2)),
+                xl_time = min(time) - 0.01*abs(min(time)), 
+                xr_time = max(time) + 0.01*abs(max(time)),
                 nknots = c(10,10,5), bdeg = c(3,3,3), pord = c(2,2,2),
-                decom = 2, psanova = FALSE,
+                decom = 3, psanova = FALSE,
                 nest_sp1 = 1, nest_sp2 = 1, nest_time = 1,
                 f1_main = TRUE, f2_main = TRUE, ft_main = TRUE,
                 f12_int = TRUE, f1t_int = TRUE, f2t_int = TRUE,
@@ -260,7 +321,7 @@ pspt <- function(sp1, sp2, time = NULL, scale = TRUE, ntime = NULL,
     if (!is.null(time)) {
       time <- scale(time)
       xl_time = min(time) - 0.01
-      xr_time=max(time)+0.01
+      xr_time = max(time) + 0.01
     }
   }
   B <- NULL
@@ -333,13 +394,12 @@ pspt <- function(sp1, sp2, time = NULL, scale = TRUE, ntime = NULL,
             f12_int = f12_int, f1t_int = f1t_int, f2t_int = f2t_int,
             f12t_int = f12t_int)
   attributes(B) <- c(attributes(B), a)
-  class(B) <- c("bs","basis","matrix")
+  class(B) <- c("bs", "basis", "matrix")
   B
 }
 
-#####################################################################################
-
-B_XZ <- function (B, x = NULL, pord = 2 , decom = 2){
+################################################################
+B_XZ <- function(B, x = NULL, pord = 2 , decom = 3) {
   m <- ncol(B)
   n <- nrow(B)
   D <- diff(diag(m), differences = pord)
@@ -354,18 +414,16 @@ B_XZ <- function (B, x = NULL, pord = 2 , decom = 2){
     X <- NULL
     for(i in 1:(pord)){ X <- cbind(X, x^(i-1)) }
   }
-  # else if(decom == 3) {
-  #   Xf <- NULL
-  #   for(i in 0:(pord-1)){
-  #     Xf <- cbind(Xf,knots[-c((1:pord),
-  #         (length(knots)- pord + 1):length(knots))]^i)
-  #   }
-  #   X <- B %*% Xf
-  # }
+  else if (decom == 3) {
+    X <- B %*% ((P.svd$u)[, -(1:(m - pord))])
+    D.temp <- sweep(X, 2, colMeans(X))
+    Xf <- svd(crossprod(D.temp))$u[, ncol(D.temp):1]
+    X <- X %*% Xf
+  }
   list(X = X, Z = Z, d = d, B = B, m = m, D = D, U = P.svd$u)
 }
 
-#####################################################################################
+#############################################################
 
 Bspt <- function(sp1, sp2, time, nfull, ntime, psanova,
                  Bi, bdegspt){
@@ -440,7 +498,7 @@ Bspt <- function(sp1, sp2, time, nfull, ntime, psanova,
               Bsptlist = Bsptlist)
 }
 
-#####################################################################################
+################################################################
 
 B_XZ_spt <- function(sp1, sp2, time, pordspt, psanova, decomspt,
                      f1_main, f2_main, ft_main,

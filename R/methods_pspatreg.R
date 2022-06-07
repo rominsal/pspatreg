@@ -25,27 +25,46 @@
 #' @param ... further arguments passed to or from other methods.  
 #' @examples
 #' library(pspatreg)
-#' ## load spatial panel and Wsp_it
-#' ## 103 Italian provinces. Period 1996-2019
-#' data(unemp_it, package = "pspatreg")
-#' ## Wsp_it is a matrix. Create a neighboord list 
-#' lwsp_it <- spdep::mat2listw(Wsp_it)
-#' ## short sample for spatial pure case (2d)
-#' unemp_it_short <- unemp_it[unemp_it$year == 2019, ]
+#' ###############################################
+#' # Examples using spatial data of Ames Houses.
+#' ###############################################
+#' # Getting and preparing the data
+#' library(spdep)
+#' library(sf)
+#' ames <- AmesHousing::make_ames() # Raw Ames Housing Data
+#' ames_sf <- st_as_sf(ames, coords = c("Longitude", "Latitude"))
+#' ames_sf$Longitude <- ames$Longitude
+#' ames_sf$Latitude <- ames$Latitude
+#' ames_sf$lnSale_Price <- log(ames_sf$Sale_Price)
+#' ames_sf$lnLot_Area <- log(ames_sf$Lot_Area)
+#' ames_sf$lnTotal_Bsmt_SF <- log(ames_sf$Total_Bsmt_SF+1)
+#' ames_sf$lnGr_Liv_Area <- log(ames_sf$Gr_Liv_Area)
+#' ########### Constructing the spatial weights matrix
+#' ames_sf1 <- ames_sf[(duplicated(ames_sf$Longitude) == FALSE), ]
+#' coord_sf1 <- cbind(ames_sf1$Longitude, ames_sf1$Latitude)
+#' ID <- row.names(as(ames_sf1, "sf"))
+#' col_tri_nb <- tri2nb(coord_sf1)
+#' soi_nb <- graph2nb(soi.graph(col_tri_nb, 
+#'                             coord_sf1), 
+#'                    row.names = ID)
+#' lw_ames <- nb2listw(soi_nb, style = "W", 
+#'                     zero.policy = FALSE)
+#' 
 #' ####  GAM pure with pspatreg
-#' form1 <- unrate ~ partrate + agri + cons +
-#'                  pspl(serv, nknots = 15) +
-#'                  pspl(empgrowth, nknots = 20)
-#' gampure <- pspatfit(form1, data = unemp_it_short)
+#' form1 <- lnSale_Price ~ Fireplaces + Garage_Cars +
+#'           pspl(lnLot_Area, nknots = 20) + 
+#'           pspl(lnTotal_Bsmt_SF, nknots = 20) +
+#'           pspl(lnGr_Liv_Area, nknots = 20)    
+#' gampure <- pspatfit(form1, data = ames_sf1)
 #' summary(gampure)
 #' 
 #' #####################  GAM + SAR Model
-#' gamsar <- pspatfit(form1, data = unemp_it_short, 
-#'                    type = "sar", listw = lwsp_it)
+#' gamsar <- pspatfit(form1, data = ames_sf1, 
+#'                    type = "sar", listw = lw_ames,
+#'                    method = "Chebyshev")
 #' summary(gamsar)
-#' ### Test nested models
-#' anova(gampure, gamsar)
-#' ### anova without testing
+#' 
+#' ### Compare Models
 #' anova(gampure, gamsar, lrtest = FALSE)
 #' ## logLikelihood 
 #' logLik(gamsar)
@@ -56,13 +75,13 @@
 #' coef(gamsar)
 #' ## Frequentist (sandwich) covariance matrix 
 #' ## (parametric terms)
-#' vcov(gamsar)      
+#' vcov(gamsar, bayesian = FALSE)      
 #' ## Bayesian covariance matrix (parametric terms)
-#' vcov(gamsar, bayesian = TRUE)
+#' vcov(gamsar)
 #' #####################################
 #' #### Fitted Values and Residuals
 #' plot(gamsar$fitted.values, 
-#'      unemp_it_short$unrate, 
+#'      ames_sf1$lnSale_Price, 
 #'      xlab = 'fitted values', 
 #'      ylab = "unrate",
 #'      type = "p", cex.lab = 1.3, 

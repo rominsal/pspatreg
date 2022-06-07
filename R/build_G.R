@@ -38,7 +38,7 @@ build_G2d <- function(la, lg, env) {
                             length(g21u) + length(g12b)) }
       Ginv <- c(Ginv_f1, Ginv_f2, Ginv_f12)
     }
-  } else { Ginv <- Ginv_eff <- NULL } 
+  } else { Ginv <- Ginv_eff <- NULL }
   if (env$nvarnopar>0) {
     for (k in 1:env$nvarnopar) {
       name_taunopark <- paste("taunopar", k, sep = "")

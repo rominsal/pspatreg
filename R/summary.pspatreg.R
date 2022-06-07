@@ -44,17 +44,17 @@ summary.pspatreg <- function(object,...) {
  names_var <- labels(z$terms)
  names_varspt <- names_var[grepl("pspt", names_var)]
  nvarspt <- length(names_varspt)
- names_varnopar <- names_var[grepl("pspl", names_var)]
+ #names_varnopar <- names_var[grepl("pspl", names_var)]
  names(z$bfixed) <- gsub("fixed_", "", names(z$bfixed))
  names(z$se_bfixed) <- gsub("fixed_", "", names(z$se_bfixed))
  names_varpar <- names(z$bfixed) 
  names_varpar <- names_varpar[!grepl("pspl", names_varpar) & 
                               !grepl("pspt", names_varpar)]
- # nvarpar <- length(names_varpar)
- # names_varnopar <- names(z$bfixed)
- # names_varnopar <- names_varnopar[grepl("pspl", names_varnopar)]
- # names_varnopar <- gsub("fixed_", "", names_varnopar)
- # names_varnopar <- gsub(").1", ")", names_varnopar)
+ nvarpar <- length(names_varpar)
+ names_varnopar <- names(z$bfixed)
+ names_varnopar <- names_varnopar[grepl("pspl", names_varnopar)]
+ names_varnopar <- gsub("fixed_", "", names_varnopar)
+ names_varnopar <- gsub(").1", ")", names_varnopar)
  rdf <- z$df.residual
  r <- z$residuals
  f <- z$fitted.values
