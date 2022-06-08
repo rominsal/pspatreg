@@ -32,9 +32,6 @@ Default = `FALSE`.}
 
 \item{nt}{Number of temporal periods. It is needed
 for dynamic models.}
-
-\item{alpha}{numerical value for the significance level of the pointwise 
-confidence interval of the impact functions. Default 0.05.}
 }
 \value{
 plot of the direct, indirect and total impacts  function for each non-parametric
@@ -109,7 +106,7 @@ imp_nparvar <- impactsnopar(gamsar, alpha = 0.05,
                             listw = lwsp_it, 
                             viewplot = TRUE)  
 ##### This returns the same result but using plot_impactsnopar()
-imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, 
+imp_nparvar <- impactsnopar(gamsar, listw = lwsp_it, alpha = 0.05,
                             viewplot = FALSE)
 plot_impactsnopar(imp_nparvar, data = unemp_it, 
                    smooth = TRUE)

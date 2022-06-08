@@ -127,8 +127,8 @@ to set \code{demean = TRUE} when spatio-temporal trends
 are included.}
 
 \item{eff_demean}{Type of demeaning for panel data.
-Possible values are \code{"individual"} (default) or
-\code{"time"}.}
+Possible values are \code{"individual"} (default), 
+\code{"time"} or \code{"twoways"}.}
 
 \item{index}{Vector of variables indexing panel data. 
 First variable corresponds to individuals and second 
@@ -713,12 +713,14 @@ summary(param)
 # Demeaning model
 param_dem <- pspatfit(formpar, data = unemp_it,
                       demean = TRUE,
-                      index = c("prov", "year") )
+                      index = c("prov", "year"),
+                      eff_demean = "individual" )
 summary(param_dem)
 # Compare results with plm package
 param_plm <- plm::plm(formula = formpar,
                       data = unemp_it,
                       index = c("prov", "year"),
+                      effect = "individual",
                       model = "within")
 summary(param_plm)                                              
 param_dem_time <- pspatfit(formpar, 
@@ -734,6 +736,17 @@ param_plm_time <- plm::plm(formula = formpar,
                       effect = "time",
                       model = "within")
 summary(param_plm_time)
+param_dem_twoways <- pspatfit(formpar, data = unemp_it,
+                      demean = TRUE,
+                      eff_demean = "twoways",
+                      index = c("prov", "year") )
+summary(param_dem_twoways)
+param_plm_twoways <- plm::plm(formula = formpar,
+                      data = unemp_it,
+                      index = c("prov", "year"),
+                      effect = "twoways",
+                      model = "within")
+summary(param_plm_twoways)
 ##### Demeaning with nonparametric covariates
 formgam <- unrate ~ partrate + agri + cons +  
                     pspl(serv, nknots = 15) +

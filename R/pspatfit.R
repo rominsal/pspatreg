@@ -751,8 +751,8 @@
 #' param_plm <- plm::plm(formula = formpar,
 #'                       data = unemp_it,
 #'                       index = c("prov", "year"),
-#'                       model = "within"
-#'                       effect = "individual")
+#'                       effect = "individual",
+#'                       model = "within")
 #' summary(param_plm)                                              
 #' param_dem_time <- pspatfit(formpar, 
 #'                       data = unemp_it, 
