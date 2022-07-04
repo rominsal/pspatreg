@@ -27,7 +27,6 @@ Make plots and maps of the spatio-temporal trends
   in 3d of the objects fitted with \code{\link{pspatfit}} function.
 }
 \examples{
-
 library(pspatreg)
 library(sf)
 data(unemp_it, package = "pspatreg")

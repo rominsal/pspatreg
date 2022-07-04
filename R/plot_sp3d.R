@@ -39,7 +39,6 @@
 #'  }    
 #' 
 #' @examples
-#' 
 #' library(pspatreg)
 #' library(sf)
 #' data(unemp_it, package = "pspatreg")

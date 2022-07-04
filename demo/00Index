@@ -1,0 +1,11 @@
+demo_pspatfit    # Demo of pspatfit() function
+demo_pspl_pspt # Demo of pspl() and pspt() functions
+demo_impactspar  # Demo of impactspar() function
+demo_impactsnopar # Demo of impactsnopar() function
+demo_plot_impactsnopar # Demo of plot_impactsnopar() function
+demo_fit_terms # Demo of fit_terms() function
+demo_plot_terms # Demo of plot_terms() function
+demo_plot_sp2d # Demo of plot_sp2d() function
+demo_plot_sp3d # Demo of plot_sp3d() function
+demo_plot_sptime # Demo of plot_sptime() function
+

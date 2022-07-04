@@ -2,8 +2,8 @@ Package: pspatreg
 Type: Package
 Title: Spatial and Spatio-Temporal Semiparametric Regression Models 
   with Spatial Lags
-Version: 1.0.3
-Date: 2022-06-06
+Version: 1.0.4
+Date: 2022-07-04
 Authors@R: 
   c(person("Roman", "Minguez", email = "roman.minguez@uclm.es", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0490-3181")),
